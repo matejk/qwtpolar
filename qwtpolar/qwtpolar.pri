@@ -2,12 +2,14 @@
 # Install paths
 ######################################################################
 
+VERSION      = 0.0.0
+
 unix {
-    INSTALLBASE    = /usr/local/qwtpolar-0.0.0-svn
+    INSTALLBASE    = /usr/local/qwtpolar-$$VERSION-svn
 }
 
 win32 {
-    INSTALLBASE    = C:/QwtPolar-0.0.0-svn
+    INSTALLBASE    = C:/QwtPolar-$$VERSION-svn
 }
 
 target.path    = $$INSTALLBASE/lib
@@ -35,9 +37,8 @@ CONFIG           += debug     # release/debug
 # Add the paths to the Qwt include files and Qwt libraries
 ######################################################################
 
-QWT_INCLUDEPATH = .../qwt-5.1/src
-QWT_LIBRARYPATH = .../qwt-5.1/lib
-
+QWT_INCLUDEPATH = /home1/uwe/qwt/qwt-5.1/src
+QWT_LIBRARYPATH = /home1/uwe/qwt/qwt-5.1/lib
 
 ######################################################################
 # Build the static/shared libraries.
