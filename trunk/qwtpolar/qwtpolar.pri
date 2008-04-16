@@ -37,8 +37,8 @@ CONFIG           += debug     # release/debug
 # Add the paths to the Qwt include files and Qwt libraries
 ######################################################################
 
-QWT_INCLUDEPATH = /home1/uwe/qwt/qwt-5.1/src
-QWT_LIBRARYPATH = /home1/uwe/qwt/qwt-5.1/lib
+QWT_INCLUDEPATH = .../qwt-5.1/src
+QWT_LIBRARYPATH = .../qwt-5.1/lib
 
 ######################################################################
 # Build the static/shared libraries.
