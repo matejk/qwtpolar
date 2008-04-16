@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh 
 # 
 # Generates a Qwt Polar package from sourceforge svn
 #
@@ -84,7 +84,10 @@ function cleanQwtPolar {
         mv $SRCFILE.sed $SRCFILE
     done 
 
-    cd -
+	sed -e "s/\$\$VERSION-svn/$VERSION/" qwtpolar.pri > qwtpolar.pri.sed
+    mv qwtpolar.pri.sed qwtpolar.pri
+
+    cd - > /dev/null
 }
 
 ##########################
@@ -101,11 +104,8 @@ function createDocs {
         exit $?
     fi
 
-    # We need LateX for the qwtpolar.pdf
 
-    sed -e '/GENERATE_LATEX/d' -e '/GENERATE_MAN/d' -e '/PROJECT_NUMBER/d' Doxyfile > Doxyfile.doc
-    echo 'GENERATE_LATEX = YES' >> Doxyfile.doc
-    echo 'GENERATE_MAN = YES' >> Doxyfile.doc
+	cp Doxyfile Doxyfile.doc
     echo "PROJECT_NUMBER = $VERSION" >> Doxyfile.doc
 
     cp ../INSTALL ../COPYING ./
@@ -119,19 +119,6 @@ function createDocs {
     rm Doxyfile.doc Doxygen.log INSTALL COPYING
     rm -r images
 
-    cd latex
-    make > /dev/null 2>&1
-    if [ $? -ne 0 ]
-    then 
-        exit $?
-    fi
-
-    cd ..
-    mkdir pdf
-    mv latex/refman.pdf pdf/qwtpolar.pdf
-
-    rm -r latex 
-    
     cd $ODIR
 }
 
@@ -158,8 +145,6 @@ function prepare4Win {
         exit $?
     fi
 
-    rm -r doc/man 
-
     # win files, but not uptodate
 
     BATCHES=`find . -type f -name '*.bat' -print`
@@ -173,7 +158,7 @@ function prepare4Win {
         posix2dos $FILE
     done
 
-    cd -
+    cd - > /dev/null
 }
 
 ##########################
@@ -190,7 +175,7 @@ function prepare4Unix {
 
     rm -rf admin
 
-    cd -
+    cd - > /dev/null
 }
 
 ##########################
@@ -228,8 +213,6 @@ echo done
 
 echo -n "generate documentation ... "
 createDocs $TMPDIR/doc
-mv $TMPDIR/doc/pdf/qwtpolar.pdf $QWTPOLARDIR.pdf
-rmdir $TMPDIR/doc/pdf
 echo done
 
 
