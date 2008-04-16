@@ -11,8 +11,6 @@ include( ../qwtpolar.pri )
 TARGET            = qwtpolar
 TEMPLATE          = lib
 
-VERSION      = 0.1.0
-
 MOC_DIR           = moc
 OBJECTS_DIR       = obj
 DESTDIR           = ../lib
