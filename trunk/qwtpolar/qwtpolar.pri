@@ -35,8 +35,8 @@ CONFIG           += debug     # release/debug
 # Add the paths to the Qwt include files and Qwt libraries
 ######################################################################
 
-QWT_INCLUDEPATH = ...
-QWT_LIBRARYPATH = ...
+QWT_INCLUDEPATH = .../qwt-5.1/src
+QWT_LIBRARYPATH = .../qwt-5.1/lib
 
 
 ######################################################################
