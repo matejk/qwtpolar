@@ -309,8 +309,9 @@ void QwtPolarCurve::drawLines(QPainter *painter,
     QwtPolygon polyline(size);
     for (int i = from; i <= to; i++)
     {
-        double r = radialMap.xTransform(radius(i));
-        const double a = azimuthMap.xTransform(azimuth(i));
+		const QwtPolarPoint point = sample(i);
+        double r = radialMap.xTransform(point.radius());
+        const double a = azimuthMap.xTransform(point.azimuth());
         polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
     }
     painter->drawPolyline(polyline);
@@ -339,8 +340,9 @@ void QwtPolarCurve::drawSymbols(QPainter *painter, const QwtSymbol &symbol,
 
     for (int i = from; i <= to; i++)
     {
-        const double r = radialMap.xTransform(radius(i));
-        const double a = azimuthMap.xTransform(azimuth(i));
+		const QwtPolarPoint point = sample(i);
+        const double r = radialMap.xTransform(point.radius());
+        const double a = azimuthMap.xTransform(point.azimuth());
 
         const QPoint pos = qwtPolar2Pos(pole, r, a).toPoint();
 
