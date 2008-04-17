@@ -11,6 +11,7 @@
 
 #include "qwt_polar_global.h"
 #include "qwt_data.h"
+#include "qwt_polar_point.h"
 #include "qwt_polar_item.h"
 
 class QPainter;
@@ -47,8 +48,9 @@ public:
     const QwtData &data() const;
 
     int dataSize() const;
-    inline double radius(int i) const;
-    inline double azimuth(int i) const;
+    double radius(int i) const;
+    double azimuth(int i) const;
+	QwtPolarPoint sample(int i) const;
 
     void setPen(const QPen &);
     const QPen &pen() const;
@@ -126,6 +128,15 @@ inline double QwtPolarCurve::azimuth(int i) const
 inline double QwtPolarCurve::radius(int i) const 
 { 
     return d_points->y(i); 
+}
+
+/*!
+    \param i index
+    \return point at position i
+*/
+inline QwtPolarPoint QwtPolarCurve::sample(int i) const
+{
+    return QwtPolarPoint(azimuth(i), radius(i));
 }
 
 #endif
