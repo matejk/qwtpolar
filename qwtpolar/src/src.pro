@@ -22,6 +22,10 @@ else {
     CONFIG += staticlib
 }
 
+win32:QwtDll {
+    DEFINES    += QT_DLL QWT_DLL QWT_POLAR_MAKEDLL
+}
+
 INCLUDEPATH += $$QWT_INCLUDEPATH
 DEPENDPATH  += $$QWT_INCLUDEPATH
 
