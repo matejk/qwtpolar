@@ -2,7 +2,10 @@
 # Install paths
 ######################################################################
 
-VERSION      = 0.0.0
+VER_MAJ      = 0
+VER_MIN      = 0
+VER_PAT      = 1
+VERSION      = $$VER_MAJ.$$VER_MIN.$$VER_PAT
 
 unix {
     INSTALLBASE    = /usr/local/qwtpolar-$$VERSION-svn
