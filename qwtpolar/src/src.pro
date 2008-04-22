@@ -1,10 +1,10 @@
-# -*- mode: sh -*- ###########################
+# -*- mode: sh -*- ##############################################
 # QwtPolar Widget Library
 # Copyright (C) 2008   Uwe Rathmann
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GPL License, Version 2.0
-##############################################
+#################################################################
 
 include( ../qwtpolar.pri )
 
@@ -20,10 +20,6 @@ contains(CONFIG, QwtPolarDll ) {
 }
 else {
     CONFIG += staticlib
-}
-
-win32:QwtDll {
-    DEFINES    += QT_DLL QWT_DLL QWT_POLAR_MAKEDLL
 }
 
 INCLUDEPATH += $$QWT_INCLUDEPATH
@@ -64,3 +60,21 @@ unix {
 }
 
 INSTALLS       = target headers doc
+
+win32 {
+    contains(CONFIG, QwtPolarDll) {
+    	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
+		QWTLIB     = qwt$${QWT_VERSION_MAJ}
+	}
+	else {
+		QWTLIB     = qwt
+	}
+
+    msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    msvc2005:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    g++:LIBS   += -L$${QWT_LIBRARYPATH} -lqwt
+}
+else {
+	LIBS   += -L$${QWT_LIBRARYPATH} -lqwt
+}
