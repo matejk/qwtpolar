@@ -50,15 +50,15 @@ win32 {
 		QWTPOLARLIB = $${QWTPOLARLIB}$${VER_MAJ}
 	}
 
-    msvc:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    msvc.net:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    msvc2005:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    g++:LIBS   += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
+    win32-msvc:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
+    win32-msvc.net:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
+    win32-msvc2005:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
+    win32-g++:LIBS   += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
 
-    msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    msvc2005:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
+    win32-msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-msvc2005:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
 }
 else {
 	LIBS  += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
