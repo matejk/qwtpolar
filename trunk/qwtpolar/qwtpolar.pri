@@ -73,8 +73,8 @@ win32 {
 # Note, that these need to bo absolute path names.
 ######################################################################
 
-QWT_INCLUDEPATH = /home1/uwe/qwt/qwt-5.1/src
-QWT_LIBRARYPATH = /home1/uwe/qwt/qwt-5.1/lib
+QWT_INCLUDEPATH = /path/to/qwt-5.1/include
+QWT_LIBRARYPATH = /path/to/qwt-5.1/lib
 !exists ( $${QWT_INCLUDEPATH} ) {
 	error( "You need to define a valid path to the Qwt includes in qwtpolar.pri" )
 }
