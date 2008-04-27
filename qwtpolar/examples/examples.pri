@@ -62,5 +62,5 @@ win32 {
 }
 else {
 	LIBS  += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
-	LIBS  += -L$${QWT_LIBRARYPATH} -l$${QWTPOLARLIB} 
+	LIBS  += -L$${QWT_LIBRARYPATH} -l$${QWTLIB} 
 }
