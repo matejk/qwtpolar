@@ -6,14 +6,37 @@
 # modify it under the terms of the GPL License, Version 2.0
 #################################################################
 
-include( ../qwtpolar.pri )
+QWT_POLAR_ROOT = ..
 
-TARGET            = qwtpolar
+include( $${QWT_POLAR_ROOT}/qwtpolar.pri )
+
+SUFFIX_STR =
+VVERSION = $$[QT_VERSION]
+isEmpty(VVERSION) {
+
+    # Qt 3
+    debug {
+        SUFFIX_STR = $${DEBUG_SUFFIX}
+    }
+    else {
+        SUFFIX_STR = $${RELEASE_SUFFIX}
+    }
+}
+else {
+    CONFIG(debug, debug|release) {
+        SUFFIX_STR = $${DEBUG_SUFFIX}
+    }
+    else {
+        SUFFIX_STR = $${RELEASE_SUFFIX}
+    }
+}
+
+TARGET            = qwtpolar$${SUFFIX_STR}
 TEMPLATE          = lib
 
 MOC_DIR           = moc
-OBJECTS_DIR       = obj
-DESTDIR           = ../lib
+OBJECTS_DIR       = obj$${SUFFIX_STR}
+DESTDIR           = $${QWT_POLAR_ROOT}/lib
 
 contains(CONFIG, QwtPolarDll ) {
     CONFIG += dll
@@ -54,27 +77,27 @@ SOURCES += \
 # Install directives
 
 headers.files  = $$HEADERS
-doc.files      = ../doc/html
+doc.files      = $${QWT_POLAR_ROOT}/doc/html
 unix {
-    doc.files      += ../doc/man
+    doc.files      += $${QWT_POLAR_ROOT}/doc/man
 }
 
 INSTALLS       = target headers doc
 
+QWTLIB     = qwt$${SUFFIX_STR}
 win32 {
     contains(CONFIG, QwtPolarDll) {
     	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
-		QWTLIB     = qwt$${QWT_VERSION_MAJ}
+		QWTLIB     = $${QWTLIB}$${QWT_VERSION_MAJ}
 	}
 	else {
-		QWTLIB     = qwt
 	}
 
     msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     msvc2005:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    g++:LIBS   += -L$${QWT_LIBRARYPATH} -lqwt
+    g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
 }
 else {
-	LIBS   += -L$${QWT_LIBRARYPATH} -lqwt
+	LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
 }
