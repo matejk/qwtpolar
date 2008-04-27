@@ -1,5 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS = src
-SUBDIRS += examples
+
+contains(CONFIG, QwtPolarExamples ) {
+	SUBDIRS += examples
+}
 
