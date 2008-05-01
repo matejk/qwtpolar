@@ -1,0 +1,80 @@
+/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+ * QwtPolar Widget Library
+ * Copyright (C) 2008   Uwe Rathmann
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GPL License, Version 2.0
+ *****************************************************************************/
+/*
+  This file contains NO source code, just some documentation for doxygen to
+  parse.
+*/
+
+/*!
+  \mainpage QwtPolar - A Qwt/Qt Polar Plot Library
+
+The QwtPolar library contains classes for displaying values on a polar 
+coordinate system. It is an addon package for to the <a href="http://qwt.sourceforge.net">Qwt</a> Library.
+
+  \image html polarplot.png
+
+  \if homepage
+  \section homepage Project page
+  The official project page is hosted at 
+	<a href="http://qwtpolar.sourceforge.net">sourceforge</a>
+  \endif
+
+  \section license License
+
+  In opposite to the Qwt library, the QwtPolar library is released under
+  the GPL 2.0. The reason for this is temporarily and the 
+  <a href="http://qwt.sourceforge.net/qwtlicense.html">Qwt Licence</a> 
+  will be used for later releases too.
+
+  In the meantime you need to contact the author, if you like to use it in
+  a closed source environment.
+
+  \section platforms Platforms
+
+  QwtPolar might be usable in all environments where you find
+  <a href="http://www.trolltech.com/products/qt">Qt</a>.
+  It is compatible with Qt 3.3.x and Qt 4.x, but the documentation
+  is generated for Qt 4.x.\n 
+  It also needs <a href="http://qwt.sourceforge.net">Qwt 5.1.x</a>.
+
+  \section downloads Downloads
+  Stable releases, prereleases and snapshots are available at the QwtPolar <a href="http://sourceforge.net/projects/qwtpolar">project page</a>.
+
+  For getting a development snapshot from the SVN repository: 
+  \code svn co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/trunk/qwtpolar \endcode
+
+  \section support Support
+  - Mailing list\n
+  QwtPolar doesn't have its own mailing list, but you can ask on the
+  Qwt <a href="http://sourceforge.net/mail/?group_id=13693">mailing list</a>.\n 
+  If you prefer newsgroups use the mail to news gateway of <a href="http://dir.gmane.org/gmane.comp.graphics.qwt.general">Gmane</a>. 
+
+  - Forum\n
+  <a href="http://www.qtcentre.org">Qt Centre</a> is a great resource for Qt 
+  related questions. It has a sub forum, that is dedicated to 
+  Qwt related questions. 
+
+  - Individual support\n
+  If you are looking for individual support, or need someone who implements 
+  your Qwt component/application contact qwt-support@tigertal.de.
+
+  \section relatedprojects Related Projects
+
+  <a href="http://qwt.sourceforge.net">Qwt</a>, Qt Widgets for Technical Applications.\n
+  <a href="http://qwtplot3d.sourceforge.net">QwtPlot3D</a>, an OpenGL 3D plot widget.\n
+
+  \section donations Donations
+
+  Sourceforge offers a <a href="http://sourceforge.net/docman/display_doc.php?docid=20244&group_id=1"> Donation System</a> via PayPal. You can use it, if you like to <a href="http://sourceforge.net/project/project_donations.php?group_id=13693">support</a> the development of Qwt.
+*/
+
+  \section credits Credits:
+  \par Authors: 
+    Uwe Rathmann
+  \par Project admin:
+    Uwe Rathmann \<rathmann@users.sourceforge.net\>
