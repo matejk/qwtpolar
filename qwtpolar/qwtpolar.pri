@@ -45,10 +45,11 @@ else {
         # On Windows you can't mix release and debug libraries.
         # The designer is built in release mode. If you like to use it
         # you need a release version. For your own application development you
-        # might need a debug version. So we better built both.
+        # might need a debug version. 
 
-        CONFIG           += debug_and_release
-        CONFIG           += build_all
+        # CONFIG           += debug_and_release
+        # CONFIG           += build_all
+        CONFIG           += release     # release/debug/debug_and_release
     }
     else {
         CONFIG           += release     # release/debug
@@ -76,10 +77,10 @@ win32 {
 QWT_INCLUDEPATH = /path/to/qwt-5.1/include
 QWT_LIBRARYPATH = /path/to/qwt-5.1/lib
 !exists ( $${QWT_INCLUDEPATH} ) {
-	error( "You need to define a valid path to the Qwt includes in qwtpolar.pri" )
+    error( "You need to define a valid path to the Qwt includes in qwtpolar.pri" )
 }
 !exists ( $${QWT_LIBRARYPATH} ) {
-	error( "You need to define a valid path to the Qwt libs in qwtpolar.pri" )
+    error( "You need to define a valid path to the Qwt libs in qwtpolar.pri" )
 }
 
 ######################################################################
