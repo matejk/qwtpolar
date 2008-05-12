@@ -1,6 +1,9 @@
+Release 0.0.2
+===================
+
+1. GPL replaced by the Qwt License
+
 Release 0.0.1
 ===================
 
-Changes
--------
 1. qmake project files fixed

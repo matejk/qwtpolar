@@ -3,7 +3,7 @@
  * Copyright (C) 2008   Uwe Rathmann
  * 
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GPL License, Version 2.0
+ * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
 #ifndef QWT_POLAR_GRID_H
