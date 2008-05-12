@@ -3,8 +3,9 @@
  * Copyright (C) 2008   Uwe Rathmann
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GPL License, Version 2.0
+ * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
+
 /*
   This file contains NO source code, just some documentation for doxygen to
   parse.
@@ -26,13 +27,7 @@ coordinate system. It is an addon package for to the <a href="http://qwt.sourcef
 
   \section license License
 
-  In opposite to the Qwt library, the QwtPolar library is released under
-  the GPL 2.0. The reason for this is temporarily and the 
-  <a href="http://qwt.sourceforge.net/qwtlicense.html">Qwt Licence</a> 
-  will be used for later releases too.
-
-  In the meantime you need to contact the author, if you like to use it in
-  a closed source environment.
+  Qwt is distributed under the terms of the \ref qwtlicense.
 
   \section platforms Platforms
 
@@ -78,3 +73,8 @@ coordinate system. It is an addon package for to the <a href="http://qwt.sourcef
     Uwe Rathmann
   \par Project admin:
     Uwe Rathmann \<rathmann@users.sourceforge.net\>
+
+/*!
+  \page qwtlicense Qwt License, Version 1.0
+  \include "COPYING"
+*/
