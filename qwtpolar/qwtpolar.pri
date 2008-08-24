@@ -100,6 +100,14 @@ QWT_LIBRARYPATH = /path/to/qwt-5.1/lib
 CONFIG           += QwtPolarDll
 
 ######################################################################
+# If you want to build the QwtPolar designer plugin,
+# enable the line below.
+# Otherwise you have to build it from the designer directory.
+######################################################################
+
+CONFIG     += QwtPolarDesigner
+
+######################################################################
 # If you want to auto build the examples, enable the line below
 # Otherwise you have to build them from the examples directory.
 ######################################################################

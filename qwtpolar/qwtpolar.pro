@@ -6,9 +6,15 @@
 # modify it under the terms of the Qwt License, Version 1.0
 #################################################################
 
+include( qwtpolar.pri )
+
 TEMPLATE = subdirs
 
 SUBDIRS = src
+
+contains(CONFIG, QwtPolarDesigner ) {
+    SUBDIRS += designer
+}
 
 contains(CONFIG, QwtPolarExamples ) {
 	SUBDIRS += examples
