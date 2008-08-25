@@ -691,6 +691,15 @@ bool QwtPolarPlot::event(QEvent *e)
         case QEvent::PolishRequest:
             polish();
             break;
+#if 1
+        case QEvent::Resize:
+        {
+            // The designer needs early updates
+            if ( !testAttribute(Qt::WA_WState_Polished) )
+                updateLayout();
+            break;
+        }
+#endif
 #endif
         default:;
     }
