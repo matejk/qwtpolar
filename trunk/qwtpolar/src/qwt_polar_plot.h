@@ -46,6 +46,8 @@ class QWT_POLAR_EXPORT QwtPolarPlot: public QFrame, public QwtPolarItemDict
     Q_OBJECT
 
     Q_PROPERTY(QBrush plotBackground READ plotBackground WRITE setPlotBackground)
+    Q_PROPERTY(double azimuthOrigin READ azimuthOrigin WRITE setAzimuthOrigin)
+
 
 public:
     enum LegendPosition
@@ -95,6 +97,8 @@ public:
 
     QwtScaleMap scaleMap(int scaleId) const;
 
+    double azimuthOrigin() const;
+
     void zoom(const QwtPolarPoint&, double factor);
     void unzoom();
 
@@ -130,6 +134,7 @@ signals:
 public slots:
     virtual void replot();
     void autoRefresh();
+    void setAzimuthOrigin(double);
 
 protected slots:
     virtual void legendItemClicked();

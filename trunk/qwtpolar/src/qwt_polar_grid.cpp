@@ -860,7 +860,11 @@ void QwtPolarGrid::updateScaleDraws(
             scaleDraw->setRadius(qRound(radius));
             scaleDraw->moveCenter(p);
 
-            scaleDraw->setAngleRange(90.0, -270.0);
+            double from = ::fmod(90.0 - azimuthMap.p1() * 180.0 / M_PI, 360.0);
+            if ( from < 0.0 )
+                from += 360.0;
+
+            scaleDraw->setAngleRange(from, from - 360.0);
             scaleDraw->setTransformation(azimuthMap.transformation()->copy());
         }
         else
