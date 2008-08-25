@@ -84,6 +84,7 @@ public:
     QPointer<QWidget> spacer;
 #endif
     QwtPolarPlot::LegendPosition legendPosition;
+    double azimuthOrigin;
 };
 
 /*!
@@ -586,6 +587,37 @@ QwtScaleDiv *QwtPolarPlot::scaleDiv(int scaleId)
 }
 
 /*!
+  \brief Change the origin of the azimuth scale
+
+  The azimuth origin is the angle where the azimuth scale 
+  shows the value 0.0.  The default origin is 0.0. 
+
+  \param origin New origin
+  \sa azimuthOrigin()
+*/
+void QwtPolarPlot::setAzimuthOrigin(double origin)
+{
+    origin = ::fmod(origin, 2 * M_PI);
+    if ( origin != d_data->azimuthOrigin )
+    {
+        d_data->azimuthOrigin = origin;
+        autoRefresh();
+    }
+}
+
+/*!
+  The azimuth origin is the angle where the azimuth scale 
+  shows the value 0.0. 
+
+  \return Origin of the azimuth scale
+  \sa setAzimuthOrigin()
+*/
+double QwtPolarPlot::azimuthOrigin() const
+{
+    return d_data->azimuthOrigin;
+}
+
+/*!
    \brief Translate and in/decrease the zoom factor
 
    In zoom mode the zoom position is in the center of the 
@@ -670,7 +702,8 @@ QwtScaleMap QwtPolarPlot::scaleMap(int scaleId) const
 
     if ( scaleId == QwtPolar::Azimuth)
     {
-        map.setPaintXInterval(0.0, M_2PI); 
+        map.setPaintXInterval(d_data->azimuthOrigin, 
+            d_data->azimuthOrigin + M_2PI); 
     }
     else
     {
@@ -764,6 +797,7 @@ void QwtPolarPlot::initPlot(const QwtText &title)
     }
     d_data->zoomFactor = 1.0;
     d_data->legendPosition = QwtPolarPlot::RightLegend;
+    d_data->azimuthOrigin = 0.0;
 
     setSizePolicy(QSizePolicy::MinimumExpanding,
         QSizePolicy::MinimumExpanding);
