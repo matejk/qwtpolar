@@ -45,6 +45,8 @@ class QWT_POLAR_EXPORT QwtPolarPlot: public QFrame, public QwtPolarItemDict
 {
     Q_OBJECT
 
+    Q_PROPERTY(QBrush plotBackground READ plotBackground WRITE setPlotBackground)
+
 public:
     enum LegendPosition
     {
