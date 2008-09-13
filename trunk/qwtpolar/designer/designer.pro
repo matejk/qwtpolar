@@ -58,7 +58,10 @@ contains(CONFIG, QwtPolarDesigner) {
 	unix:LIBS      += -L$${QWTPOLAR_ROOT}/lib -l$${LIBNAME}
 	win32-msvc:LIBS  += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
 	win32-msvc.net:LIBS  += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
+	win32-msvc2002:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
+	win32-msvc2003:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
 	win32-msvc2005:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
+	win32-msvc2008:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
 	win32-g++:LIBS   += -L$${QWTPOLAR_ROOT}/lib -l$${LIBNAME}
 
 	# isEmpty(QT_VERSION) does not work with Qt-4.1.0/MinGW

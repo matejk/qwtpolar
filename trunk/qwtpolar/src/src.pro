@@ -95,7 +95,10 @@ win32 {
 
     win32-msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     win32-msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-msvc2002:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-msvc2003:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     win32-msvc2005:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
+    win32-msvc2008:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     win32-g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
 }
 else {
