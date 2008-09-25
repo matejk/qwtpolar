@@ -133,11 +133,21 @@ void QwtPolarMagnifier::rescale(double factor)
         return;
 
     QwtPolarPlot* plt = plot();
+    if ( plt == NULL )
+        return;
 
+    QwtPolarPoint zoomPos; 
+    double newZoomFactor = plt->zoomFactor() * factor;
+
+    if ( newZoomFactor >= 1.0 )
+        newZoomFactor = 1.0;
+    else
+        zoomPos = plt->zoomPos();
+    
     const bool autoReplot = plt->autoReplot();
     plt->setAutoReplot(false);
 
-    plt->zoom(plt->zoomPos(), plt->zoomFactor() * factor);
+    plt->zoom(zoomPos, newZoomFactor);
 
     plt->setAutoReplot(autoReplot);
     plt->replot();
