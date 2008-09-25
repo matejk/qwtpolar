@@ -44,6 +44,9 @@ public:
 
 protected slots:
     virtual void movePlot(int dx, int dy);
+
+protected:
+    virtual void widgetMousePressEvent(QMouseEvent *);
 };
 
 #endif
