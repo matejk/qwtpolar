@@ -60,6 +60,7 @@ HEADERS += \
     qwt_polar_marker.h \
     qwt_polar_itemdict.h \
     qwt_polar_canvas.h \
+    qwt_polar_layout.h \
     qwt_polar_plot.h
 
 SOURCES += \
@@ -72,6 +73,7 @@ SOURCES += \
     qwt_polar_marker.cpp \
     qwt_polar_itemdict.cpp \
     qwt_polar_canvas.cpp \
+    qwt_polar_layout.cpp \
     qwt_polar_plot.cpp
 
 # Install directives
