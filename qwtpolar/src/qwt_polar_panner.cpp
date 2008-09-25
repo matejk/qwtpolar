@@ -98,3 +98,15 @@ void QwtPolarPanner::movePlot(int dx, int dy)
     plot->setAutoReplot(doAutoReplot);
     plot->replot();
 }
+
+void QwtPolarPanner::widgetMousePressEvent(QMouseEvent *me)
+{
+    const QwtPolarPlot *plot = QwtPolarPanner::plot();
+    if ( plot )
+    {
+        if ( plot->zoomFactor() < 1.0 )
+            QwtPanner::widgetMousePressEvent(me);
+    }
+}
+        
+
