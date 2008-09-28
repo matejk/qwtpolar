@@ -6,9 +6,6 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#if 1
-#include <QDebug>
-#endif
 #include <qscrollbar.h>
 #include "qwt_text.h"
 #include "qwt_text_label.h"
@@ -47,7 +44,7 @@ public:
 */
 
 void QwtPolarLayout::LayoutData::init(
-	const QwtPolarPlot *plot, const QRect &rect)
+    const QwtPolarPlot *plot, const QRect &rect)
 {
     // legend
 
@@ -97,10 +94,10 @@ class QwtPolarLayout::PrivateData
 {
 public:
     PrivateData():
-		margin(0),
-		spacing(0)
-	{
-	}
+        margin(0),
+        spacing(0)
+    {
+    }
 
     QRect titleRect;
     QRect legendRect;
@@ -346,13 +343,13 @@ void QwtPolarLayout::activate(const QwtPolarPlot *plot,
 
     QRect rect(boundingRect);  // undistributed rest of the plot rect
 
-	// subtract the margin
-	rect.setRect(
-		rect.x() + d_data->margin,
-		rect.y() + d_data->margin,
-		rect.width() - 2 * d_data->margin,
-		rect.height() - 2 * d_data->margin
-	);
+    // subtract the margin
+    rect.setRect(
+        rect.x() + d_data->margin,
+        rect.y() + d_data->margin,
+        rect.width() - 2 * d_data->margin,
+        rect.height() - 2 * d_data->margin
+    );
 
     // We extract all layout relevant data from the widgets
     // and save them to d_data->layoutData.
@@ -396,36 +393,83 @@ void QwtPolarLayout::activate(const QwtPolarPlot *plot,
         }
     }
 
-	if ( !(options & IgnoreTitle) && 
-		!d_data->layoutData.title.text.isEmpty() )
-	{
+    if ( !(options & IgnoreTitle) && 
+        !d_data->layoutData.title.text.isEmpty() )
+    {
         int h = d_data->layoutData.title.text.heightForWidth(rect.width());
         if ( !(options & IgnoreFrames) )
             h += 2 * d_data->layoutData.title.frameWidth;
 
-		d_data->titleRect = QRect(rect.x(), rect.y(),
-			rect.width(), h);
+        d_data->titleRect = QRect(rect.x(), rect.y(),
+            rect.width(), h);
 
         // subtract title
         rect.setTop(rect.top() + h + d_data->spacing);
-	}
+    }
 
-	d_data->canvasRect = rect;
+    if ( plot->zoomPos().radius() > 0.0 || plot->zoomFactor() < 1.0 )
+    {
+        // In zoomed state we have no idea about the geometry that
+        // is best for the plot. So we use the complete rectangle
+        // accepting, that there might a lot of space wasted 
+        // around the plot. 
+
+        d_data->canvasRect = rect;
+    }
+    else
+    {
+        // In full state we know, that we want 
+        // to display something circular.
+
+        const int dim = qwtMin(rect.width(), rect.height());
+        
+        d_data->canvasRect.setX(rect.center().x() - dim / 2);
+        d_data->canvasRect.setY(rect.y());
+        d_data->canvasRect.setSize(QSize(dim, dim));
+    }
 
     if (!d_data->legendRect.isEmpty() )
     {
-    	if ( d_data->legendPos == QwtPolarPlot::LeftLegend 
-        	|| d_data->legendPos == QwtPolarPlot::RightLegend )
-		{
-        	// We prefer to align the legend to the canvas - not to
-        	// the complete plot - if possible.
+        if ( d_data->legendPos == QwtPolarPlot::LeftLegend 
+            || d_data->legendPos == QwtPolarPlot::RightLegend )
+        {
+            // We prefer to align the legend to the canvas - not to
+            // the complete plot - if possible.
 
-        	if ( d_data->layoutData.legend.hint.height() 
-				< d_data->canvasRect.height() )
-        	{
-            	d_data->legendRect.setY(d_data->canvasRect.y());
-            	d_data->legendRect.setHeight(d_data->canvasRect.height());
-        	}
-		}
+            if ( d_data->layoutData.legend.hint.height() 
+                < d_data->canvasRect.height() )
+            {
+                d_data->legendRect.setY(d_data->canvasRect.y());
+                d_data->legendRect.setHeight(d_data->canvasRect.height());
+            }
+        }
+
+        // Shift the legend, so that it is
+        // aligned to the canvas
+
+        switch(d_data->legendPos)
+        {
+            case QwtPolarPlot::LeftLegend:
+            {
+                d_data->legendRect.moveRight(d_data->canvasRect.left() - 1);
+                break;
+            }
+            case QwtPolarPlot::RightLegend:
+            {
+                d_data->legendRect.moveLeft(d_data->canvasRect.right() + 1);
+                break;
+            }
+            case QwtPolarPlot::TopLegend:
+            {
+                d_data->legendRect.moveBottom(d_data->canvasRect.top() - 1);
+                break;
+            }
+            case QwtPolarPlot::BottomLegend:
+            {
+                d_data->legendRect.moveTop(d_data->canvasRect.bottom() + 1);
+                break;
+            }
+            default:;
+        }
     }
 }

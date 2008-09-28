@@ -22,6 +22,7 @@ class QwtScaleEngine;
 class QwtScaleDiv;
 class QwtTextLabel;
 class QwtPolarCanvas;
+class QwtPolarLayout;
 
 /*!
   \brief A plotting widget, displaying a polar coordinate system
@@ -119,13 +120,21 @@ public:
 
     // Legend
 
-    void insertLegend(QwtLegend *, LegendPosition = QwtPolarPlot::RightLegend);
+    void insertLegend(QwtLegend *, LegendPosition = QwtPolarPlot::RightLegend,
+        double ratio = -1.0);
 
     QwtLegend *legend();
     const QwtLegend *legend() const;
 
+    // Layout
+    QwtPolarLayout *plotLayout();
+    const QwtPolarLayout *plotLayout() const;
+
     QwtDoubleInterval visibleInterval() const;
     QwtDoubleRect plotRect() const;
+    QwtDoubleRect plotRect(const QRect &) const;
+
+    int plotMarginHint() const;
 
 signals:
     void legendClicked(QwtPolarItem *plotItem);
@@ -142,6 +151,7 @@ protected slots:
 
 protected:
     virtual bool event(QEvent *);
+    virtual void resizeEvent(QResizeEvent *);
 
     virtual void updateLayout();
 
@@ -151,8 +161,6 @@ protected:
         const QwtDoubleRect &canvasRect) const;
 
     void updateScale(int scaleId);
-
-    int plotMarginHint() const;
 
 private:
     void initPlot(const QwtText &);
