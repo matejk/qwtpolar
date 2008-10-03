@@ -981,14 +981,37 @@ void QwtPolarPlot::drawItems(QPainter *painter,
         {
             painter->save();
             
-            const int margin = item->marginHint();
-            const QwtDoubleRect clipRect(pr.x() - margin, pr.y() - margin,
-                pr.width() + 2 * margin, pr.height() + 2 * margin);
+            // Unfortunately circular clipping slows down
+            // painting a lot. So we better try to avoid it.
 
-            if ( !clipRect.contains(canvasRect) )
+            bool doClipping = false;
+            if ( item->rtti() != QwtPolarItem::Rtti_PolarGrid )
             {
-                QRegion clipRegion(clipRect.toRect(), QRegion::Ellipse);
-                painter->setClipRegion(clipRegion, Qt::IntersectClip);
+                const QwtDoubleInterval intv = 
+                    item->boundingInterval(QwtPolar::Radius);
+
+                if ( !intv.isValid() )
+                    doClipping = true;
+                else
+                {
+                    if ( radialMap.s1() < radialMap.s2() )
+                        doClipping = intv.maxValue() > radialMap.s2();
+                    else
+                        doClipping = intv.minValue() < radialMap.s2();
+                }
+            }
+
+            if ( doClipping )
+            {
+                const int margin = item->marginHint();
+                const QwtDoubleRect clipRect(pr.x() - margin, pr.y() - margin,
+                    pr.width() + 2 * margin, pr.height() + 2 * margin);
+
+                if ( !clipRect.contains(canvasRect) )
+                {
+                    QRegion clipRegion(clipRect.toRect(), QRegion::Ellipse);
+                    painter->setClipRegion(clipRegion, Qt::IntersectClip);
+                }
             }
 
 #if QT_VERSION >= 0x040000
