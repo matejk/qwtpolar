@@ -695,16 +695,36 @@ double QwtPolarPlot::zoomFactor() const
 
   The azimuth map translates between the scale values and angles from
   [0.0, 2 * PI[. The radial map translates scale values into the distance
-  from the pole.
+  from the pole. The radial map is calculated from the current geometry
+  of the canvas.
 
   \param scaleId Scale index
   \return Map for the scale on the canvas. With this map pixel coordinates can
           translated to plot coordinates and vice versa.
 
   \sa QwtScaleMap, transform(), invTransform()
-
 */
 QwtScaleMap QwtPolarPlot::scaleMap(int scaleId) const
+{
+    const QwtDoubleRect pr = plotRect();
+    return scaleMap(scaleId, pr.width() / 2.0);
+}
+
+/*!
+  Build a scale map
+
+  The azimuth map translates between the scale values and angles from
+  [0.0, 2 * PI[. The radial map translates scale values into the distance
+  from the pole.
+
+  \param scaleId Scale index
+  \param radius Radius of the plot are in pixels
+  \return Map for the scale on the canvas. With this map pixel coordinates can
+          translated to plot coordinates and vice versa.
+
+  \sa QwtScaleMap, transform(), invTransform()
+*/
+QwtScaleMap QwtPolarPlot::scaleMap(int scaleId, const double radius) const
 {
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
         return QwtScaleMap();
@@ -722,8 +742,7 @@ QwtScaleMap QwtPolarPlot::scaleMap(int scaleId) const
     }
     else
     {
-        const double w = plotRect().width(); 
-        map.setPaintXInterval(0.0, w / 2.0);
+        map.setPaintXInterval(0.0, radius);
     }
 
     return map;
@@ -912,24 +931,28 @@ const QwtPolarCanvas *QwtPolarPlot::canvas() const
 void QwtPolarPlot::drawCanvas(QPainter *painter, 
     const QwtDoubleRect &canvasRect) const
 {
-    const QwtDoubleRect pr = plotRect(canvasRect.toRect());
+    const QwtDoubleRect cr = canvasRect;
+    const QwtDoubleRect pr = plotRect(cr.toRect());
     if ( d_data->canvasBrush.style() != Qt::NoBrush )
     {
         painter->save();
         painter->setPen(Qt::NoPen);
         painter->setBrush(d_data->canvasBrush);
 #if QT_VERSION < 0x040000
-        painter->drawEllipse(pr.toRect());
+        QwtPainter::drawEllipse(painter, pr.toRect());
 #else
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->drawEllipse(pr);
+        QwtPainter::drawEllipse(painter, pr.toRect());
 #endif
         painter->restore();
     }
 
+    const double radius = pr.width() / 2.0;
+
     drawItems(painter, 
-        scaleMap(QwtPolar::Azimuth), scaleMap(QwtPolar::Radius),
-        pr.center(), pr.width() / 2.0, canvasRect);
+        scaleMap(QwtPolar::Azimuth, radius), 
+        scaleMap(QwtPolar::Radius, radius),
+        pr.center(), radius, canvasRect);
 }
 
 /*!
@@ -947,7 +970,7 @@ void QwtPolarPlot::drawItems(QPainter *painter,
         const QwtDoublePoint &pole, double radius,
         const QwtDoubleRect &canvasRect) const
 {
-    const QwtDoubleRect pr = plotRect();
+    const QwtDoubleRect pr = plotRect(canvasRect.toRect());
 
     const QwtPolarItemList& itmList = itemList();
     for ( QwtPolarItemIterator it = itmList.begin();
@@ -1117,8 +1140,8 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
 {
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
 
-    const QwtDoubleRect pRect = plotRect();
     const QwtDoubleRect cRect = canvas()->contentsRect();
+    const QwtDoubleRect pRect = plotRect(cRect.toRect());
     if ( cRect.contains(pRect.toRect()) || !cRect.intersects(pRect) )
     {
         return QwtDoubleInterval(sd->lBound(), sd->hBound());
@@ -1281,7 +1304,6 @@ void QwtPolarPlot::renderTo(QPainter *painter, const QRect &plotRect) const
     QwtPainter::resetMetricsMap();
 
     ((QwtPolarPlot *)this)->plotLayout()->invalidate();
-
 }
 
 /*!

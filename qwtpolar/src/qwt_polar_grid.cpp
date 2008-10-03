@@ -705,7 +705,7 @@ void QwtPolarGrid::drawRays(
             if ( testDisplayFlag(ClipGridLines) )
                 pa = QwtClipper::clipPolygon(canvasRect.toRect(), pa);
 
-            painter->drawPolyline(pa);
+            QwtPainter::drawPolyline(painter, pa);
         }
     }
 }
@@ -754,7 +754,7 @@ void QwtPolarGrid::drawCircles(
             outerRect.moveCenter(pole);
 
 #if QT_VERSION < 0x040000
-            painter->drawEllipse(outerRect.toRect());
+            QwtPainter::drawEllipse(painter, outerRect.toRect());
 #else
             if ( testDisplayFlag(ClipGridLines) )
             {
@@ -771,7 +771,7 @@ void QwtPolarGrid::drawCircles(
                 {
                     const QwtDoubleInterval intv = angles[i];
                     if ( intv.minValue() == 0 && intv.maxValue() == 2 * M_PI )
-                        painter->drawEllipse(outerRect.toRect());
+                        QwtPainter::drawEllipse(painter, outerRect.toRect());
                     else
                     {
                         const double from = intv.minValue() / M_PI * 180;
@@ -780,7 +780,10 @@ void QwtPolarGrid::drawCircles(
                         if ( span < 0.0 )
                             span += 360.0;
                     
-                        painter->drawArc(outerRect.toRect(), 
+                        const QwtMetricsMap &mm = QwtPainter::metricsMap();
+                        const QRect r = outerRect.toRect();
+
+                        painter->drawArc(mm.layoutToDevice(r, painter), 
                             qRound(from * 16), qRound(span * 16));
                     }
                     
@@ -788,7 +791,7 @@ void QwtPolarGrid::drawCircles(
             }
             else
             {
-                painter->drawEllipse(outerRect.toRect());
+                QwtPainter::drawEllipse(painter, outerRect.toRect());
             }
 #endif
         }
@@ -843,10 +846,9 @@ void QwtPolarGrid::updateScaleDraws(
 
     const QwtDoubleInterval interval = 
         d_data->gridData[QwtPolar::ScaleRadius].scaleDiv.interval();
-    const QwtScaleMap map = plot()->scaleMap(QwtPolar::ScaleRadius);
 
-    const int min = map.transform(interval.minValue());
-    const int max = map.transform(interval.maxValue());
+    const int min = radialMap.transform(interval.minValue());
+    const int max = radialMap.transform(interval.maxValue());
     const int l = max - min;
 
     for ( int axisId = 0; axisId < QwtPolar::AxesCount; axisId++ )

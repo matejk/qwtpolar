@@ -8,6 +8,7 @@
 
 #include <qpainter.h>
 #include "qwt_global.h"
+#include "qwt_painter.h"
 #include "qwt_polar.h"
 #include "qwt_scale_map.h"
 #include "qwt_double_rect.h"
@@ -309,12 +310,12 @@ void QwtPolarCurve::drawLines(QPainter *painter,
     QwtPolygon polyline(size);
     for (int i = from; i <= to; i++)
     {
-		const QwtPolarPoint point = sample(i);
+        const QwtPolarPoint point = sample(i);
         double r = radialMap.xTransform(point.radius());
         const double a = azimuthMap.xTransform(point.azimuth());
         polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
     }
-    painter->drawPolyline(polyline);
+    QwtPainter::drawPolyline(painter, polyline);
 }
 
 /*!
@@ -336,11 +337,12 @@ void QwtPolarCurve::drawSymbols(QPainter *painter, const QwtSymbol &symbol,
     painter->setBrush(symbol.brush());
     painter->setPen(symbol.pen());
 
-    QRect rect(QPoint(0, 0), symbol.size());
+    QRect rect;
+    rect.setSize(QwtPainter::metricsMap().screenToLayout(symbol.size()));
 
     for (int i = from; i <= to; i++)
     {
-		const QwtPolarPoint point = sample(i);
+        const QwtPolarPoint point = sample(i);
         const double r = radialMap.xTransform(point.radius());
         const double a = azimuthMap.xTransform(point.azimuth());
 
@@ -349,7 +351,6 @@ void QwtPolarCurve::drawSymbols(QPainter *painter, const QwtSymbol &symbol,
         rect.moveCenter(pos);
         symbol.draw(painter, rect);
     }
-
 }
 
 /*!
