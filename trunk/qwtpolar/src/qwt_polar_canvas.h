@@ -59,6 +59,8 @@ public:
 
 protected:
     virtual void paintEvent(QPaintEvent *);
+    virtual void resizeEvent(QResizeEvent *);
+
     virtual void drawContents(QPainter *);
 
     void drawCanvas(QPainter *, const QwtDoubleRect &);
