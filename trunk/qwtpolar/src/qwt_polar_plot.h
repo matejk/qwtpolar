@@ -96,6 +96,7 @@ public:
     const QwtScaleDiv *scaleDiv(int scaleId) const;
     QwtScaleDiv *scaleDiv(int scaleId);
 
+    QwtScaleMap scaleMap(int scaleId, double radius) const;
     QwtScaleMap scaleMap(int scaleId) const;
 
     double azimuthOrigin() const;
