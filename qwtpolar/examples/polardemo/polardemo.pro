@@ -8,14 +8,19 @@
 
 include( ../examples.pri )
 
+QT          += svg
+
 TARGET       = polardemo
 
 SOURCES = \
+	mainwindow.cpp \
 	plot.cpp \
 	settingseditor.cpp \
 	main.cpp
 
 HEADERS = \
+	pixmaps.h \
+	mainwindow.h \
 	plot.h \
 	settingseditor.h
 
