@@ -99,6 +99,8 @@ public:
     QwtScaleMap scaleMap(int scaleId, double radius) const;
     QwtScaleMap scaleMap(int scaleId) const;
 
+    void updateScale(int scaleId);
+
     double azimuthOrigin() const;
 
     void zoom(const QwtPolarPoint&, double factor);
@@ -118,6 +120,7 @@ public:
     const QBrush& plotBackground() const;
 
     virtual void drawCanvas(QPainter *, const QwtDoubleRect &) const;
+
 
     // Legend
 
@@ -163,8 +166,6 @@ protected:
         const QwtScaleMap &radialMap, const QwtScaleMap &azimuthMap,
         const QwtDoublePoint &pole, double radius,
         const QwtDoubleRect &canvasRect) const;
-
-    void updateScale(int scaleId);
 
     virtual void renderTitle(QPainter *, const QRect &) const;
     virtual void renderLegend(QPainter *, const QRect &) const;

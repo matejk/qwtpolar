@@ -188,6 +188,15 @@ void QwtPolarCanvas::paintEvent(QPaintEvent *event)
 #endif
 }
 
+//! Resize event
+void QwtPolarCanvas::resizeEvent(QResizeEvent *event)
+{
+    QFrame::resizeEvent(event);
+
+    for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
+        plot()->updateScale(scaleId);
+}
+
 //! Redraw the canvas
 void QwtPolarCanvas::drawContents(QPainter *painter)
 {
