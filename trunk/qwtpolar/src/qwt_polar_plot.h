@@ -136,6 +136,9 @@ public:
 
     int plotMarginHint() const;
 
+    void renderTo(QPaintDevice &) const;
+    virtual void renderTo(QPainter *, const QRect &) const;
+
 signals:
     void legendClicked(QwtPolarItem *plotItem);
     void legendChecked(QwtPolarItem *plotItem, bool on);
@@ -161,6 +164,11 @@ protected:
         const QwtDoubleRect &canvasRect) const;
 
     void updateScale(int scaleId);
+
+    virtual void renderTitle(QPainter *, const QRect &) const;
+    virtual void renderLegend(QPainter *, const QRect &) const;
+    virtual void renderLegendItem(QPainter *,
+        const QWidget *, const QRect &) const;
 
 private:
     void initPlot(const QwtText &);

@@ -9,6 +9,7 @@
 #include <qglobal.h>
 #if QT_VERSION < 0x040000
 #include <qguardedptr.h>
+#include <qpaintdevicemetrics.h>
 #else
 #include <qpointer.h>
 #include <qpaintengine.h>
@@ -23,6 +24,7 @@
 #include "qwt_round_scale_draw.h"
 #include "qwt_polar_canvas.h"
 #include "qwt_legend.h"
+#include "qwt_legend_item.h"
 #include "qwt_dyngrid_layout.h"
 #include "qwt_polar_layout.h"
 #include "qwt_polar_plot.h"
@@ -910,7 +912,7 @@ const QwtPolarCanvas *QwtPolarPlot::canvas() const
 void QwtPolarPlot::drawCanvas(QPainter *painter, 
     const QwtDoubleRect &canvasRect) const
 {
-    const QwtDoubleRect pr = plotRect();
+    const QwtDoubleRect pr = plotRect(canvasRect.toRect());
     if ( d_data->canvasBrush.style() != Qt::NoBrush )
     {
         painter->save();
@@ -1222,3 +1224,167 @@ const QwtPolarLayout *QwtPolarPlot::plotLayout() const
     return d_data->layout;
 }
 
+void QwtPolarPlot::renderTo(QPaintDevice &paintDev) const
+{
+#if QT_VERSION < 0x040000
+    QPaintDeviceMetrics mpr(&paintDev);
+    int w = mpr.width();
+    int h = mpr.height();
+#else
+    int w = paintDev.width();
+    int h = paintDev.height();
+#endif
+
+    const QRect rect(0, 0, w, h);
+
+    QPainter p(&paintDev);
+    renderTo(&p, rect);
+
+}
+
+void QwtPolarPlot::renderTo(QPainter *painter, const QRect &plotRect) const
+{
+    if ( painter == 0 || !painter->isActive() ||
+            !plotRect.isValid() || size().isNull() )
+       return;
+
+    // All paint operations need to be scaled according to
+    // the paint device metrics.
+
+    QwtPainter::setMetricsMap(this, painter->device());
+    const QwtMetricsMap &metricsMap = QwtPainter::metricsMap();
+
+    int layoutOptions = QwtPolarLayout::IgnoreScrollbars
+        | QwtPolarLayout::IgnoreFrames;
+
+    ((QwtPolarPlot *)this)->plotLayout()->activate(this,
+        QwtPainter::metricsMap().deviceToLayout(plotRect),
+        layoutOptions);
+
+    painter->save();
+    renderTitle(painter, plotLayout()->titleRect());
+    painter->restore();
+
+    painter->save();
+    renderLegend(painter, plotLayout()->legendRect());
+    painter->restore();
+
+    QRect canvasRect = plotLayout()->canvasRect();
+    canvasRect = metricsMap.layoutToDevice(canvasRect);
+
+    QwtPainter::setMetricsMap(painter->device(), painter->device());
+
+    painter->save();
+    drawCanvas(painter, canvasRect);
+    painter->restore();
+
+    QwtPainter::resetMetricsMap();
+
+    ((QwtPolarPlot *)this)->plotLayout()->invalidate();
+
+}
+
+/*!
+  Render the title into a given rectangle.
+  
+  \param painter Painter
+  \param rect Bounding rectangle
+*/
+
+void QwtPolarPlot::renderTitle(QPainter *painter, const QRect &rect) const
+{   
+    painter->setFont(titleLabel()->font());
+
+    const QColor color = 
+#if QT_VERSION < 0x040000
+        titleLabel()->palette().color(
+            QPalette::Active, QColorGroup::Text);
+#else
+        titleLabel()->palette().color(
+            QPalette::Active, QPalette::Text);
+#endif
+
+    painter->setPen(color);
+    titleLabel()->text().draw(painter, rect);
+}
+
+/*!
+  Render the legend into a given rectangle.
+
+  \param painter Painter
+  \param rect Bounding rectangle
+*/
+
+void QwtPolarPlot::renderLegend(QPainter *painter, const QRect &rect) const
+{
+#if 1
+    // Shift this code into QwtLegend, so that Qwt/QwtPolar can share it
+#endif
+
+    if ( !legend() || legend()->isEmpty() )
+        return;
+
+    QLayout *l = legend()->contentsWidget()->layout();
+    if ( l == 0 || !l->inherits("QwtDynGridLayout") )
+        return;
+
+    QwtDynGridLayout *legendLayout = (QwtDynGridLayout *)l;
+
+    uint numCols = legendLayout->columnsForWidth(rect.width());
+#if QT_VERSION < 0x040000
+    QValueList<QRect> itemRects =
+        legendLayout->layoutItems(rect, numCols);
+#else
+    QList<QRect> itemRects =
+        legendLayout->layoutItems(rect, numCols);
+#endif
+
+    int index = 0;
+
+#if QT_VERSION < 0x040000
+    QLayoutIterator layoutIterator = legendLayout->iterator();
+    for ( QLayoutItem *item = layoutIterator.current();
+        item != 0; item = ++layoutIterator)
+    {
+#else
+    for ( int i = 0; i < legendLayout->count(); i++ )
+    {
+        QLayoutItem *item = legendLayout->itemAt(i);
+#endif
+        QWidget *w = item->widget();
+        if ( w )
+        {
+            painter->save();
+            painter->setClipping(true);
+            QwtPainter::setClipRect(painter, itemRects[index]);
+
+            renderLegendItem(painter, w, itemRects[index]);
+
+            index++;
+            painter->restore();
+        }
+    }
+}
+
+/*!
+  Render the legend item into a given rectangle.
+
+  \param painter Painter
+  \param w Widget representing a legend item
+  \param rect Bounding rectangle
+*/
+
+void QwtPolarPlot::renderLegendItem(QPainter *painter,
+    const QWidget *w, const QRect &rect) const
+{
+#if 1
+    // Shift this code into QwtLegend, so that Qwt/QwtPolar can share it
+#endif
+    if ( w->inherits("QwtLegendItem") )
+    {
+        QwtLegendItem *item = (QwtLegendItem *)w;
+
+        painter->setFont(item->font());
+        item->drawItem(painter, rect);
+    }
+}
