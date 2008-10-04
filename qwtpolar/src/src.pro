@@ -52,6 +52,7 @@ HEADERS += \
     qwt_polar_global.h \
     qwt_polar.h \
     qwt_polar_point.h \
+    qwt_polar_fitter.h \
     qwt_polar_item.h \
     qwt_polar_panner.h \
     qwt_polar_magnifier.h \
@@ -65,6 +66,7 @@ HEADERS += \
 
 SOURCES += \
     qwt_polar_point.cpp \
+    qwt_polar_fitter.cpp \
     qwt_polar_item.cpp \
     qwt_polar_panner.cpp \
     qwt_polar_magnifier.cpp \

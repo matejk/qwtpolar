@@ -16,6 +16,7 @@
 
 class QPainter;
 class QwtSymbol;
+class QwtCurveFitter;
 
 /*!
   A class which draws curves on a polar plot
@@ -50,7 +51,7 @@ public:
     int dataSize() const;
     double radius(int i) const;
     double azimuth(int i) const;
-	QwtPolarPoint sample(int i) const;
+    QwtPolarPoint sample(int i) const;
 
     void setPen(const QPen &);
     const QPen &pen() const;
@@ -60,6 +61,9 @@ public:
 
     void setSymbol(const QwtSymbol &s);
     const QwtSymbol& symbol() const;
+
+    void setCurveFitter(QwtCurveFitter *);
+    QwtCurveFitter *curveFitter() const;
 
     virtual void draw(QPainter *p, 
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
