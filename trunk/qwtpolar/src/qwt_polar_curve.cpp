@@ -17,6 +17,7 @@
 #include "qwt_symbol.h"
 #include "qwt_legend.h"
 #include "qwt_legend_item.h"
+#include "qwt_curve_fitter.h"
 #include "qwt_polar_curve.h"
 
 static int verifyRange(int size, int &i1, int &i2)
@@ -37,7 +38,8 @@ class QwtPolarCurve::PrivateData
 {
 public:
     PrivateData():
-        style(QwtPolarCurve::Lines)
+        style(QwtPolarCurve::Lines),
+        curveFitter(NULL)
     {
         symbol = new QwtSymbol();
         pen = QPen(Qt::black);
@@ -46,11 +48,13 @@ public:
     ~PrivateData()
     {
         delete symbol;
+        delete curveFitter;
     }
 
     QwtPolarCurve::CurveStyle style;
     QwtSymbol *symbol;
     QPen pen;
+    QwtCurveFitter *curveFitter;
 };
 
 //! Constructor
@@ -201,6 +205,22 @@ void QwtPolarCurve::setData(const QwtData &data)
     itemChanged();
 }
 
+void QwtPolarCurve::setCurveFitter(QwtCurveFitter *curveFitter)
+{
+    if ( curveFitter != d_data->curveFitter )
+    {
+        delete d_data->curveFitter;
+        d_data->curveFitter = curveFitter;
+
+        itemChanged();
+    }
+}
+
+QwtCurveFitter *QwtPolarCurve::curveFitter() const
+{
+    return d_data->curveFitter;
+}
+
 /*!
   Draw the curve
 
@@ -307,14 +327,43 @@ void QwtPolarCurve::drawLines(QPainter *painter,
     if ( size <= 0 )
         return;
 
-    QwtPolygon polyline(size);
-    for (int i = from; i <= to; i++)
+    QwtPolygon polyline;
+    if ( d_data->curveFitter )
     {
-        const QwtPolarPoint point = sample(i);
-        double r = radialMap.xTransform(point.radius());
-        const double a = azimuthMap.xTransform(point.azimuth());
-        polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
+#if QT_VERSION < 0x040000
+        QwtArray<QwtDoublePoint> points(size);
+#else
+        QwtPolygonF points(size);
+#endif
+        for (int j = from; j <= to; j++)
+            points[j - from] = QwtDoublePoint(azimuth(j), radius(j));
+
+        points = d_data->curveFitter->fitCurve(points);
+
+        polyline.resize(points.size());
+        for ( int i = 0; i < points.size(); i++ )
+        {
+            const QwtPolarPoint point(points[i].x(), points[i].y());
+
+            double r = radialMap.xTransform(point.radius());
+            const double a = azimuthMap.xTransform(point.azimuth());
+            polyline.setPoint(i, qwtPolar2Pos(pole, r, a).toPoint() );
+        }
     }
+    else
+    {
+        polyline.resize(size);
+
+        for (int i = from; i <= to; i++)
+        {
+            const QwtPolarPoint point = sample(i);
+
+            double r = radialMap.xTransform(point.radius());
+            const double a = azimuthMap.xTransform(point.azimuth());
+            polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
+        }
+    }
+
     QwtPainter::drawPolyline(painter, polyline);
 }
 
