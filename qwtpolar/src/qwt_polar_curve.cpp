@@ -342,7 +342,7 @@ void QwtPolarCurve::drawLines(QPainter *painter,
         points = d_data->curveFitter->fitCurve(points);
 
         polyline.resize(points.size());
-        for ( int i = 0; i < points.size(); i++ )
+        for ( int i = 0; i < (int)points.size(); i++ )
         {
             const QwtPolarPoint point(points[i].x(), points[i].y());
 
@@ -365,7 +365,10 @@ void QwtPolarCurve::drawLines(QPainter *painter,
         }
     }
 
-    QRect clipRect = painter->window().adjusted(-10, -10, 10, 10);
+    QRect clipRect = painter->window();
+	clipRect.setRect(clipRect.x() - 1, clipRect.y() - 1, 
+		clipRect.width() + 2, clipRect.height() + 2);
+
     polyline = QwtClipper::clipPolygon(clipRect, polyline);
 
     QwtPainter::drawPolyline(painter, polyline);

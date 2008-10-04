@@ -1022,7 +1022,14 @@ void QwtPolarPlot::drawItems(QPainter *painter,
                 if ( !clipRect.contains(canvasRect) )
                 {
                     QRegion clipRegion(clipRect.toRect(), QRegion::Ellipse);
+#if QT_VERSION >= 0x040000
                     painter->setClipRegion(clipRegion, Qt::IntersectClip);
+#else
+					if ( painter->hasClipping() )
+						clipRegion &= painter->clipRegion();
+
+                    painter->setClipRegion(clipRegion);
+#endif
                 }
             }
 
