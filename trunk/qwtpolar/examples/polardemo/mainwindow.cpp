@@ -1,3 +1,4 @@
+#include <qregexp.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qprinter.h>
