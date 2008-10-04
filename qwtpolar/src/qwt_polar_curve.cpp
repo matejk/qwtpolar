@@ -18,6 +18,7 @@
 #include "qwt_legend.h"
 #include "qwt_legend_item.h"
 #include "qwt_curve_fitter.h"
+#include "qwt_clipper.h"
 #include "qwt_polar_curve.h"
 
 static int verifyRange(int size, int &i1, int &i2)
@@ -363,6 +364,9 @@ void QwtPolarCurve::drawLines(QPainter *painter,
             polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
         }
     }
+
+    QRect clipRect = painter->window().adjusted(-10, -10, 10, 10);
+    polyline = QwtClipper::clipPolygon(clipRect, polyline);
 
     QwtPainter::drawPolyline(painter, polyline);
 }
