@@ -29,7 +29,7 @@
 #include "qwt_polar_layout.h"
 #include "qwt_polar_plot.h"
 
-static inline double distance(
+static inline double qwtDistance(
     const QwtDoublePoint &p1, const QwtDoublePoint &p2)
 {
     double dx = p2.x() - p1.x();
@@ -933,21 +933,33 @@ void QwtPolarPlot::drawCanvas(QPainter *painter,
 {
     const QwtDoubleRect cr = canvasRect;
     const QwtDoubleRect pr = plotRect(cr.toRect());
+
+    const double radius = pr.width() / 2.0;
+
     if ( d_data->canvasBrush.style() != Qt::NoBrush )
     {
         painter->save();
         painter->setPen(Qt::NoPen);
         painter->setBrush(d_data->canvasBrush);
+
+        if ( qwtDistance(pr.center(), cr.topLeft()) < radius &&
+            qwtDistance(pr.center(), cr.topRight()) < radius &&
+            qwtDistance(pr.center(), cr.bottomRight()) < radius &&
+            qwtDistance(pr.center(), cr.bottomLeft()) < radius )
+        {
+            QwtPainter::drawRect(painter, cr.toRect());
+        }
+        else
+        {
 #if QT_VERSION < 0x040000
-        QwtPainter::drawEllipse(painter, pr.toRect());
+            QwtPainter::drawEllipse(painter, pr.toRect());
 #else
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        QwtPainter::drawEllipse(painter, pr.toRect());
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            QwtPainter::drawEllipse(painter, pr.toRect());
 #endif
+        }
         painter->restore();
     }
-
-    const double radius = pr.width() / 2.0;
 
     drawItems(painter, 
         scaleMap(QwtPolar::Azimuth, radius), 
@@ -1190,7 +1202,7 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
         dmax = 0.0;
         for ( int i = 0; i < 4; i++ )
         {
-            const double dist = distance(pole, corners[i]);
+            const double dist = qwtDistance(pole, corners[i]);
             if ( dist > dmax )
                 dmax = dist;
         }
@@ -1201,51 +1213,51 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
         {
             if ( pole.y() < scaleRect.top() )
             {
-                dmin = distance(pole, scaleRect.topLeft());
-                dmax = distance(pole, scaleRect.bottomRight());
+                dmin = qwtDistance(pole, scaleRect.topLeft());
+                dmax = qwtDistance(pole, scaleRect.bottomRight());
             }
             else if ( pole.y() > scaleRect.bottom() )
             {
-                dmin = distance(pole, scaleRect.bottomLeft());
-                dmax = distance(pole, scaleRect.topRight());
+                dmin = qwtDistance(pole, scaleRect.bottomLeft());
+                dmax = qwtDistance(pole, scaleRect.topRight());
             }
             else
             {
                 dmin = scaleRect.left() - pole.x();
-                dmax = qwtMax(distance(pole, scaleRect.bottomRight()),
-                    distance(pole, scaleRect.topRight()) );
+                dmax = qwtMax(qwtDistance(pole, scaleRect.bottomRight()),
+                    qwtDistance(pole, scaleRect.topRight()) );
             }
         } 
         else if ( pole.x() > scaleRect.right() )
         {
             if ( pole.y() < scaleRect.top() )
             {
-                dmin = distance(pole, scaleRect.topRight());
-                dmax = distance(pole, scaleRect.bottomLeft());
+                dmin = qwtDistance(pole, scaleRect.topRight());
+                dmax = qwtDistance(pole, scaleRect.bottomLeft());
             }
             else if ( pole.y() > scaleRect.bottom() )
             {
-                dmin = distance(pole, scaleRect.bottomRight());
-                dmax = distance(pole, scaleRect.topLeft());
+                dmin = qwtDistance(pole, scaleRect.bottomRight());
+                dmax = qwtDistance(pole, scaleRect.topLeft());
             }
             else
             {
                 dmin = pole.x() - scaleRect.right();
-                dmax = qwtMax(distance(pole, scaleRect.bottomLeft()),
-                    distance(pole, scaleRect.topLeft()) );
+                dmax = qwtMax(qwtDistance(pole, scaleRect.bottomLeft()),
+                    qwtDistance(pole, scaleRect.topLeft()) );
             }
         }
         else if ( pole.y() < scaleRect.top() )
         {
             dmin = scaleRect.top() - pole.y();
-            dmax = qwtMax(distance(pole, scaleRect.bottomLeft()),
-                distance(pole, scaleRect.bottomRight()));
+            dmax = qwtMax(qwtDistance(pole, scaleRect.bottomLeft()),
+                qwtDistance(pole, scaleRect.bottomRight()));
         }
         else if ( pole.y() > scaleRect.bottom() )
         {
             dmin = pole.y() - scaleRect.bottom();
-            dmax = qwtMax(distance(pole, scaleRect.topLeft()),
-                distance(pole, scaleRect.topRight()));
+            dmax = qwtMax(qwtDistance(pole, scaleRect.topLeft()),
+                qwtDistance(pole, scaleRect.topRight()));
         }
     }
 
