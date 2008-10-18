@@ -778,10 +778,6 @@ void QwtPolarPlot::resizeEvent(QResizeEvent *e)
 
 void QwtPolarPlot::initPlot(const QwtText &title)
 {
-#if QT_VERSION < 0x040000
-    setWFlags(Qt::WNoAutoErase);
-#endif
-
     d_data = new PrivateData;
     d_data->layout = new QwtPolarLayout;
 
