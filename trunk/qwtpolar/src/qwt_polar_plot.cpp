@@ -78,12 +78,10 @@ public:
     QGuardedPtr<QwtTextLabel> titleLabel;
     QGuardedPtr<QwtPolarCanvas> canvas;
     QGuardedPtr<QwtLegend> legend;
-    QGuardedPtr<QWidget> spacer;
 #else
     QPointer<QwtTextLabel> titleLabel;
     QPointer<QwtPolarCanvas> canvas;
     QPointer<QwtLegend> legend;
-    QPointer<QWidget> spacer;
 #endif
     double azimuthOrigin;
 
@@ -795,8 +793,6 @@ void QwtPolarPlot::initPlot(const QwtText &title)
     flags |= Qt::TextWordWrap;
 #endif
     text.setRenderFlags(flags);
-
-    d_data->spacer = new QWidget(this),
 
     d_data->titleLabel = new QwtTextLabel(text, this);
     d_data->titleLabel->setFont(QFont(fontInfo().family(), 14, QFont::Bold));
