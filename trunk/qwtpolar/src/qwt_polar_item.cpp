@@ -37,7 +37,13 @@ public:
     QwtText title;
 };
 
-//! Constructor
+/*! 
+   Constructor
+
+   \param title Item title, f.e used on a legend
+
+   \sa setTitle()
+*/
 QwtPolarItem::QwtPolarItem(const QwtText &title)
 {
     d_data = new PrivateData;
@@ -59,6 +65,8 @@ QwtPolarItem::~QwtPolarItem()
   call to attach (if necessary). 
   If a NULL argument is passed, it will detach from any QwtPolarPlot it
   was attached to.
+
+  \param plot Plot widget
 
   \sa QwtPolarItem::detach()
 */
@@ -203,7 +211,7 @@ void QwtPolarItem::setItemAttribute(ItemAttribute attribute, bool on)
 /*!
    Test an item attribute
 
-   \param ItemAttribute Attribute type
+   \param attribute Attribute type
    \return true/false
    \sa setItemAttribute(), ItemAttribute
 */
@@ -308,6 +316,8 @@ void QwtPolarItem::itemChanged()
    This interval can be useful for operations like clipping or autoscaling
    For items ( like the grid ), where a bounding interval makes no
    sense a invalid interval is returned.
+
+   \param scaleId Scale id ( QwtPolar::Scale )
 */
 QwtDoubleInterval QwtPolarItem::boundingInterval(int /*scaleId*/) const
 {
@@ -329,8 +339,9 @@ QwtDoubleInterval QwtPolarItem::boundingInterval(int /*scaleId*/) const
 
    \sa QwtPolarPlot::updateAxes()
 */
-void QwtPolarItem::updateScaleDiv(const QwtScaleDiv &,
-    const QwtScaleDiv &, const QwtDoubleInterval &) 
+void QwtPolarItem::updateScaleDiv(const QwtScaleDiv & /* azimuthScaleDiv */,
+    const QwtScaleDiv & /* radialScaleDiv */, 
+    const QwtDoubleInterval & /*interval */ ) 
 { 
 }
 

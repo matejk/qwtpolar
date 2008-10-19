@@ -47,11 +47,11 @@ QwtPolarMagnifier::~QwtPolarMagnifier()
 }
 
 /*!
-   Assign the key, that is used for unzooming
+   Assign key and modifiers, that are used for unzooming
    The default combination is Qt::Key_Home + Qt::NoModifier.
 
-   \param key
-   \param modifiers
+   \param key Key code
+   \param modifiers Modifiers
    \sa getUnzoomKey(), QwtPolarPlot::unzoom()
 */
 void QwtPolarMagnifier::setUnzoomKey(int key, int modifiers)
@@ -60,6 +60,13 @@ void QwtPolarMagnifier::setUnzoomKey(int key, int modifiers)
     d_data->unzoomKeyModifiers = modifiers;
 }
 
+/*!
+   \return Key, and modifiers that are used for unzooming
+
+   \param key Key code
+   \param modifiers Modifiers
+   \sa setUnzoomKey(), QwtPolarPlot::unzoom()
+*/
 void QwtPolarMagnifier::getUnzoomKey(int &key, int &modifiers) const
 {
     key = d_data->unzoomKey;
@@ -76,7 +83,7 @@ QwtPolarCanvas *QwtPolarMagnifier::canvas()
     return NULL;
 }
 
-//! Return observed plot canvas
+//! \return observed plot canvas
 const QwtPolarCanvas *QwtPolarMagnifier::canvas() const
 {
     return ((QwtPolarMagnifier *)this)->canvas();

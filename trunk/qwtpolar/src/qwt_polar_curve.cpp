@@ -113,20 +113,22 @@ int QwtPolarCurve::rtti() const
 }
 
 /*!
-  \brief Set the curve's drawing style
+  Set the curve's drawing style
+
+  \param style Curve style
 
   Valid styles are:
   <dl>
   <dt>NoCurve</dt>
   <dd>Don't draw a curve. Note: This doesn't affect the symbol.</dd>
   <dt>Lines</dt>
-  <dd>Connect the points with straight lines.</dd>
+  <dd>Connect the points with straight lines, optional interpolated by a curve fitter</dd>
   <dt>UserCurve ...</dt>
   <dd>Styles >= UserCurve are reserved for derived
       classes of QwtPolarCurve that overload drawCurve() with
       additional application specific curve types.</dd>
   </dl>
-  \sa style()
+  \sa style(), setCurveFitter()
 */
 void QwtPolarCurve::setStyle(CurveStyle style)
 {
@@ -172,11 +174,11 @@ const QwtSymbol &QwtPolarCurve::symbol() const
   \param pen New pen
   \sa pen()
 */
-void QwtPolarCurve::setPen(const QPen &p)
+void QwtPolarCurve::setPen(const QPen &pen)
 {
-    if ( p != d_data->pen )
+    if ( pen != d_data->pen )
     {
-        d_data->pen = p;
+        d_data->pen = pen;
         itemChanged();
     }
 }
@@ -206,6 +208,15 @@ void QwtPolarCurve::setData(const QwtData &data)
     itemChanged();
 }
 
+/*!
+  \brief Insert a curve fitter
+
+  A curve fitter interpolates the curve points. F.e QwtPolarFitter
+  adds equidistant points so that the connection gets rounded instead
+  of having straight lines. If curveFitter is NULL fitting is disabled.
+
+  \sa curveFitter()
+*/
 void QwtPolarCurve::setCurveFitter(QwtCurveFitter *curveFitter)
 {
     if ( curveFitter != d_data->curveFitter )
@@ -217,6 +228,10 @@ void QwtPolarCurve::setCurveFitter(QwtCurveFitter *curveFitter)
     }
 }
 
+/*!
+  \brief Return the curve fitter
+  \sa setCurveFitter()
+*/
 QwtCurveFitter *QwtPolarCurve::curveFitter() const
 {
     return d_data->curveFitter;
@@ -285,7 +300,7 @@ void QwtPolarCurve::draw(QPainter *painter,
   Draw the line part (without symbols) of a curve interval.
 
   \param painter Painter
-  \param style curve style, see QwtPolarCurve::CurveStyle
+  \param style Curve style, see QwtPolarCurve::CurveStyle
   \param azimuthMap Maps azimuth values to values related to 0.0, M_2PI
   \param radialMap Maps radius values into painter coordinates.
   \param pole Position of the pole in painter coordinates
@@ -312,13 +327,12 @@ void QwtPolarCurve::drawCurve(QPainter *painter, int style,
   Draw lines
 
   \param painter Painter
-  \param style curve style, see QwtPolarCurve::CurveStyle
   \param azimuthMap Maps azimuth values to values related to 0.0, M_2PI
   \param radialMap Maps radius values into painter coordinates.
   \param pole Position of the pole in painter coordinates
   \param from index of the first point to be painted
   \param to index of the last point to be painted.
-  \sa draw(), drawLines()
+  \sa draw(), drawLines(), setCurveFitter()
 */
 void QwtPolarCurve::drawLines(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
@@ -366,8 +380,8 @@ void QwtPolarCurve::drawLines(QPainter *painter,
     }
 
     QRect clipRect = painter->window();
-	clipRect.setRect(clipRect.x() - 1, clipRect.y() - 1, 
-		clipRect.width() + 2, clipRect.height() + 2);
+    clipRect.setRect(clipRect.x() - 1, clipRect.y() - 1, 
+        clipRect.width() + 2, clipRect.height() + 2);
 
     polyline = QwtClipper::clipPolygon(clipRect, polyline);
 

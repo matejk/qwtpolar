@@ -163,7 +163,12 @@ int QwtPolarGrid::rtti() const
     return QwtPolarItem::Rtti_PolarGrid;
 }
 
-//! Change the display flags
+/*! 
+   Change the display flags
+
+   \param flag See DisplayFlag
+   \param on true/false
+*/
 void QwtPolarGrid::setDisplayFlag(DisplayFlag flag, bool on)
 {
     if ( ((d_data->displayFlags & flag) != 0) != on )
@@ -177,7 +182,10 @@ void QwtPolarGrid::setDisplayFlag(DisplayFlag flag, bool on)
     }
 }
 
-//! \return true, if flag is enabled
+/*! 
+   \return true, if flag is enabled
+   \param flag See DisplayFlag
+*/
 bool QwtPolarGrid::testDisplayFlag(DisplayFlag flag) const
 {
     return (d_data->displayFlags & flag);
@@ -190,7 +198,7 @@ bool QwtPolarGrid::testDisplayFlag(DisplayFlag flag) const
   <dt>AutoScaling</dt>
   <dd>When autoscaling is enabled, the radial axes will be adjusted
       to the interval, that is currently visible on the canvas plot.
-  </dd>
+  </dd></dl>
 
   \param attribute Grid attribute
   \param on On/Off
@@ -220,6 +228,14 @@ bool QwtPolarGrid::testGridAttribute(GridAttribute attribute) const
     return d_data->attributes & attribute;
 }
 
+/*!
+  Assign a pen for painting an axis
+
+  \param axisId Axis id (QwtPolar::Axis)
+  \param pen Pen
+
+  \sa axisPen()
+*/
 void QwtPolarGrid::setAxisPen(int axisId, const QPen &pen)
 {
     if ( axisId < 0 || axisId >= QwtPolar::AxesCount )
@@ -254,6 +270,7 @@ void QwtPolarGrid::showGrid(int scaleId, bool show)
 
 /*!
   \return true if grid lines are enabled
+  \param scaleId Scale id ( QwtPolar::Scale )
   \sa QwtPolar::Scale, showGrid()
 */
 bool QwtPolarGrid::isGridVisible(int scaleId) const
@@ -289,6 +306,7 @@ void QwtPolarGrid::showMinorGrid(int scaleId, bool show)
 
 /*!
   \return true if minor grid lines are enabled
+  \param scaleId Scale id ( QwtPolar::Scale )
   \sa showMinorGrid()
 */
 bool QwtPolarGrid::isMinorGridVisible(int scaleId) const
@@ -322,6 +340,8 @@ void QwtPolarGrid::showAxis(int axisId, bool show)
 
 /*!
   \return true if the axis is visible
+  \param axisId Axis id (QwtPolar::Axis)
+  
   \sa showAxis()
 */
 bool QwtPolarGrid::isAxisVisible(int axisId) const
@@ -430,7 +450,11 @@ void QwtPolarGrid::setMajorGridPen(int scaleId, const QPen &pen)
     }
 }
 
-//! \return Pen for painting the major grid lines of a specific scale
+/*! 
+   \return Pen for painting the major grid lines of a specific scale
+   \param scaleId Scale id ( QwtPolar::Scale )
+   \sa setMajorGridPen(), minorGridPen()
+*/
 QPen QwtPolarGrid::majorGridPen(int scaleId) const
 {
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
@@ -444,7 +468,7 @@ QPen QwtPolarGrid::majorGridPen(int scaleId) const
    Assign a pen for the minor grid lines 
 
    \param pen Pen
-   \sa setPen(), setMajorGridPen(), minorGridPen
+   \sa setPen(), setMajorGridPen(), minorGridPen()
 */
 void QwtPolarGrid::setMinorGridPen(const QPen &pen)
 {
@@ -483,7 +507,10 @@ void QwtPolarGrid::setMinorGridPen(int scaleId, const QPen &pen)
     }
 }
 
-//! \return Pen for painting the minor grid lines of a specific scale
+/*! 
+   \return Pen for painting the minor grid lines of a specific scale
+   \param scaleId Scale id ( QwtPolar::Scale )
+*/
 QPen QwtPolarGrid::minorGridPen(int scaleId) const
 { 
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
@@ -493,7 +520,12 @@ QPen QwtPolarGrid::minorGridPen(int scaleId) const
     return grid.minorPen;
 }
 
-//! \return Pen for painting a specific axis
+/*! 
+   \return Pen for painting a specific axis
+
+   \param axisId Axis id (QwtPolar::Axis)
+   \sa setAxisPen()
+*/
 QPen QwtPolarGrid::axisPen(int axisId) const
 {
     if ( axisId < 0 || axisId >= QwtPolar::AxesCount )
@@ -521,7 +553,10 @@ void QwtPolarGrid::setAxisFont(int axisId, const QFont &font)
     }
 }
 
-//! \return Font for the tick labels of a specific axis
+/*! 
+  \return Font for the tick labels of a specific axis
+  \param axisId Axis id (QwtPolar::Axis)
+*/
 QFont QwtPolarGrid::axisFont(int axisId) const
 {
     if ( axisId < 0 || axisId >= QwtPolar::AxesCount )
@@ -801,6 +836,7 @@ void QwtPolarGrid::drawCircles(
 /*!
   Paint an axis
 
+  \param painter Painter
   \param axisId Axis id (QwtPolar::Axis)
 */
 void QwtPolarGrid::drawAxis(QPainter *painter, int axisId) const

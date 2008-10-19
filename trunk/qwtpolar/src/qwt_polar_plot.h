@@ -144,7 +144,29 @@ public:
     virtual void renderTo(QPainter *, const QRect &) const;
 
 signals:
+    /*!
+      A signal which is emitted when the user has clicked on
+      a legend item, which is in QwtLegend::ClickableItem mode.
+
+      \param plotItem Corresponding plot item of the
+                 selected legend item
+
+      \note clicks are disabled as default
+      \sa QwtLegend::setItemMode, QwtLegend::itemMode
+     */
     void legendClicked(QwtPolarItem *plotItem);
+
+    /*!
+      A signal which is emitted when the user has clicked on
+      a legend item, which is in QwtLegend::CheckableItem mode
+
+      \param plotItem Corresponding plot item of the
+                 selected legend item
+      \param on True when the legen item is checked
+
+      \note clicks are disabled as default
+      \sa QwtLegend::setItemMode, QwtLegend::itemMode
+     */
     void legendChecked(QwtPolarItem *plotItem, bool on);
 
 public slots:
