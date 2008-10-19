@@ -20,7 +20,12 @@ public:
     int stepCount;
 };
 
-//! Constructor
+/*! 
+   Constructor
+
+   \param stepCount Number of points, that will be inserted between 2 points
+   \sa setStepCount()
+*/
 QwtPolarFitter::QwtPolarFitter(int stepCount)
 {
     d_data = new PrivateData;
@@ -33,16 +38,35 @@ QwtPolarFitter::~QwtPolarFitter()
     delete d_data;
 }
 
+/*!
+   Assign the number of points, that will be inserted between 2 points
+   The default value is 5.
+
+   \param stepCount Number of steps
+
+   \sa stepCount()
+*/
 void QwtPolarFitter::setStepCount(int stepCount)
 {
     d_data->stepCount = qwtMax(stepCount, 0);
 }
 
+/*! 
+   \return Number of points, that will be inserted between 2 points
+   \sa setStepCount()
+*/
 int QwtPolarFitter::stepCount() const
 {
     return d_data->stepCount;
 }
 
+/*!
+   Insert stepCount() number of additional points between 2 elements
+   of points.
+
+   \param points Array of points
+   \return Array of points including the additional points
+*/
 #if QT_VERSION < 0x040000
 QwtArray<QwtDoublePoint> QwtPolarFitter::fitCurve(
     const QwtArray<QwtDoublePoint> &points) const

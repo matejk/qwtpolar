@@ -331,7 +331,7 @@ QRect QwtPolarLayout::layoutLegend(int options,
   \brief Recalculate the geometry of all components. 
 
   \param plot Plot to be layout
-  \param plotRect Rect where to place the components
+  \param boundingRect Rect where to place the components
   \param options Options
 
   \sa invalidate(), titleRect(), legendRect(), canvasRect()

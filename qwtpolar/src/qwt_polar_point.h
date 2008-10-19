@@ -6,7 +6,6 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-/*! \file */
 #ifndef QWT_POLAR_POINT_H
 #define QWT_POLAR_POINT_H 1
 
@@ -63,7 +62,12 @@ inline QwtPolarPoint::QwtPolarPoint():
 {
 }
 
-//! Constructs a point with coordinates specified by radius and azimuth.
+/*! 
+   Constructs a point with coordinates specified by radius and azimuth.
+
+   \param azimuth Azimuth
+   \param radius Radius
+*/
 inline QwtPolarPoint::QwtPolarPoint(double azimuth, double radius):
     d_azimuth(azimuth),
     d_radius(radius)
@@ -71,9 +75,8 @@ inline QwtPolarPoint::QwtPolarPoint(double azimuth, double radius):
 }
 
 /*!
-    Copy constructor.
-
     Constructs a point using the values of the point specified.
+    \param other Other point
 */
 inline QwtPolarPoint::QwtPolarPoint(const QwtPolarPoint &other):
     d_azimuth(other.d_azimuth),

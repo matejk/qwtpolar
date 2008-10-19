@@ -13,6 +13,8 @@
 
 /*! 
    Convert and assign values from a point in Cartesian coordinates
+
+   \param p Point in Cartesian coordinates
    \sa setPoint(), toPoint()
 */
 QwtPolarPoint::QwtPolarPoint(const QwtDoublePoint &p)
@@ -21,7 +23,10 @@ QwtPolarPoint::QwtPolarPoint(const QwtDoublePoint &p)
     d_azimuth = ::atan2(p.y(), p.x());
 }
 
-//! Convert and assign values from a point in Cartesian coordinates
+/*! 
+   Convert and assign values from a point in Cartesian coordinates
+   \param p Point in Cartesian coordinates
+*/
 void QwtPolarPoint::setPoint(const QwtDoublePoint &p)
 {
     d_radius = ::sqrt(qwtSqr(p.x()) + qwtSqr(p.y()) );

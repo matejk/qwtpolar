@@ -14,6 +14,12 @@
 
 /*!
   \brief A simple curve fitter for polar points
+
+  QwtPolarFitter adds equidistant points between 2 curve points,
+  so that the connection gets rounded according to the nature of
+  a polar plot.
+
+  \sa QwtPolarCurve::setCurveFitter()
 */
 class QWT_EXPORT QwtPolarFitter: public QwtCurveFitter
 {

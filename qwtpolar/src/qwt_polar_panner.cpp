@@ -99,6 +99,11 @@ void QwtPolarPanner::movePlot(int dx, int dy)
     plot->replot();
 }
 
+/*!
+  Block panning when the plot zoom factor is >= 1.0.
+
+  \param me Mouse event
+*/
 void QwtPolarPanner::widgetMousePressEvent(QMouseEvent *me)
 {
     const QwtPolarPlot *plot = QwtPolarPanner::plot();

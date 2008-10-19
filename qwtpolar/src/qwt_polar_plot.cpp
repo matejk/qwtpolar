@@ -334,7 +334,7 @@ const QBrush &QwtPolarPlot::plotBackground() const
   The autoReplot option is set to false by default, which
   means that the user has to call replot() in order to make
   changes visible.
-  \param tf \c true or \c false. Defaults to \c true.
+  \param enable \c true or \c false. Defaults to \c true.
   \sa replot()
 */
 void QwtPolarPlot::setAutoReplot(bool enable)
@@ -393,7 +393,7 @@ bool QwtPolarPlot::hasAutoScale(int scaleId) const
   Set the maximum number of major scale intervals for a specified scale
 
   \param scaleId Scale index
-  \param maxMajor maximum number of major steps
+  \param maxMinor maximum number of minor steps
   \sa scaleMaxMajor()
 */
 void QwtPolarPlot::setScaleMaxMinor(int scaleId, int maxMinor)
@@ -470,9 +470,9 @@ int QwtPolarPlot::scaleMaxMajor(int scaleId) const
 }
 
 /*!
-   Change the scale engine for an axis
+  Change the scale engine for an axis
     
-  \param scaleId Svale index
+  \param scaleId Scale index
   \param scaleEngine Scale engine
 
   \sa axisScaleEngine()
@@ -494,7 +494,12 @@ void QwtPolarPlot::setScaleEngine(int scaleId, QwtScaleEngine *scaleEngine)
     autoRefresh();
 }
 
-//! \return Scale engine for a specific scale
+/*! 
+  \return Scale engine for a specific scale
+
+  \param scaleId Scale index
+  \sa setScaleEngine()
+*/
 QwtScaleEngine *QwtPolarPlot::scaleEngine(int scaleId)
 {
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
@@ -503,7 +508,12 @@ QwtScaleEngine *QwtPolarPlot::scaleEngine(int scaleId)
     return d_data->scaleData[scaleId].scaleEngine;
 }
 
-//! \return Scale engine for a specific scale
+/*! 
+  \return Scale engine for a specific scale
+
+  \param scaleId Scale index
+  \sa setScaleEngine()
+*/
 const QwtScaleEngine *QwtPolarPlot::scaleEngine(int scaleId) const
 {
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
@@ -1017,8 +1027,8 @@ void QwtPolarPlot::drawItems(QPainter *painter,
 #if QT_VERSION >= 0x040000
                     painter->setClipRegion(clipRegion, Qt::IntersectClip);
 #else
-					if ( painter->hasClipping() )
-						clipRegion &= painter->clipRegion();
+                    if ( painter->hasClipping() )
+                        clipRegion &= painter->clipRegion();
 
                     painter->setClipRegion(clipRegion);
 #endif
@@ -1038,7 +1048,11 @@ void QwtPolarPlot::drawItems(QPainter *painter,
 
 }
 
-//! Rebuild the scale 
+/*! 
+  Rebuild the scale 
+  \param scaleId Scale index
+*/
+
 void QwtPolarPlot::updateScale(int scaleId)
 {
     if ( scaleId < 0 || scaleId >= QwtPolar::ScaleCount )
@@ -1124,7 +1138,8 @@ int QwtPolarPlot::plotMarginHint() const
 }
 
 /*!
-   Calculate the bounding rect of the plot area
+   \brief Calculate the bounding rect of the plot area
+
    The plot area depends on the size of the canvas
    and the zoom parameters.
 */
@@ -1133,6 +1148,14 @@ QwtDoubleRect QwtPolarPlot::plotRect() const
     return plotRect(canvas()->contentsRect());
 }
 
+/*!
+   \brief Calculate the bounding rect of the plot area
+
+   The plot area depends on the zoom parameters.
+
+   \param canvasRect Rectangle of the canvas
+   \return Rectangle for displaying 100% of the plot
+*/
 QwtDoubleRect QwtPolarPlot::plotRect(const QRect &canvasRect) const
 {
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
@@ -1271,16 +1294,30 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
     return interval;
 }
 
+/*!
+  \return Layout, responsible for the geometry of the plot components
+*/
 QwtPolarLayout *QwtPolarPlot::plotLayout()
 {
     return d_data->layout;
 }
 
+/*!
+  \return Layout, responsible for the geometry of the plot components
+*/
 const QwtPolarLayout *QwtPolarPlot::plotLayout() const
 {
     return d_data->layout;
 }
 
+/*!
+   \brief Render the plot to a paint device ( f.e a QPrinter )
+
+   A convenience method, that calculates the target rectangle
+   from the paintdevice metrics.
+
+   \sa renderTo(QPainter *, const QRect &)
+*/
 void QwtPolarPlot::renderTo(QPaintDevice &paintDev) const
 {
 #if QT_VERSION < 0x040000
@@ -1299,11 +1336,19 @@ void QwtPolarPlot::renderTo(QPaintDevice &paintDev) const
 
 }
 
+/*!
+   \brief Render the plot to a given rectangle ( f.e on a QPrinter, QSvgRenderer )
+
+   \param painter Painter
+   \param plotRect Bounding rectangle for the plot
+*/
 void QwtPolarPlot::renderTo(QPainter *painter, const QRect &plotRect) const
 {
     if ( painter == 0 || !painter->isActive() ||
             !plotRect.isValid() || size().isNull() )
+    {
        return;
+    }
 
     // All paint operations need to be scaled according to
     // the paint device metrics.
