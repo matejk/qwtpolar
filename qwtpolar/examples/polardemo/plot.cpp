@@ -5,8 +5,6 @@
 #include <qwt_polar_grid.h>
 #include <qwt_polar_curve.h>
 #include <qwt_polar_marker.h>
-#include <qwt_polar_panner.h>
-#include <qwt_polar_magnifier.h>
 #include <qwt_scale_engine.h>
 #include "plot.h"
 
@@ -104,9 +102,6 @@ Plot::Plot(QWidget *parent):
     setScaleMaxMinor(QwtPolar::Azimuth, 2);
     setScale(QwtPolar::Radius, 
         radialInterval.minValue(), radialInterval.maxValue());
-
-    (void) new QwtPolarPanner(canvas());
-    (void) new QwtPolarMagnifier(canvas());
 
     // grids, axes 
 
