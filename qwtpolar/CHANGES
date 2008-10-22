@@ -1,3 +1,16 @@
+Release 0.0.3
+===================
+
+1. QwtPolarPlot::renderTo() added for any type of paint device
+   F.e. you can print or export a plot to a SVG document.
+2. QwtPolarLayout added
+   This layout engine is necessary for QwtPolarPlot::renderTo()
+3. QwtPolarFitter added
+   A simple fitter that adds equidistant points, so that the connections
+   of a curve in line mode get "rounded".
+4. A couple of workarounds added, to avoid painting bottlenecks.
+5. Panning and zoom out have been restricted to plots, that are zoomed in.
+
 Release 0.0.2
 ===================
 
