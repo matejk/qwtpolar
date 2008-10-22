@@ -10,7 +10,11 @@
 #endif
 #include <qprintdialog.h>
 #include <qfileinfo.h>
+#else
+#include <qtooltip.h>
 #endif
+#include <qwt_polar_panner.h>
+#include <qwt_polar_magnifier.h>
 #include "mainwindow.h"
 #include "plot.h"
 #include "settingseditor.h"
@@ -22,6 +26,13 @@ MainWindow::MainWindow(QWidget *parent):
     QWidget *w = new QWidget(this);
 
     d_plot = new Plot(w);
+
+    d_panner = new QwtPolarPanner(d_plot->canvas());
+    d_panner->setEnabled(false);
+
+    d_zoomer = new QwtPolarMagnifier(d_plot->canvas());
+    d_zoomer->setEnabled(false);
+
     d_settingsEditor = new SettingsEditor(w);
 
     d_settingsEditor->showSettings(d_plot->settings());
@@ -36,6 +47,29 @@ MainWindow::MainWindow(QWidget *parent):
 
     QToolBar *toolBar = new QToolBar(this);
 
+    QToolButton *btnZoom = new QToolButton(toolBar);
+
+    const QString zoomHelp = 
+        "Use the wheel to zoom in/out.\n"
+        "When the plot is zoomed in,\n"
+        "use the left mouse button to move it.";
+
+#if QT_VERSION >= 0x040000
+    btnZoom->setText("Zoom");
+    btnZoom->setIcon(QIcon(zoom_xpm));
+    btnZoom->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    btnZoom->setToolTip(zoomHelp);
+    btnZoom->setCheckable(true);
+    toolBar->addWidget(btnZoom);
+#else
+    btnZoom->setTextLabel("Zoom");
+    btnZoom->setPixmap(zoom_xpm);
+    QToolTip::add(btnZoom, zoomHelp);
+    btnZoom->setUsesTextLabel(true);
+    btnZoom->setToggleButton(true);
+#endif
+    connect(btnZoom, SIGNAL(toggled(bool)), SLOT(enableZoomMode(bool)));
+
     QToolButton *btnPrint = new QToolButton(toolBar);
 #if QT_VERSION >= 0x040000
     btnPrint->setText("Print");
@@ -47,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent):
     btnPrint->setPixmap(print_xpm);
     btnPrint->setUsesTextLabel(true);
 #endif
-
     connect(btnPrint, SIGNAL(clicked()), SLOT(print()));
 
 #if QT_VERSION >= 0x040300
@@ -123,4 +156,10 @@ void MainWindow::exportSVG()
     }
 #endif
 #endif
+}
+
+void MainWindow::enableZoomMode(bool on)
+{
+    d_panner->setEnabled(on);
+    d_zoomer->setEnabled(on);
 }
