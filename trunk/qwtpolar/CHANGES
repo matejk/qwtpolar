@@ -10,6 +10,7 @@ Release 0.0.3
    of a curve in line mode get "rounded".
 4. A couple of workarounds added, to avoid painting bottlenecks.
 5. Panning and zoom out have been restricted to plots, that are zoomed in.
+6. Designer plugin added 
 
 Release 0.0.2
 ===================

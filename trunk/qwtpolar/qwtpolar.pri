@@ -12,7 +12,7 @@
 
 VER_MAJ      = 0
 VER_MIN      = 0
-VER_PAT      = 2
+VER_PAT      = 3
 VERSION      = $$VER_MAJ.$$VER_MIN.$$VER_PAT
 
 unix {
@@ -34,6 +34,7 @@ doc.path       = $$INSTALLBASE/doc
 CONFIG           += qt     # Also for Qtopia Core!
 CONFIG           += warn_on
 CONFIG           += thread
+CONFIG           += silent
 
 ######################################################################
 # release/debug mode
