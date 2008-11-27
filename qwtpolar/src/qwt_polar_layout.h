@@ -18,7 +18,7 @@
   Organizes the geometry for the different QwtPolarPlot components.
 */
 
-class QWT_EXPORT QwtPolarLayout
+class QWT_POLAR_EXPORT QwtPolarLayout
 {
 public:
     enum Options

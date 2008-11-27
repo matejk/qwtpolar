@@ -21,7 +21,7 @@
 
   \sa QwtPolarCurve::setCurveFitter()
 */
-class QWT_EXPORT QwtPolarFitter: public QwtCurveFitter
+class QWT_POLAR_EXPORT QwtPolarFitter: public QwtCurveFitter
 {
 public:
     QwtPolarFitter(int stepCount = 5);
