@@ -48,7 +48,7 @@ contains(CONFIG, QwtPolarDesigner) {
 	DEPENDPATH  += $$QWT_INCLUDEPATH
 
     LIBNAME         = qwtpolar$${SUFFIX_STR}
-	contains(CONFIG, QwtDll) {
+	contains(CONFIG, QwtPolarDll) {
 		win32 {
 			DEFINES += QT_DLL QWT_DLL QWTPOLAR_DLL
 			LIBNAME = $${LIBNAME}$${VER_MAJ}
