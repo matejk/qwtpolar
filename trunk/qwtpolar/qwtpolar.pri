@@ -91,6 +91,9 @@ QWT_LIBRARYPATH = /path/to/qwt-5.1/lib
 !exists ( $${QWT_LIBRARYPATH} ) {
     error( "You need to define a valid path to the Qwt libs in qwtpolar.pri" )
 }
+win32 {
+	QWT_VERSION_MAJ = 5
+}
 
 ######################################################################
 # Build the static/shared libraries.
