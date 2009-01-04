@@ -36,6 +36,7 @@ public:
         Rtti_PolarScale,
         Rtti_PolarMarker,
         Rtti_PolarCurve,
+        Rtti_PolarSpectrogram,
 
         Rtti_PolarUserItem = 1000
     };
