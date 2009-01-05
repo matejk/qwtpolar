@@ -7,4 +7,7 @@
 #################################################################
 
 TEMPLATE = subdirs
-SUBDIRS = polardemo
+
+SUBDIRS = \ 
+	spectrogram \
+	polardemo
