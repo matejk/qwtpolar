@@ -12,11 +12,20 @@
 #include "qwt_polar_global.h"
 #include "qwt_polar_item.h"
 
+class QwtRasterData;
+class QwtColorMap;
+
 class QWT_POLAR_EXPORT QwtPolarSpectrogram: public QwtPolarItem
 {
 public:
     explicit QwtPolarSpectrogram();
     virtual ~QwtPolarSpectrogram();
+
+    void setData(const QwtRasterData &data);
+    const QwtRasterData &data() const;
+
+    void setColorMap(const QwtColorMap &);
+    const QwtColorMap &colorMap() const;
 
     virtual int rtti() const;
 
@@ -26,6 +35,18 @@ public:
         const QwtDoubleRect &canvasRect) const;
 
     virtual QwtDoubleInterval boundingInterval(int scaleId) const;
+
+#if 0
+    virtual QSize rasterHint(const QwtDoubleRect &) const;
+#endif
+
+    void invalidateCache();
+
+protected:
+
+    virtual QImage renderImage(
+		const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
+		const QwtDoublePoint &pole, const QRect &rect) const;
 
 private:
     class PrivateData;
