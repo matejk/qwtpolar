@@ -1,5 +1,4 @@
 #include <qwt_polar_plot.h>
-#include <qwt_polar_spectrogram.h>
 
 class Plot: public QwtPolarPlot
 {
@@ -10,7 +9,4 @@ public:
 
 public slots:
     void printPlot();
-
-private:
-    QwtPolarSpectrogram *d_spectrogram;
 };
