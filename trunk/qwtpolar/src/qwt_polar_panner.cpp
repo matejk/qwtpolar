@@ -12,8 +12,8 @@
 #include "qwt_polar_panner.h"
 
 //! Create a plot panner for a polar plot canvas
-QwtPolarPanner::QwtPolarPanner(QwtPolarCanvas *plot):
-    QwtPanner(plot)
+QwtPolarPanner::QwtPolarPanner(QwtPolarCanvas *canvas):
+    QwtPanner(canvas)
 {
     connect(this, SIGNAL(panned(int, int)),
         SLOT(movePlot(int, int)));

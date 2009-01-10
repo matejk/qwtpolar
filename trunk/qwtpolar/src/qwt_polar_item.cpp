@@ -315,7 +315,7 @@ void QwtPolarItem::itemChanged()
 
    This interval can be useful for operations like clipping or autoscaling
    For items ( like the grid ), where a bounding interval makes no
-   sense a invalid interval is returned.
+   sense an invalid interval is returned.
 
    \param scaleId Scale id ( QwtPolar::Scale )
 */

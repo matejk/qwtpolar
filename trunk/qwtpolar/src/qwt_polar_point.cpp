@@ -7,6 +7,7 @@
  *****************************************************************************/
 
 #include <cmath>
+#include <cassert>
 #include <qglobal.h>
 #include "qwt_math.h"
 #include "qwt_polar_point.h"
@@ -87,7 +88,9 @@ bool QwtPolarPoint::operator!=(const QwtPolarPoint &other) const
 QwtPolarPoint QwtPolarPoint::normalized() const
 {
     const double radius = qwtMax(d_radius, 0.0);
-    const double azimuth = ::fmod(d_azimuth, 2 * M_PI);
+    double azimuth = ::fmod(d_azimuth, 2 * M_PI);
+	if ( azimuth < 0.0 )
+		azimuth += 2 * M_PI;
 
     return QwtPolarPoint(azimuth, radius);
 }
