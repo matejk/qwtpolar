@@ -16,13 +16,6 @@
 class SpectrogramData: public QwtRasterData
 {
 public:
-#if 0
-	SpectrogramData():
-		QwtRasterData(QwtDoubleRect(0.0, 0.0, 360.0, 8.0))
-	{
-	}
-#endif
-
     virtual QwtRasterData *copy() const
     {
         return new SpectrogramData();
@@ -35,16 +28,21 @@ public:
 
     virtual double value(double azimuth, double radius) const
     {
+#if 0
+        if ( azimuth > 180.0 )
+            azimuth = 360.0 - azimuth;
+#endif
+
         const double c = 0.842;
-		const double x = radius / 10.0 * 3.0 - 1.5;
-		const double y = azimuth / 360.0 * 3.0 - 1.5;
+        const double x = radius / 10.0 * 3.0 - 1.5;
+        const double y = azimuth / 360.0 * 3.0 - 1.5;
 
         const double v1 = x * x + (y-c) * (y+c);
         const double v2 = x * (y+c) + x * (y+c);
 
         const double v = 1.0 / (v1 * v1 + v2 * v2);
 
-		return v;
+        return v;
     }
 };
 
@@ -55,40 +53,35 @@ Plot::Plot(QWidget *parent):
     setPlotBackground(Qt::darkBlue);
 
     // scales 
-#if 1
-    setScale(QwtPolar::Azimuth, 0.0, 360.0, 360.0 / 8.0 );
-#endif
-
+    setScale(QwtPolar::Azimuth, 0.0, 360.0, 45.0 );
     setScaleMaxMinor(QwtPolar::Azimuth, 2);
+
     setScale(QwtPolar::Radius, 0.0, 10.0);
+    setScaleMaxMinor(QwtPolar::Radius, 2);
     
     // grids
-    QwtPolarGrid *grid = new QwtPolarGrid();
-    grid->setPen(QPen(Qt::white));
+    d_grid = new QwtPolarGrid();
+    d_grid->setPen(QPen(Qt::white));
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
     {
-        grid->showGrid(scaleId);
-        grid->showMinorGrid(scaleId);
+        d_grid->showGrid(scaleId);
+        d_grid->showMinorGrid(scaleId);
 
         QPen minorPen(Qt::gray);
-#if 0
         minorPen.setStyle(Qt::DotLine);
-#endif
-        grid->setMinorGridPen(scaleId, minorPen);
+        d_grid->setMinorGridPen(scaleId, minorPen);
     }
-    grid->setAxisPen(QwtPolar::AxisAzimuth, QPen(Qt::black));
-    grid->showAxis(QwtPolar::AxisAzimuth, true);
-    grid->showAxis(QwtPolar::AxisLeft, false);
-    grid->showAxis(QwtPolar::AxisRight, true);
-    grid->showAxis(QwtPolar::AxisTop, false);
-    grid->showAxis(QwtPolar::AxisBottom, false);
-    grid->showGrid(QwtPolar::Azimuth, true);
-    grid->showGrid(QwtPolar::Radius, true);
-#if 1
-    grid->attach(this);
-#endif
+    d_grid->setAxisPen(QwtPolar::AxisAzimuth, QPen(Qt::black));
+    d_grid->showAxis(QwtPolar::AxisAzimuth, true);
+    d_grid->showAxis(QwtPolar::AxisLeft, false);
+    d_grid->showAxis(QwtPolar::AxisRight, true);
+    d_grid->showAxis(QwtPolar::AxisTop, false);
+    d_grid->showAxis(QwtPolar::AxisBottom, false);
+    d_grid->showGrid(QwtPolar::Azimuth, true);
+    d_grid->showGrid(QwtPolar::Radius, true);
+    d_grid->attach(this);
 
-	// spectrogram
+    // spectrogram
 
     QwtPolarSpectrogram *spectrogram = new QwtPolarSpectrogram();
 
@@ -103,13 +96,11 @@ Plot::Plot(QWidget *parent):
 
     spectrogram->attach(this);
 
-	spectrogram->setZ(1.0);
-	grid->setZ(2.0);
+    spectrogram->setZ(1.0);
+    d_grid->setZ(2.0);
 
     new QwtPolarPanner(canvas());
     new QwtPolarMagnifier(canvas());
-
-    replot();
 }
 
 void Plot::printPlot()
@@ -130,3 +121,8 @@ void Plot::printPlot()
     }
 }
 
+void Plot::showGrid(bool on)
+{
+    d_grid->setVisible(on);
+    replot();
+}
