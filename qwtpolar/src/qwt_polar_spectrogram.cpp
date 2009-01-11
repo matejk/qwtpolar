@@ -134,70 +134,110 @@ void QwtPolarSpectrogram::draw(QPainter *painter,
     const QwtDoublePoint &pole, double,
     const QwtDoubleRect &canvasRect) const
 {
-	const QwtDoubleRect plotRect = plot()->plotRect(canvasRect.toRect());
+    const QwtDoubleRect plotRect = plot()->plotRect(canvasRect.toRect());
 
-	QRegion clipRegion(canvasRect.toRect());
-	clipRegion &= QRegion(plotRect.toRect(), QRegion::Ellipse);
+    QRegion clipRegion(canvasRect.toRect());
+    clipRegion &= QRegion(plotRect.toRect(), QRegion::Ellipse);
 
     QRect imageRect = canvasRect.toRect();
 
-	const QwtDoubleInterval radialInterval = 
-		boundingInterval(QwtPolar::ScaleRadius);
-	if ( radialInterval.isValid() )
-	{
-		const double radius = radialMap.transform(radialInterval.maxValue()) -
-			radialMap.transform(radialInterval.minValue());
+    const QwtDoubleInterval radialInterval = 
+        boundingInterval(QwtPolar::ScaleRadius);
+    if ( radialInterval.isValid() )
+    {
+        const double radius = radialMap.transform(radialInterval.maxValue()) -
+            radialMap.transform(radialInterval.minValue());
 
-		QwtDoubleRect r(0, 0, 2 * radius, 2 * radius);
-		r.moveCenter(pole);
+        QwtDoubleRect r(0, 0, 2 * radius, 2 * radius);
+        r.moveCenter(pole);
 
-		clipRegion &= QRegion(r.toRect(), QRegion::Ellipse);;
+        clipRegion &= QRegion(r.toRect(), QRegion::Ellipse);;
 
-		imageRect &= r.toRect();
-	}
-	
-	const QImage image = renderImage(azimuthMap, radialMap, pole, imageRect);
+        imageRect &= r.toRect();
+    }
+    
+    const QImage image = renderImage(azimuthMap, radialMap, pole, imageRect);
 
-	painter->save();
-	painter->setClipRegion(clipRegion);
+    painter->save();
+    painter->setClipRegion(clipRegion);
 
-	painter->drawImage(imageRect, image);
+    painter->drawImage(imageRect, image);
 
-	painter->restore();
+    painter->restore();
 }
 
 QImage QwtPolarSpectrogram::renderImage(
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-		const QwtDoublePoint &pole, const QRect &rect) const
+        const QwtDoublePoint &pole, const QRect &rect) const
 {
-	QImage image(rect.size(), QImage::Format_ARGB32);
-	image.fill(QColor(Qt::red).rgb());
+#if QT_VERSION < 0x040000
+    QImage image(rect.size(), 
+        d_data->colorMap->format() == QwtColorMap::RGB ? 32 : 8 );
+#else
+    QImage image(rect.size(), d_data->colorMap->format() == QwtColorMap::RGB 
+        ? QImage::Format_ARGB32 : QImage::Format_Indexed8 );
+#endif
 
     const QwtDoubleInterval intensityRange = d_data->data->range();
     if ( !intensityRange.isValid() )
         return image;
 
-	for ( int y = rect.top(); y <= rect.bottom(); y++ )
-	{
-		const double dy = pole.y() - y;
+#if 0
+    d_data->data->initRaster(area, rect.size());
+#endif
 
-		QRgb *line = (QRgb *)image.scanLine(y - rect.top());
-		for ( int x = rect.left(); x <= rect.right(); x++ )
-		{
-			const double dx = x - pole.x();
-			
-			QwtPolarPoint pos(QwtDoublePoint(dx, dy));
-			pos = pos.normalized();
+    if ( d_data->colorMap->format() == QwtColorMap::RGB )
+    {
+        for ( int y = rect.top(); y <= rect.bottom(); y++ )
+        {
+            const double dy = pole.y() - y;
 
-			const double azimuth = azimuthMap.invTransform(pos.azimuth());
-			const double radius = radialMap.invTransform(pos.radius());
+            QRgb *line = (QRgb *)image.scanLine(y - rect.top());
+            for ( int x = rect.left(); x <= rect.right(); x++ )
+            {
+                const double dx = x - pole.x();
+                
+                QwtPolarPoint pos(QwtDoublePoint(dx, dy));
+                pos = pos.normalized(); // relative to pole in pixels
 
-			const double value = d_data->data->value(azimuth, radius);
-			*line++ = d_data->colorMap->rgb(intensityRange, value);
-		}
-	}
+                const double azimuth = azimuthMap.invTransform(pos.azimuth());
+                const double radius = radialMap.invTransform(pos.radius());
 
-	return image;
+                const double value = d_data->data->value(azimuth, radius);
+                *line++ = d_data->colorMap->rgb(intensityRange, value);
+            }
+        }
+    }
+    else if ( d_data->colorMap->format() == QwtColorMap::Indexed )
+    {
+        image.setColorTable(d_data->colorMap->colorTable(intensityRange));
+
+        for ( int y = rect.top(); y <= rect.bottom(); y++ )
+        {
+            const double dy = pole.y() - y;
+
+            unsigned char *line = image.scanLine(y - rect.top());
+            for ( int x = rect.left(); x <= rect.right(); x++ )
+            {
+                const double dx = x - pole.x();
+
+                QwtPolarPoint pos(QwtDoublePoint(dx, dy));
+                pos = pos.normalized();
+
+                const double azimuth = azimuthMap.invTransform(pos.azimuth());
+                const double radius = radialMap.invTransform(pos.radius());
+
+                const double value = d_data->data->value(azimuth, radius);
+                *line++ = d_data->colorMap->colorIndex(intensityRange, value);
+            }
+        }
+    }
+
+#if 0
+    d_data->data->discardRaster();
+#endif
+
+    return image;
 }
 
 /*! 
@@ -211,15 +251,15 @@ QImage QwtPolarSpectrogram::renderImage(
 */
 QwtDoubleInterval QwtPolarSpectrogram::boundingInterval(int scaleId) const
 {
-	if ( scaleId == QwtPolar::ScaleRadius )
-	{
-		const QwtDoubleRect boundingRect = d_data->data->boundingRect();
-		if ( boundingRect.isValid() )
-		{
-			QwtDoubleInterval intv(boundingRect.top(), boundingRect.bottom());
-			return intv.normalized();
-		}
-	}
+    if ( scaleId == QwtPolar::ScaleRadius )
+    {
+        const QwtDoubleRect boundingRect = d_data->data->boundingRect();
+        if ( boundingRect.isValid() )
+        {
+            QwtDoubleInterval intv(boundingRect.top(), boundingRect.bottom());
+            return intv.normalized();
+        }
+    }
     return QwtPolarItem::boundingInterval(scaleId);
 }
 
