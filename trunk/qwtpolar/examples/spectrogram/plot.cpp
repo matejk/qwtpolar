@@ -68,7 +68,6 @@ Plot::Plot(QWidget *parent):
         d_grid->showMinorGrid(scaleId);
 
         QPen minorPen(Qt::gray);
-        minorPen.setStyle(Qt::DotLine);
         d_grid->setMinorGridPen(scaleId, minorPen);
     }
     d_grid->setAxisPen(QwtPolar::AxisAzimuth, QPen(Qt::black));
