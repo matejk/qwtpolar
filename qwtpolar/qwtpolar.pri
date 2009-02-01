@@ -13,7 +13,7 @@
 VER_MAJ      = 0
 VER_MIN      = 0
 VER_PAT      = 3
-VERSION      = $$VER_MAJ.$$VER_MIN.$$VER_PAT
+VERSION      = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 
 unix {
     INSTALLBASE    = /usr/local/qwtpolar-$$VERSION-svn
