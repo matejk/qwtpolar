@@ -185,7 +185,7 @@ PlotSettings Plot::settings() const
     delete transform;
 
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
-    s.flags[PlotSettings::Inverted] = sd->lBound() > sd->hBound();
+    s.flags[PlotSettings::Inverted] = sd->lowerBound() > sd->upperBound();
 
 #if QT_VERSION >= 0x040000
     s.flags[PlotSettings::Antialiasing] = d_grid->testRenderHint(
