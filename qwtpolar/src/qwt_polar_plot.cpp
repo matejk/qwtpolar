@@ -741,7 +741,7 @@ QwtScaleMap QwtPolarPlot::scaleMap(int scaleId, const double radius) const
     map.setTransformation(scaleEngine(scaleId)->transformation());
 
     const QwtScaleDiv *sd = scaleDiv(scaleId);
-    map.setScaleInterval(sd->lBound(), sd->hBound());
+    map.setScaleInterval(sd->lowerBound(), sd->upperBound());
 
     if ( scaleId == QwtPolar::Azimuth)
     {
@@ -1168,7 +1168,7 @@ QwtDoubleRect QwtPolarPlot::plotRect(const QRect &canvasRect) const
     QwtScaleMap map;
     map.setTransformation(se->transformation());
     map.setPaintXInterval(0.0, radius / d_data->zoomFactor);
-    map.setScaleInterval(sd->lBound(), sd->hBound());
+    map.setScaleInterval(sd->lowerBound(), sd->upperBound());
 
     double v = map.s1();
     if ( map.s1() <= map.s2() )
@@ -1201,7 +1201,7 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
     const QwtDoubleRect pRect = plotRect(cRect.toRect());
     if ( cRect.contains(pRect.toRect()) || !cRect.intersects(pRect) )
     {
-        return QwtDoubleInterval(sd->lBound(), sd->hBound());
+        return QwtDoubleInterval(sd->lowerBound(), sd->upperBound());
     }
 
     const QwtDoublePoint pole = pRect.center();
