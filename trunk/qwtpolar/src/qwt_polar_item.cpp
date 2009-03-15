@@ -411,7 +411,7 @@ void QwtPolarItem::updateLegend(QwtLegend *legend) const
 */
 QWidget *QwtPolarItem::legendItem() const
 {
-#if QWT_VERSION >= 0x050200
+#if QWT_VERSION >= 0x050300
     return new QwtLegendCurveItem;
 #else
     return new QwtLegendItem;

@@ -773,12 +773,12 @@ void QwtPolarGrid::drawCircles(
             if ( axis.isVisible &&
                 axis.scaleDraw->hasComponent(QwtAbstractScaleDraw::Backbone) )
             {
-                if ( isClose(val, gridData.scaleDiv.hBound()) )
+                if ( isClose(val, gridData.scaleDiv.upperBound()) )
                     skipLine = true;
             }
         }
 
-        if ( isClose(val, gridData.scaleDiv.lBound()) )
+        if ( isClose(val, gridData.scaleDiv.lowerBound()) )
             skipLine = true;
 
         if ( !skipLine )
@@ -1020,7 +1020,7 @@ void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
                                 skipOrigin = true;
                         }
                     }
-                    if ( ticks.size() > 0 && ticks.first() == sd.lBound() )
+                    if ( ticks.size() > 0 && ticks.first() == sd.lowerBound() )
                     {
                         if ( skipOrigin )
                         {
@@ -1037,7 +1037,7 @@ void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
 
                 if ( testDisplayFlag(HideMaxRadiusLabel) )
                 {
-                    if ( ticks.size() > 0 && ticks.last() == sd.hBound() )
+                    if ( ticks.size() > 0 && ticks.last() == sd.upperBound() )
 #if QT_VERSION < 0x040000
                         ticks.pop_back();
 #else
