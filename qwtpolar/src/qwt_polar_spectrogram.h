@@ -36,17 +36,10 @@ public:
 
     virtual QwtDoubleInterval boundingInterval(int scaleId) const;
 
-#if 0
-    virtual QSize rasterHint(const QwtDoubleRect &) const;
-#endif
-
-    void invalidateCache();
-
 protected:
-
     virtual QImage renderImage(
-		const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
-		const QwtDoublePoint &pole, const QRect &rect) const;
+        const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
+        const QwtDoublePoint &pole, const QRect &rect) const;
 
 private:
     class PrivateData;
