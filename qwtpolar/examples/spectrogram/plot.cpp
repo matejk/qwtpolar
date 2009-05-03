@@ -28,20 +28,14 @@ public:
 
     virtual double value(double azimuth, double radius) const
     {
-#if 0
-        if ( azimuth > 180.0 )
-            azimuth = 360.0 - azimuth;
-#endif
-
         const double c = 0.842;
         const double x = radius / 10.0 * 3.0 - 1.5;
         const double y = azimuth / 360.0 * 3.0 - 1.5;
 
         const double v1 = x * x + (y-c) * (y+c);
-        const double v2 = x * (y+c) + x * (y+c);
+        const double v2 = 2 * x * (y+c);
 
         const double v = 1.0 / (v1 * v1 + v2 * v2);
-
         return v;
     }
 };
