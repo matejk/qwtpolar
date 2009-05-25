@@ -34,8 +34,7 @@ coordinate system. It is an addon package for to the <a href="http://qwt.sourcef
   QwtPolar might be usable in all environments where you find
   <a href="http://www.trolltech.com/products/qt">Qt</a>.
   It is compatible with Qt 3.3.x and Qt 4.x, but the documentation
-  is generated for Qt 4.x.\n 
-  It also needs <a href="http://qwt.sourceforge.net">Qwt 5.1.x</a>.
+  is generated for Qt 4.x. The corresponding <a href="http://qwt.sourceforge.net">Qwt</a> version is 5.2.x;
 
   \section downloads Downloads
   Stable releases, prereleases and snapshots are available at the QwtPolar <a href="http://sourceforge.net/projects/qwtpolar">project page</a>.
