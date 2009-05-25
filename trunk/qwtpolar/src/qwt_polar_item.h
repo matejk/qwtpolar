@@ -36,6 +36,12 @@ class QwtScaleDiv;
 class QWT_POLAR_EXPORT QwtPolarItem: public QwtLegendItemManager
 {
 public:
+    /*!
+        \brief Runtime type information
+
+        RttiValues is used to cast plot items, without
+        having to enable runtime type information of the compiler.
+     */
     enum RttiValues
     { 
         Rtti_PolarItem = 0,
@@ -49,6 +55,17 @@ public:
         Rtti_PolarUserItem = 1000
     };
 
+    /*!
+       \brief Plot Item Attributes
+    
+       - Legend\n
+         The item is represented on the legend.
+       - AutoScale \n
+         The boundingRect() of the item is included in the
+         autoscaling calculation.
+  
+       \sa setItemAttribute(), testItemAttribute()
+     */
     enum ItemAttribute
     {
         Legend = 1,
@@ -56,6 +73,7 @@ public:
     };
 
 #if QT_VERSION >= 0x040000
+    //! Render hints
     enum RenderHint
     {
         RenderAntialiased = 1

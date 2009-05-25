@@ -16,8 +16,8 @@
 
 // QWT_POLAR_VERSION is (major << 16) + (minor << 8) + patch.
 
-#define QWT_POLAR_VERSION       0x000000
-#define QWT_POLAR_VERSION_STR   "0.0.0"
+#define QWT_POLAR_VERSION       0x000100
+#define QWT_POLAR_VERSION_STR   "0.1.0"
 
 #if defined(Q_WS_WIN)
 

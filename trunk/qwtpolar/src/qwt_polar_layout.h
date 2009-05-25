@@ -17,7 +17,7 @@
 
   Organizes the geometry for the different QwtPolarPlot components.
   It is used by the QwtPolar widget to organize its internal widgets
-  or by Polar::print() to render its content to a QPaintDevice like
+  or by QwtPolarPlot::renderTo() to render its content to a QPaintDevice like
   a QPrinter, QPixmap/QImage or QSvgRenderer.
 */
 
@@ -30,9 +30,9 @@ public:
       - IgnoreScrollbars\n
         Ignore the dimension of the scrollbars. There are no
         scrollbars, when the plot is rendered to a paint device
-        (QwtPolar::print() ).
+        (QwtPolarPlot::renderTo() ).
       - IgnoreFrames\n
-        Ignore all frames. QwtPolar::print() doesn't paint them.
+        Ignore all frames. QwtPolarPlot::renderTo() doesn't paint them.
       - IgnoreTitle\n
         Ignore the title.
       - IgnoreLegend\n

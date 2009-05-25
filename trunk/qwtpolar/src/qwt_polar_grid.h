@@ -23,8 +23,7 @@ class QwtRoundScaleDraw;
 class QwtScaleDraw;
 
 /*!
-  /brief An item which draws scales and azimuth/radial grid lines on 
-         a polar plot.
+  \brief An item which draws scales and grid lines on a polar plot.
 
   The QwtPolarGrid class can be used to draw a coordinate grid.
   A coordinate grid consists of major and minor gridlines. 

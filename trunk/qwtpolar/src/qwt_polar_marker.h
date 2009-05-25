@@ -31,7 +31,7 @@ class QwtSymbol;
   The setLabelAlignment() member specifies where the label is
   drawn. All the Align*-constants in Qt::AlignmentFlags (see Qt documentation)
   are valid. The alignment refers to the center point of
-  the marker, which means, for example, that the label would be printed
+  the marker, which means, for example, that the label would be painted
   left above the center point if the alignment was set to AlignLeft|AlignTop.
 */
 
