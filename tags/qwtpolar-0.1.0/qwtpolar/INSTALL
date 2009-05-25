@@ -1,0 +1,28 @@
+Introduction
+============
+
+QwtPolar uses qmake to build all its components and examples.
+qmake is part of a Qt distribution.
+
+qmake reads project files, that contain the options and rules how to
+build a certain project. A project file ends with the suffix "*.pro".
+Files that end with the suffix "*.pri" are included by the project
+files and contain definitions, that are common for several project files.
+
+qwtpolar.pri is read by all project files of the QwtPolar package.
+So the first step is to read and edit qwtpolar.pri to adjust it to your
+needs. 
+
+QwtPolar 0.1.x needs Qwt 5.2.x. In qwtpolar.pri you need to
+insert the paths to your Qwt installation.
+
+Documentation
+==========================
+
+Qwt includes a class documentation, that is available in various formats:
+
+- Html files
+- Qt Compressed Help (*.qch ) for the Qt assistant.
+- Man pages ( UNIX only )
+
+Good luck !
