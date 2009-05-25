@@ -13,7 +13,16 @@ qwtpolar.pri is read by all project files of the QwtPolar package.
 So the first step is to read and edit qwtpolar.pri to adjust it to your
 needs. 
 
-QwtPolar 0.0.x needs Qwt 5.1.x. In qwtpolar.pri you need to
+QwtPolar 0.1.x needs Qwt 5.2.x. In qwtpolar.pri you need to
 insert the paths to your Qwt installation.
+
+Documentation
+==========================
+
+Qwt includes a class documentation, that is available in various formats:
+
+- Html files
+- Qt Compressed Help (*.qch ) for the Qt assistant.
+- Man pages ( UNIX only )
 
 Good luck !
