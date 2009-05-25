@@ -74,6 +74,7 @@ public:
     QwtColorMap *colorMap;
 };
 
+//!  Constructor
 QwtPolarSpectrogram::QwtPolarSpectrogram():
     QwtPolarItem(QwtText("Spectrogram"))
 {
@@ -152,6 +153,16 @@ const QwtColorMap &QwtPolarSpectrogram::colorMap() const
     return *d_data->colorMap;
 }
 
+/*!
+  Draw the spectrogram
+
+  \param painter Painter
+  \param azimuthMap Maps azimuth values to values related to 0.0, M_2PI
+  \param radialMap Maps radius values into painter coordinates.
+  \param pole Position of the pole in painter coordinates
+  \param radius Radius of the complete plot area in painter coordinates
+  \param canvasRect Contents rect of the canvas in painter coordinates
+*/
 void QwtPolarSpectrogram::draw(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
     const QwtDoublePoint &pole, double,
@@ -269,12 +280,12 @@ QImage QwtPolarSpectrogram::renderImage(
     else if ( d_data->colorMap->format() == QwtColorMap::Indexed )
     {
 #if QT_VERSION < 0x040000
-		const QValueVector<QRgb> &colorTable =
-			d_data->colorMap->colorTable(intensityRange);
+        const QValueVector<QRgb> &colorTable =
+            d_data->colorMap->colorTable(intensityRange);
 
         image.setNumColors(colorTable.size());
         for ( unsigned int i = 0; i < colorTable.size(); i++ )
-			image.setColor(i, colorTable[i]);
+            image.setColor(i, colorTable[i]);
 #else
         image.setColorTable(d_data->colorMap->colorTable(intensityRange));
 #endif

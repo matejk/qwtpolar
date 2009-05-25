@@ -51,6 +51,28 @@ class QWT_POLAR_EXPORT QwtPolarPlot: public QFrame, public QwtPolarItemDict
 
 
 public:
+    /*!
+        Position of the legend, relative to the canvas.
+
+        - LeftLegend\n
+          The legend will be left from the canvas.
+        - RightLegend\n
+          The legend will be right from the canvas.
+        - BottomLegend\n
+          The legend will be below the canvas.
+        - TopLegend\n
+          The legend will be between canvas and title.
+        - ExternalLegend\n
+          External means that only the content of the legend
+          will be handled by QwtPlot, but not its geometry.
+          This might be interesting if an application wants to
+          have a legend in an external window ( or on the canvas ).
+
+        \note In case of ExternalLegend, the legend is not
+              painted by renderTo().
+
+        \sa insertLegend()
+     */
     enum LegendPosition
     {
         LeftLegend,

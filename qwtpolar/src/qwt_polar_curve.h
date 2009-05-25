@@ -40,7 +40,7 @@ public:
            be interpolated depending on the 'Fitted' attribute. Curve
            fitting can be configured using setCurveFitter().
 
-        \sa setStyle
+        \sa setStyle()
     */
     enum CurveStyle
     {
