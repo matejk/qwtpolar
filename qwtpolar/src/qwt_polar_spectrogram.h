@@ -11,10 +11,20 @@
 
 #include "qwt_polar_global.h"
 #include "qwt_polar_item.h"
+#include <qimage.h>
 
 class QwtRasterData;
 class QwtColorMap;
 
+/*!
+  \brief An item, which displays a spectrogram
+
+  A spectrogram displays threedimenional data, where the 3rd dimension
+  ( the intensity ) is displayed using colors. The colors are calculated
+  from the values using a color map.
+
+  \sa QwtRasterData, QwtColorMap
+*/
 class QWT_POLAR_EXPORT QwtPolarSpectrogram: public QwtPolarItem
 {
 public:

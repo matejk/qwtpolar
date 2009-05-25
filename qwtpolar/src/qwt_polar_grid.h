@@ -23,8 +23,21 @@ class QwtRoundScaleDraw;
 class QwtScaleDraw;
 
 /*!
-  A item which draws scales and azimuth and radial 
-  grid lines on a polar plot
+  /brief An item which draws scales and azimuth/radial grid lines on 
+         a polar plot.
+
+  The QwtPolarGrid class can be used to draw a coordinate grid.
+  A coordinate grid consists of major and minor gridlines. 
+  The locations of the gridlines are determined by the azimuth and radial 
+  scale divisions. 
+
+  QwtPolarGrid is also responsible for drawing the axis representing the
+  scales. It is possible to display 4 radial and one azimuth axis.
+  
+  Whenever the scale divisions of the plot widget changes the grid
+  is synchronized by updateScaleDiv().
+
+  \sa QwtPolarPlot, QwtPolar::Axis
 */
 
 class QWT_POLAR_EXPORT QwtPolarGrid: public QwtPolarItem
@@ -33,6 +46,27 @@ public:
     /*! 
        Mysterious flags trying to avoid conflicts, when painting the
        scales and grid lines. 
+
+      - SmartOriginLabel\n
+        Try to avoid situations, where the label of the origin is
+        painted over another axis.
+      - HideMaxRadiusLabel\n
+        Often the outermost tick of the radial scale is close to the 
+        canvas border. With HideMaxRadiusLabel enabled it is not painted.
+      - ClipAxisBackground\n
+        The tick labels of the radial scales might be hard to read, when
+        they are painted on top of the radial grid lines ( or on top
+        of a curve/spectrogram ). When ClipAxisBackground the bounding rect
+        of each label is added to the clip region.
+      - SmartScaleDraw\n
+        Don't paint the backbone of the radial axes, when they are very close
+        to a line of the azimuth grid.
+      - ClipGridLines\n
+        All grid lines are clipped against the plot area before being painted.
+        When the plot is zoomed in this will have an significant impact
+        on the performance of the painting cde.
+
+      The default setting enables all flags. 
      */
     enum DisplayFlag
     {
@@ -43,6 +77,13 @@ public:
         ClipGridLines = 16
     };
 
+    /*!
+      \brief Grid attributes
+
+      - AutoScaling\n
+        When AutoScaling is enabled, the radial axes will be adjusted
+        to the interval, that is currently visible on the canvas plot.
+     */
     enum GridAttribute
     {
         AutoScaling = 1

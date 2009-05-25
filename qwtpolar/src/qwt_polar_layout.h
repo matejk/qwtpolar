@@ -16,11 +16,29 @@
   \brief Layout class for QwtPolarPlot.
 
   Organizes the geometry for the different QwtPolarPlot components.
+  It is used by the QwtPolar widget to organize its internal widgets
+  or by Polar::print() to render its content to a QPaintDevice like
+  a QPrinter, QPixmap/QImage or QSvgRenderer.
 */
 
 class QWT_POLAR_EXPORT QwtPolarLayout
 {
 public:
+    /*!
+      Options to configure the plot layout engine
+
+      - IgnoreScrollbars\n
+        Ignore the dimension of the scrollbars. There are no
+        scrollbars, when the plot is rendered to a paint device
+        (QwtPolar::print() ).
+      - IgnoreFrames\n
+        Ignore all frames. QwtPolar::print() doesn't paint them.
+      - IgnoreTitle\n
+        Ignore the title.
+      - IgnoreLegend\n
+        Ignore the legend.
+     */
+
     enum Options
     {
         IgnoreScrollbars = 1,

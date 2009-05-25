@@ -169,6 +169,12 @@ signals:
      */
     void legendChecked(QwtPolarItem *plotItem, bool on);
 
+	/*!
+      A signal that is emitted, whenever the layout of the plot
+      has been recalculated.
+     */
+    void layoutChanged();
+
 public slots:
     virtual void replot();
     void autoRefresh();

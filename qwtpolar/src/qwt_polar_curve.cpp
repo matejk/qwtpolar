@@ -116,19 +116,7 @@ int QwtPolarCurve::rtti() const
   Set the curve's drawing style
 
   \param style Curve style
-
-  Valid styles are:
-  <dl>
-  <dt>NoCurve</dt>
-  <dd>Don't draw a curve. Note: This doesn't affect the symbol.</dd>
-  <dt>Lines</dt>
-  <dd>Connect the points with straight lines, optional interpolated by a curve fitter</dd>
-  <dt>UserCurve ...</dt>
-  <dd>Styles >= UserCurve are reserved for derived
-      classes of QwtPolarCurve that overload drawCurve() with
-      additional application specific curve types.</dd>
-  </dl>
-  \sa style(), setCurveFitter()
+  \sa CurveStyle, style()
 */
 void QwtPolarCurve::setStyle(CurveStyle style)
 {
@@ -141,7 +129,7 @@ void QwtPolarCurve::setStyle(CurveStyle style)
 
 /*!
     \brief Return the current style
-    \sa setStyle()
+    \sa CurveStyle, setStyle()
 */  
 QwtPolarCurve::CurveStyle QwtPolarCurve::style() const 
 { 

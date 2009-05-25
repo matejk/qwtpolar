@@ -268,7 +268,16 @@ QImage QwtPolarSpectrogram::renderImage(
     }
     else if ( d_data->colorMap->format() == QwtColorMap::Indexed )
     {
+#if QT_VERSION < 0x040000
+		const QValueVector<QRgb> &colorTable =
+			d_data->colorMap->colorTable(intensityRange);
+
+        image.setNumColors(colorTable.size());
+        for ( unsigned int i = 0; i < colorTable.size(); i++ )
+			image.setColor(i, colorTable[i]);
+#else
         image.setColorTable(d_data->colorMap->colorTable(intensityRange));
+#endif
 
         for ( int y = rect.top(); y <= rect.bottom(); y++ )
         {

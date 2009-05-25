@@ -887,6 +887,7 @@ void QwtPolarPlot::updateLayout()
     }
 
     d_data->canvas->setGeometry(d_data->layout->canvasRect());
+	emit layoutChanged();
 }
 
 /*!
