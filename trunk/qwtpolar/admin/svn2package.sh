@@ -130,6 +130,12 @@ function createDocs {
         exit $?
     fi
 
+    if [ $GENERATE_QCH -ne 0 ]
+    then
+        doxygen2qthelp --namespace=net.sourceforge.qwtpolar-$VERSION --folder=qwtpolar-$VERSION html/index.hhp qwtpolar-$VERSION.qch
+        rm html/index.hh*
+    fi
+
     rm Doxyfile.doc Doxygen.log INSTALL COPYING
     rm -r images
 
