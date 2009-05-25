@@ -83,8 +83,9 @@ win32 {
 # Note, that these need to bo absolute path names.
 ######################################################################
 
-QWT_INCLUDEPATH = /home1/uwe/qwt/qwt-5.2/src
-QWT_LIBRARYPATH = /home1/uwe/qwt/qwt-5.2/lib
+QWT_INCLUDEPATH = /path/to/qwt-5.2/include
+QWT_LIBRARYPATH = /path/to/qwt-5.2/lib
+
 !exists ( $${QWT_INCLUDEPATH} ) {
     error( "You need to define a valid path to the Qwt includes in qwtpolar.pri" )
 }
@@ -116,4 +117,4 @@ CONFIG     += QwtPolarDesigner
 # Otherwise you have to build them from the examples directory.
 ######################################################################
 
-CONFIG     += QwtPolarExamples
+# CONFIG     += QwtPolarExamples
