@@ -19,7 +19,12 @@ class QwtSymbol;
 class QwtCurveFitter;
 
 /*!
-  A class which draws curves on a polar plot
+  \brief An item, that represents a series of points
+
+  A curve is the representation of a series of points in polar coordinates.
+  The points are connected to the curve using the abstract QwtData interface.
+
+  \sa QwtPolarPlot, QwtSymbol, QwtScaleMap
 */
 
 class QWT_POLAR_EXPORT QwtPolarCurve: public QwtPolarItem
@@ -27,6 +32,14 @@ class QWT_POLAR_EXPORT QwtPolarCurve: public QwtPolarItem
 public:
     /*!
         Curve styles.
+
+         - NoCurve\n
+           Don't draw a curve. Note: This doesn't affect the symbols.
+         - Lines\n
+           Connect the points with straight lines. The lines might
+           be interpolated depending on the 'Fitted' attribute. Curve
+           fitting can be configured using setCurveFitter().
+
         \sa setStyle
     */
     enum CurveStyle

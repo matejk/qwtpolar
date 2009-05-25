@@ -76,7 +76,7 @@ Plot::Plot(QWidget *parent):
 
     // spectrogram
 
-    QwtPolarSpectrogram *spectrogram = new QwtPolarSpectrogram();
+    d_spectrogram = new QwtPolarSpectrogram();
 
     QwtLinearColorMap colorMap(Qt::darkBlue, Qt::yellow);
     colorMap.addColorStop(0.05, Qt::blue);
@@ -84,16 +84,21 @@ Plot::Plot(QWidget *parent):
     colorMap.addColorStop(0.6, Qt::green);
     colorMap.addColorStop(0.98, Qt::red);
 
-    spectrogram->setColorMap(colorMap);
-    spectrogram->setData(SpectrogramData());
+    d_spectrogram->setColorMap(colorMap);
+    d_spectrogram->setData(SpectrogramData());
 
-    spectrogram->attach(this);
+    d_spectrogram->attach(this);
 
-    spectrogram->setZ(1.0);
+    d_spectrogram->setZ(1.0);
     d_grid->setZ(2.0);
 
     new QwtPolarPanner(canvas());
     new QwtPolarMagnifier(canvas());
+}
+
+const QwtPolarSpectrogram *Plot::spectrogram() const
+{
+    return d_spectrogram;
 }
 
 void Plot::printPlot()

@@ -17,7 +17,7 @@
 The QwtPolar library contains classes for displaying values on a polar 
 coordinate system. It is an addon package for to the <a href="http://qwt.sourceforge.net">Qwt</a> Library.
 
-  \image html polarplot.png
+  \image html polarplot.png 
 
   \if homepage
   \section homepage Project page

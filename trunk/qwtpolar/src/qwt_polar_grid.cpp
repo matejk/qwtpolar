@@ -194,16 +194,10 @@ bool QwtPolarGrid::testDisplayFlag(DisplayFlag flag) const
 /*!
   \brief Specify an attribute for the grid
 
-  The following attributes are defined:<dl>
-  <dt>AutoScaling</dt>
-  <dd>When autoscaling is enabled, the radial axes will be adjusted
-      to the interval, that is currently visible on the canvas plot.
-  </dd></dl>
-
   \param attribute Grid attribute
   \param on On/Off
 
-  /sa testGridAttribute(), updateScaleDiv(), 
+  /sa GridAttribute, testGridAttribute(), updateScaleDiv(), 
       QwtPolarPlot::zoom(), QwtPolarPlot::scaleDiv()
 */
 void QwtPolarGrid::setGridAttribute(GridAttribute attribute, bool on)
@@ -221,7 +215,7 @@ void QwtPolarGrid::setGridAttribute(GridAttribute attribute, bool on)
 
 /*!
     \return true, if attribute is enabled 
-    \sa setGridAttribute()
+    \sa GridAttribute, setGridAttribute()
 */
 bool QwtPolarGrid::testGridAttribute(GridAttribute attribute) const
 {

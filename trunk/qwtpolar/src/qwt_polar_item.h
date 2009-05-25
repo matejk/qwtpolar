@@ -24,6 +24,14 @@ class QwtScaleDiv;
 
 /*!
   \brief Base class for items on a polar plot
+
+  A QwtPolarItem is "something that can be painted on the canvas".
+  It is connected to the QwtPolar framework by a couple of virtual
+  methods, that are individually implemented in derived item classes.
+
+  QwtPolar offers an implementation of the most common types of items,
+  but deriving from QwtPolarItem makes it easy to implement additional
+  types of items.
 */
 class QWT_POLAR_EXPORT QwtPolarItem: public QwtLegendItemManager
 {

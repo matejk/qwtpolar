@@ -73,12 +73,10 @@ function cleanQwtPolar {
 
     for SRCFILE in $SOURCES $PROFILES $PRIFILES
     do
-    	sed -e '/#warning/d' $SRCFILE > $SRCFILE.sed
-        mv $SRCFILE.sed $SRCFILE
+    	sed -i -e '/#warning/d' $SRCFILE 
     done 
 
-	sed -e "s/\$\$VERSION-svn/$VERSION/" qwtpolar.pri > qwtpolar.pri.sed
-    mv qwtpolar.pri.sed qwtpolar.pri
+	sed -i -e "s/\$\$VERSION-svn/$VERSION/" qwtpolar.pri
 
     cd - > /dev/null
 }
@@ -97,9 +95,32 @@ function createDocs {
         exit $?
     fi
 
-
 	cp Doxyfile Doxyfile.doc
+
+    sed -i '/PROJECT_NUMBER/d' Doxyfile.doc
     echo "PROJECT_NUMBER = $VERSION" >> Doxyfile.doc
+
+    if [ $GENERATE_MAN -ne 0 ]
+    then
+        sed -i -e '/GENERATE_MAN/d' -e '/PROJECT_NUMBER/d' Doxyfile.doc
+        echo 'GENERATE_MAN = YES' >> Doxyfile.doc
+    fi
+
+    if [ $GENERATE_PDF -ne 0 ]
+    then
+        # We need LateX for the PDF
+
+        sed -i -e '/GENERATE_LATEX/d' -e '/GENERATE_MAN/d' -e '/PROJECT_NUMBER/d' Doxyfile.doc
+        echo 'GENERATE_LATEX = YES' >> Doxyfile.doc
+        echo 'GENERATE_MAN = YES' >> Doxyfile.doc
+        echo "PROJECT_NUMBER = $VERSION" >> Doxyfile.doc
+    fi
+
+    if [ $GENERATE_QCH -ne 0 ]
+    then
+        sed -i -e '/GENERATE_HTMLHELP/d' Doxyfile.doc
+        echo "GENERATE_HTMLHELP = YES" >> Doxyfile.doc
+    fi
 
     cp ../INSTALL ../COPYING ./
 
@@ -111,6 +132,22 @@ function createDocs {
 
     rm Doxyfile.doc Doxygen.log INSTALL COPYING
     rm -r images
+
+    if [ $GENERATE_PDF -ne 0 ]
+    then
+        cd latex
+        make > /dev/null 2>&1
+        if [ $? -ne 0 ]
+        then
+            exit $?
+        fi
+
+        cd ..
+        mkdir pdf
+        mv latex/refman.pdf pdf/qwtpolardoc.pdf
+
+        rm -r latex
+    fi
 
     cd $ODIR
 }
@@ -179,6 +216,9 @@ QWTPOLARDIR=
 SVNDIR=trunk
 BRANCH=qwtpolar
 VERSION=
+GENERATE_PDF=0
+GENERATE_QCH=0
+GENERATE_MAN=1
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -186,6 +226,10 @@ while [ $# -gt 0 ] ; do
             usage; exit 1 ;;
         -b|--branch)
             shift; SVNDIR=branches; BRANCH=$1; shift;;
+        -pdf)
+            GENERATE_PDF=1; shift;;
+        -qch)
+            GENERATE_QCH=1; shift;;
         *) 
             QWTPOLARDIR=qwtpolar-$1 ; VERSION=$1; shift;;
     esac
@@ -206,6 +250,13 @@ echo done
 
 echo -n "generate documentation ... "
 createDocs $TMPDIR/doc
+
+if [ $GENERATE_PDF -ne 0 ]
+then
+    mv $TMPDIR/doc/pdf/qwtpolardoc.pdf $QWTPOLARDIR.pdf
+    rmdir $TMPDIR/doc/pdf
+fi
+
 echo done
 
 

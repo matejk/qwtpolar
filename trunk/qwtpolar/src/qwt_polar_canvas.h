@@ -17,7 +17,9 @@ class QPainter;
 class QwtPolarPlot;
 
 /*!
-  Canvas of a QwtPolarPlot.       
+  \brief Canvas of a QwtPolarPlot.       
+
+  The canvas is the widget, where all polar items are painted to. 
 
   \note In opposite to QwtPlot all axes are painted on the canvas.
   \sa QwtPolarPlot

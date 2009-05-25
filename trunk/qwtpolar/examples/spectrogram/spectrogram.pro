@@ -12,8 +12,10 @@ TARGET       = spectrogram
 
 SOURCES = \
 	plot.cpp \
+	plotwindow.cpp \
 	main.cpp
 
 HEADERS = \
-	plot.h
+	plot.h \
+	plotwindow.h
 
