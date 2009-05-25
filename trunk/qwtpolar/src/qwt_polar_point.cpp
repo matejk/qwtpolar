@@ -7,7 +7,6 @@
  *****************************************************************************/
 
 #include <cmath>
-#include <cassert>
 #include <qglobal.h>
 #include "qwt_math.h"
 #include "qwt_polar_point.h"
