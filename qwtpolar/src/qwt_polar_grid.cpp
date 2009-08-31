@@ -1068,3 +1068,89 @@ int QwtPolarGrid::marginHint() const
     return 0;
 }
 
+/*!
+  Returns the scale draw of a specified axis
+
+  \param axisId axis index ( QwtPolar::AxisLeft <= axisId <= QwtPolar::AxisBottom)
+  \return specified scaleDraw for axis, or NULL if axis is invalid.
+  \sa azimuthScaleDraw()
+*/
+const QwtScaleDraw *QwtPolarGrid::scaleDraw(int axisId) const
+{
+    if ( axisId >= QwtPolar::AxisLeft || axisId <= QwtPolar::AxisBottom )
+        return (QwtScaleDraw *)d_data->axisData[axisId].scaleDraw;
+
+    return NULL;
+}
+
+/*!
+  Returns the scale draw of a specified axis
+
+  \param axisId axis index ( QwtPolar::AxisLeft <= axisId <= QwtPolar::AxisBottom)
+  \return specified scaleDraw for axis, or NULL if axis is invalid.
+  \sa setScaleDraw(), azimuthScaleDraw()
+*/
+QwtScaleDraw *QwtPolarGrid::scaleDraw(int axisId)
+{
+    if ( axisId >= QwtPolar::AxisLeft || axisId <= QwtPolar::AxisBottom )
+        return (QwtScaleDraw *)d_data->axisData[axisId].scaleDraw;
+
+    return NULL;
+}
+
+/*!
+  \brief Set a scale draw
+
+  \param axisId axis index ( QwtPolar::AxisLeft <= axisId <= QwtPolar::AxisBottom)
+  \param scaleDraw object responsible for drawing scales.
+
+  \sa scaleDraw(), setAzimuthScaleDraw()
+*/
+void QwtPolarGrid::setScaleDraw(int axisId, QwtScaleDraw *scaleDraw)
+{
+    if ( axisId < QwtPolar::AxisLeft || axisId > QwtPolar::AxisBottom )
+        return;
+
+    AxisData &axisData = d_data->axisData[axisId];
+    if ( axisData.scaleDraw != scaleDraw )
+    {
+        delete axisData.scaleDraw;
+        axisData.scaleDraw = scaleDraw;
+        itemChanged();
+    }
+}
+
+/*!
+  Returns the scale draw of the azimuth axis
+  \sa setAzimuthScaleDraw(), scaleDraw()
+*/
+const QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw() const
+{
+    return (QwtRoundScaleDraw *)d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw;
+}
+
+/*!
+  Returns the scale draw of the azimuth axis
+  \sa setAzimuthScaleDraw(), scaleDraw()
+*/
+QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw() 
+{
+    return (QwtRoundScaleDraw *)d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw;
+}
+
+/*!
+  \brief Set a scale draw for the azimuth scale
+
+  \param scaleDraw object responsible for drawing scales.
+  \sa azimuthScaleDraw(), setScaleDraw()
+*/
+void QwtPolarGrid::setAzimuthScaleDraw(QwtRoundScaleDraw *scaleDraw)
+{
+    AxisData &axisData = d_data->axisData[QwtPolar::AxisAzimuth];
+    if ( axisData.scaleDraw != scaleDraw )
+    {
+        delete axisData.scaleDraw;
+        axisData.scaleDraw = scaleDraw;
+        itemChanged();
+    }
+}
