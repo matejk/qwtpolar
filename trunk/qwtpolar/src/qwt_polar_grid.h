@@ -125,6 +125,14 @@ public:
     void setAxisFont(int axisId, const QFont &p);
     QFont axisFont(int axisId) const;
 
+    void setScaleDraw(int axisId, QwtScaleDraw *);
+    const QwtScaleDraw *scaleDraw(int axisId) const;
+    QwtScaleDraw *scaleDraw(int axisId); 
+
+    void setAzimuthScaleDraw(QwtRoundScaleDraw *);
+    const QwtRoundScaleDraw *azimuthScaleDraw() const;
+    QwtRoundScaleDraw *azimuthScaleDraw(); 
+
     virtual void draw(QPainter *p, 
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QwtDoublePoint &pole, double radius,
