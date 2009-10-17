@@ -91,14 +91,17 @@ unix {
 INSTALLS       = target headers doc
 
 QWTLIB     = qwt$${SUFFIX_STR}
-win32 {
-    contains(CONFIG, QwtPolarDll) {
-    	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
-		QWTLIB     = $${QWTLIB}$${QWT_VERSION_MAJ}
-	}
-	else {
-	}
 
+win32:QwtPolarDll {
+   	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
+	QWTLIB     = $${QWTLIB}$${QWT_VERSION_MAJ}
+}
+
+symbian:QwtPolarDll {
+   	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
+}
+
+win32 {
     win32-msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     win32-msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
     win32-msvc2002:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
