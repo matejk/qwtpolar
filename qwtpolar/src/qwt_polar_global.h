@@ -19,7 +19,7 @@
 #define QWT_POLAR_VERSION       0x000100
 #define QWT_POLAR_VERSION_STR   "0.1.0"
 
-#if defined(Q_WS_WIN)
+#if defined(Q_WS_WIN) || defined(Q_WS_S60)
 
 #if defined(_MSC_VER) /* MSVC Compiler */
 /* template-class specialization 'identifier' is already instantiated */
