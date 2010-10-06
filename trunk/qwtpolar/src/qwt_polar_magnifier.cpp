@@ -18,11 +18,7 @@ class QwtPolarMagnifier::PrivateData
 public:
     PrivateData():
         unzoomKey(Qt::Key_Home),
-#if QT_VERSION < 0x040000
-        unzoomKeyModifiers(Qt::NoButton)
-#else
         unzoomKeyModifiers(Qt::NoModifier)
-#endif
     {
     }
 
@@ -113,11 +109,7 @@ const QwtPolarPlot *QwtPolarMagnifier::plot() const
 void QwtPolarMagnifier::widgetKeyPressEvent(QKeyEvent *ke)
 {
     const int key = ke->key();
-#if QT_VERSION < 0x040000
-    const int state = ke->state();
-#else
     const int state = ke->modifiers();
-#endif
 
     if ( key == d_data->unzoomKey &&
         state == d_data->unzoomKeyModifiers )
@@ -135,7 +127,7 @@ void QwtPolarMagnifier::widgetKeyPressEvent(QKeyEvent *ke)
 */
 void QwtPolarMagnifier::rescale(double factor)
 {
-    factor = qwtAbs(factor);
+    factor = qAbs(factor);
     if ( factor == 1.0 || factor == 0.0 )
         return;
 

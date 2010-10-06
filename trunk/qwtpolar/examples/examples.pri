@@ -8,65 +8,21 @@
 
 QWT_POLAR_ROOT = ../..
 
-include( $${QWT_POLAR_ROOT}/qwtpolar.pri )
-
-SUFFIX_STR =
-VVERSION = $$[QT_VERSION]
-isEmpty(VVERSION) {
-
-    # Qt 3
-    debug {
-        SUFFIX_STR = $${DEBUG_SUFFIX}
-    }
-    else {
-        SUFFIX_STR = $${RELEASE_SUFFIX}
-    }
-}
-else {
-    CONFIG(debug, debug|release) {
-        SUFFIX_STR = $${DEBUG_SUFFIX}
-    }
-    else {
-        SUFFIX_STR = $${RELEASE_SUFFIX}
-    }
-}
+include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
+include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 
 TEMPLATE     = app
 
-MOC_DIR      = moc
-OBJECTS_DIR  = obj$${SUFFIX_STR}
 INCLUDEPATH += $${QWT_POLAR_ROOT}/src
 DEPENDPATH  += $${QWT_POLAR_ROOT}/src
-INCLUDEPATH += $$QWT_INCLUDEPATH
-DEPENDPATH  += $$QWT_INCLUDEPATH
 DESTDIR      = $${QWT_POLAR_ROOT}/examples/bin$${SUFFIX_STR}
 
-QWTLIB = qwt$${SUFFIX_STR}
-QWTPOLARLIB = qwtpolar$${SUFFIX_STR}
+LIBS      += -L$${QWT_POLAR_ROOT}/lib
+qtAddLibrary(qwtpolar)
+
 win32 {
-	contains(CONFIG, QwtPolarDll) {
-    	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL
-		QWTLIB = $${QWTLIB}5
-		QWTPOLARLIB = $${QWTPOLARLIB}$${VER_MAJ}
-	}
-
-    win32-msvc:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-msvc.net:LIBS  += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-msvc2002:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-msvc2003:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-msvc2005:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-msvc2008:LIBS += $${QWT_POLAR_ROOT}/lib/$${QWTPOLARLIB}.lib
-    win32-g++:LIBS   += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
-
-    win32-msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2002:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2003:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2005:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2008:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
+    contains(QWT_CONFIG, QwtPolarDll) {
+        DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL
+    }
 }
-else {
-	LIBS  += -L$${QWT_POLAR_ROOT}/lib -l$${QWTPOLARLIB}
-	LIBS  += -L$${QWT_LIBRARYPATH} -l$${QWTLIB} 
-}
+

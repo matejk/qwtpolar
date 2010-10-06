@@ -21,8 +21,10 @@ PlotWindow::PlotWindow(QWidget *parent):
     title.setFont(font);
     d_colorScale->setTitle(title);
     
-    const QwtDoubleInterval range = d_plot->spectrogram()->data().range();
+    const QwtInterval range = d_plot->spectrogram()->data()->interval(Qt::ZAxis);
+#if 0
     d_colorScale->setColorMap(range, d_plot->spectrogram()->colorMap());
+#endif
     
     QwtLinearScaleEngine scaleEngine;
     d_colorScale->setScaleDiv(scaleEngine.transformation(),

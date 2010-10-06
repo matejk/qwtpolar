@@ -42,7 +42,7 @@ public:
     QwtPolarCanvas *canvas();
     const QwtPolarCanvas *canvas() const;
 
-protected slots:
+protected Q_SLOTS:
     virtual void movePlot(int dx, int dy);
 
 protected:

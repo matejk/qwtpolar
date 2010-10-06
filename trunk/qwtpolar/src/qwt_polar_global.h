@@ -10,14 +10,11 @@
 #define QWT_POLAR_GLOBAL_H
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
-#include <qmodules.h>
-#endif
 
 // QWT_POLAR_VERSION is (major << 16) + (minor << 8) + patch.
 
-#define QWT_POLAR_VERSION       0x000100
-#define QWT_POLAR_VERSION_STR   "0.1.0"
+#define QWT_POLAR_VERSION       0x010000
+#define QWT_POLAR_VERSION_STR   "1.0.0"
 
 #if defined(Q_WS_WIN) || defined(Q_WS_S60)
 

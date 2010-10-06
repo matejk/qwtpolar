@@ -22,7 +22,7 @@
 
 static inline bool isClose(double value1, double value2 )
 {
-    return qwtAbs(value1 - value2) < DBL_EPSILON;
+    return qAbs(value1 - value2) < DBL_EPSILON;
 }
 
 class QwtPolarGrid::AxisData
@@ -146,9 +146,7 @@ QwtPolarGrid::QwtPolarGrid():
     d_data->displayFlags |= ClipGridLines;
 
     setZ(10.0);
-#if QT_VERSION >= 0x040000
     setRenderHint(RenderAntialiased, true);
-#endif
 }
 
 //! Destructor
@@ -571,8 +569,8 @@ QFont QwtPolarGrid::axisFont(int axisId) const
 */
 void QwtPolarGrid::draw(QPainter *painter, 
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, double radius,
-    const QwtDoubleRect &canvasRect) const
+    const QPointF &pole, double radius,
+    const QRectF &canvasRect) const
 {
     updateScaleDraws(azimuthMap, radialMap, pole, radius);
 
@@ -589,7 +587,7 @@ void QwtPolarGrid::draw(QPainter *painter,
                 QwtScaleDraw *scaleDraw = (QwtScaleDraw *)axis.scaleDraw;
                 if ( scaleDraw->hasComponent(QwtScaleDraw::Labels) )
                 {
-                    const QwtValueList &ticks = 
+                    const QList<double> &ticks = 
                         scaleDraw->scaleDiv().ticks(QwtScaleDiv::MajorTick);
                     for ( int i = 0; i < int(ticks.size()); i++ )
                     {
@@ -679,13 +677,13 @@ void QwtPolarGrid::draw(QPainter *painter,
   \param values Azimuth values, indicating the direction of the lines
 */
 void QwtPolarGrid::drawRays(
-    QPainter *painter, const QwtDoubleRect &canvasRect,
-    const QwtDoublePoint &pole, double radius,
-    const QwtScaleMap &azimuthMap, const QwtValueList &values) const
+    QPainter *painter, const QRectF &canvasRect,
+    const QPointF &pole, double radius,
+    const QwtScaleMap &azimuthMap, const QList<double> &values) const
 {
     for ( int i = 0; i < int(values.size()); i++ )
     {
-        double azimuth = azimuthMap.xTransform(values[i]);
+        double azimuth = azimuthMap.transform(values[i]);
         azimuth = ::fmod(azimuth, 2 * M_PI);
 
         bool skipLine = false;
@@ -720,14 +718,14 @@ void QwtPolarGrid::drawRays(
         }
         if ( !skipLine )
         {
-            const QwtDoublePoint pos = qwtPolar2Pos(pole, radius, azimuth);
+            const QPointF pos = qwtPolar2Pos(pole, radius, azimuth);
 
             /*
                 Qt4 is horrible slow, when painting primitives,
                 with coordinates far outside the visible area.
              */
 
-            QwtPolygon pa(2);
+            QPolygon pa(2);
             pa.setPoint(0, pole.toPoint());
             pa.setPoint(1, pos.toPoint());
 
@@ -749,9 +747,9 @@ void QwtPolarGrid::drawRays(
   \param values Radial values, indicating the distances from the pole
 */
 void QwtPolarGrid::drawCircles(
-    QPainter *painter, const QwtDoubleRect &canvasRect,
-    const QwtDoublePoint &pole, const QwtScaleMap &radialMap, 
-    const QwtValueList &values) const
+    QPainter *painter, const QRectF &canvasRect,
+    const QPointF &pole, const QwtScaleMap &radialMap, 
+    const QList<double> &values) const
 {
     for ( int i = 0; i < int(values.size()); i++ )
     {
@@ -779,12 +777,9 @@ void QwtPolarGrid::drawCircles(
         {
             const double radius = radialMap.transform(val);
 
-            QwtDoubleRect outerRect(0, 0, 2 * radius, 2 * radius);
+            QRectF outerRect(0, 0, 2 * radius, 2 * radius);
             outerRect.moveCenter(pole);
 
-#if QT_VERSION < 0x040000
-            QwtPainter::drawEllipse(painter, outerRect.toRect());
-#else
             if ( testDisplayFlag(ClipGridLines) )
             {
 
@@ -794,11 +789,11 @@ void QwtPolarGrid::drawCircles(
                     We need to clip.
                 */
 
-                const QwtArray<QwtDoubleInterval> angles = 
+                const QVector<QwtInterval> angles = 
                     QwtClipper::clipCircle( canvasRect, pole, radius);
                 for ( int i = 0; i < angles.size(); i++ )
                 {
-                    const QwtDoubleInterval intv = angles[i];
+                    const QwtInterval intv = angles[i];
                     if ( intv.minValue() == 0 && intv.maxValue() == 2 * M_PI )
                         QwtPainter::drawEllipse(painter, outerRect.toRect());
                     else
@@ -809,10 +804,9 @@ void QwtPolarGrid::drawCircles(
                         if ( span < 0.0 )
                             span += 360.0;
                     
-                        const QwtMetricsMap &mm = QwtPainter::metricsMap();
                         const QRect r = outerRect.toRect();
 
-                        painter->drawArc(mm.layoutToDevice(r, painter), 
+                        painter->drawArc(r, 
                             qRound(from * 16), qRound(span * 16));
                     }
                     
@@ -822,7 +816,6 @@ void QwtPolarGrid::drawCircles(
             {
                 QwtPainter::drawEllipse(painter, outerRect.toRect());
             }
-#endif
         }
     }
 }
@@ -843,19 +836,11 @@ void QwtPolarGrid::drawAxis(QPainter *painter, int axisId) const
     painter->setPen(axis.pen);
     painter->setFont(axis.font);
 
-#if QT_VERSION < 0x040000
-    QColorGroup cg;
-    cg.setColor(QColorGroup::Foreground, axis.pen.color());
-    cg.setColor(QColorGroup::Text, axis.pen.color());
-
-    axis.scaleDraw->draw(painter, cg);
-#else
     QPalette pal;
     pal.setColor(QPalette::Foreground, axis.pen.color());
     pal.setColor(QPalette::Text, axis.pen.color());
 
     axis.scaleDraw->draw(painter, pal);
-#endif
 }
 
 /*!
@@ -870,11 +855,11 @@ void QwtPolarGrid::drawAxis(QPainter *painter, int axisId) const
 */
 void QwtPolarGrid::updateScaleDraws(
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
-    const QwtDoublePoint &pole, double radius) const
+    const QPointF &pole, double radius) const
 {
     const QPoint p = pole.toPoint();
 
-    const QwtDoubleInterval interval = 
+    const QwtInterval interval = 
         d_data->gridData[QwtPolar::ScaleRadius].scaleDiv.interval();
 
     const int min = radialMap.transform(interval.minValue());
@@ -950,7 +935,7 @@ void QwtPolarGrid::updateScaleDraws(
 */
 
 void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
-    const QwtScaleDiv &radialScaleDiv, const QwtDoubleInterval &interval)
+    const QwtScaleDiv &radialScaleDiv, const QwtInterval &interval)
 {
     GridData &radialGrid = d_data->gridData[QwtPolar::Radius];
 
@@ -994,8 +979,8 @@ void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
             {
                 QwtScaleDiv sd = radialGrid.scaleDiv;
 
-                QwtValueList &ticks = 
-                        (QwtValueList &)sd.ticks(QwtScaleDiv::MajorTick);
+                QList<double> &ticks = 
+                        (QList<double> &)sd.ticks(QwtScaleDiv::MajorTick);
 
                 if ( testDisplayFlag(SmartOriginLabel) )
                 {
@@ -1017,13 +1002,7 @@ void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
                     if ( ticks.size() > 0 && ticks.first() == sd.lowerBound() )
                     {
                         if ( skipOrigin )
-                        {
-#if QT_VERSION < 0x040000
-                            ticks.pop_front();
-#else
                             ticks.removeFirst();
-#endif
-                        }
                         else
                             hasOrigin = true;
                     }
@@ -1032,11 +1011,7 @@ void QwtPolarGrid::updateScaleDiv(const QwtScaleDiv &azimuthScaleDiv,
                 if ( testDisplayFlag(HideMaxRadiusLabel) )
                 {
                     if ( ticks.size() > 0 && ticks.last() == sd.upperBound() )
-#if QT_VERSION < 0x040000
-                        ticks.pop_back();
-#else
                         ticks.removeLast();
-#endif
                 }
 
                 axis.scaleDraw->setScaleDiv(sd);
@@ -1061,7 +1036,7 @@ int QwtPolarGrid::marginHint() const
     const AxisData &axis = d_data->axisData[QwtPolar::AxisAzimuth];
     if ( axis.isVisible )
     {
-        const int extent = axis.scaleDraw->extent(axis.pen, axis.font);
+        const int extent = axis.scaleDraw->extent(axis.font);
         return extent;
     }
     

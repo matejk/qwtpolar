@@ -9,10 +9,8 @@
 #include <qpainter.h>
 #include <qevent.h>
 #include <qpixmap.h>
-#if QT_VERSION >= 0x040000
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
-#endif
 #endif
 #include "qwt_polar_canvas.h"
 #include "qwt_polar_plot.h"
@@ -41,24 +39,13 @@ QwtPolarCanvas::QwtPolarCanvas(QwtPolarPlot *plot):
 {
     d_data = new PrivateData;
 
-#if QT_VERSION >= 0x040100
     setAutoFillBackground(false);
-#endif
 
-#if QT_VERSION < 0x040000
-    setBackgroundMode(Qt::NoBackground);
-#ifndef QT_NO_CURSOR
-    setWFlags(Qt::WNoAutoErase);
-    setCursor(Qt::crossCursor);
-#endif
-    setFocusPolicy(QWidget::WheelFocus);
-#else
     setAttribute(Qt::WA_NoSystemBackground, true);
 #ifndef QT_NO_CURSOR
     setCursor(Qt::CrossCursor);
 #endif
     setFocusPolicy(Qt::WheelFocus);
-#endif // >= 0x040000
 
     setPaintAttribute(PaintCached, true);
 }
@@ -169,7 +156,6 @@ void QwtPolarCanvas::invalidatePaintCache()
 //! Paint event
 void QwtPolarCanvas::paintEvent(QPaintEvent *event)
 {
-#if QT_VERSION >= 0x040000
     QPainter painter(this);
 
     if ( !contentsRect().contains( event->rect() ) )
@@ -183,9 +169,6 @@ void QwtPolarCanvas::paintEvent(QPaintEvent *event)
     painter.setClipRegion(event->region() & contentsRect());
 
     drawContents( &painter );
-#else // QT_VERSION < 0x040000
-    QFrame::paintEvent(event);
-#endif
 }
 
 //! Resize event
@@ -212,7 +195,7 @@ void QwtPolarCanvas::drawContents(QPainter *painter)
         {
             const bool doAutoReplot = plt->autoReplot();
             plt->setAutoReplot(false);
-            drawCanvas(painter, QwtDoubleRect(contentsRect()) );
+            drawCanvas(painter, QRectF(contentsRect()) );
             plt->setAutoReplot(doAutoReplot);
         }
     }
@@ -227,7 +210,7 @@ void QwtPolarCanvas::drawContents(QPainter *painter)
   \sa QwtPolarPlot::drawCanvas, setPaintAttributes(), testPaintAttributes()
 */
 void QwtPolarCanvas::drawCanvas(QPainter *painter, 
-    const QwtDoubleRect& canvasRect)
+    const QRectF& canvasRect)
 {
     if ( !canvasRect.isValid() )
         return;
@@ -237,13 +220,8 @@ void QwtPolarCanvas::drawCanvas(QPainter *painter,
         *d_data->cache = QPixmap(contentsRect().size());
 
 #ifdef Q_WS_X11
-#if QT_VERSION >= 0x040000
         if ( d_data->cache->x11Info().screen() != x11Info().screen() )
             d_data->cache->x11SetScreen(x11Info().screen());
-#else
-        if ( d_data->cache->x11Screen() != x11Screen() )
-            d_data->cache->x11SetScreen(x11Screen());
-#endif
 #endif
 
         d_data->cache->fill(this, d_data->cache->rect().topLeft());

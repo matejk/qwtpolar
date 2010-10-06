@@ -6,47 +6,24 @@
 # modify it under the terms of the Qwt License, Version 1.0
 #################################################################
 
+# qmake project file for building the qwtpolar libraries
+
 QWT_POLAR_ROOT = ..
 
-include( $${QWT_POLAR_ROOT}/qwtpolar.pri )
+include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
+include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 
-SUFFIX_STR =
-VVERSION = $$[QT_VERSION]
-isEmpty(VVERSION) {
-
-    # Qt 3
-    debug {
-        SUFFIX_STR = $${DEBUG_SUFFIX}
-    }
-    else {
-        SUFFIX_STR = $${RELEASE_SUFFIX}
-    }
-}
-else {
-    CONFIG(debug, debug|release) {
-        SUFFIX_STR = $${DEBUG_SUFFIX}
-    }
-    else {
-        SUFFIX_STR = $${RELEASE_SUFFIX}
-    }
-}
-
-TARGET            = qwtpolar$${SUFFIX_STR}
 TEMPLATE          = lib
-
-MOC_DIR           = moc
-OBJECTS_DIR       = obj$${SUFFIX_STR}
-DESTDIR           = $${QWT_POLAR_ROOT}/lib
+TARGET            = $$qtLibraryTarget(qwtpolar)
 
 contains(CONFIG, QwtPolarDll ) {
+
     CONFIG += dll
+	win32|symbian: DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
 }
 else {
     CONFIG += staticlib
 }
-
-INCLUDEPATH += $$QWT_INCLUDEPATH
-DEPENDPATH  += $$QWT_INCLUDEPATH
 
 HEADERS += \
     qwt_polar_global.h \
@@ -85,31 +62,11 @@ SOURCES += \
 headers.files  = $$HEADERS
 doc.files      = $${QWT_POLAR_ROOT}/doc/html
 unix {
-    doc.files      += $${QWT_POLAR_ROOT}/doc/man
+    doc.files      += $${QWT_POLAR_ROOT}/doc/man 
 }
+
+target.path    = $${QWT_POLAR_INSTALL_LIBS}
+headers.path   = $${QWT_POLAR_INSTALL_HEADERS}
+doc.path       = $${QWT_POLAR_INSTALL_DOCS}
 
 INSTALLS       = target headers doc
-
-QWTLIB     = qwt$${SUFFIX_STR}
-
-win32:QwtPolarDll {
-   	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
-	QWTLIB     = $${QWTLIB}$${QWT_VERSION_MAJ}
-}
-
-symbian:QwtPolarDll {
-   	DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
-}
-
-win32 {
-    win32-msvc:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc.net:LIBS  += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2002:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2003:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2005:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-msvc2008:LIBS += $${QWT_LIBRARYPATH}/$${QWTLIB}.lib
-    win32-g++:LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
-}
-else {
-	LIBS   += -L$${QWT_LIBRARYPATH} -l$${QWTLIB}
-}

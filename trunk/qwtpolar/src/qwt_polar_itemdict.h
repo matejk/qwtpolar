@@ -13,20 +13,12 @@
 
 #include "qwt_polar_global.h"
 #include "qwt_polar_item.h"
-
-#if QT_VERSION < 0x040000
-#include <qvaluelist.h>
-typedef QValueListConstIterator<QwtPolarItem *> QwtPolarItemIterator;
-/// \var typedef QValueList< QwtPolarItem *> QwtPolarItemList
-/// \brief See QT 3.x assistant documentation for QValueList
-typedef QValueList<QwtPolarItem *> QwtPolarItemList;
-#else
 #include <qlist.h>
+
 typedef QList<QwtPolarItem *>::ConstIterator QwtPolarItemIterator;
 /// \var typedef QList< QwtPolarItem *> QwtPolarItemList
 /// \brief See QT 4.x assistant documentation for QList
 typedef QList<QwtPolarItem *> QwtPolarItemList;
-#endif
 
 /*!
   \brief A dictionary for polar plot items

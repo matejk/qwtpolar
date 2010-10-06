@@ -12,11 +12,11 @@
 #include "qwt_polar_global.h"
 #include "qwt_text.h"
 #include "qwt_legend_itemmanager.h"
-#include "qwt_double_interval.h"
-#include "qwt_double_rect.h"
+#include "qwt_interval.h"
 
 class QString;
 class QRect;
+class QPointF;
 class QPainter;
 class QwtPolarPlot;
 class QwtScaleMap;
@@ -72,13 +72,11 @@ public:
         AutoScale = 2
     };
 
-#if QT_VERSION >= 0x040000
     //! Render hints
     enum RenderHint
     {
         RenderAntialiased = 1
     };
-#endif
 
     explicit QwtPolarItem(const QwtText &title = QwtText());
     virtual ~QwtPolarItem();
@@ -105,10 +103,8 @@ public:
     void setItemAttribute(ItemAttribute, bool on = true);
     bool testItemAttribute(ItemAttribute) const;
 
-#if QT_VERSION >= 0x040000
     void setRenderHint(RenderHint, bool on = true);
     bool testRenderHint(RenderHint) const;
-#endif
 
     double z() const; 
     void setZ(double z);
@@ -132,16 +128,16 @@ public:
     */
     virtual void draw(QPainter *painter, 
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QwtDoublePoint &pole, double radius,
-        const QwtDoubleRect &canvasRect) const = 0;
+        const QPointF &pole, double radius,
+        const QRectF &canvasRect) const = 0;
 
-    virtual QwtDoubleInterval boundingInterval(int scaleId) const;
+    virtual QwtInterval boundingInterval(int scaleId) const;
 
     virtual QWidget *legendItem() const;
 
     virtual void updateLegend(QwtLegend *) const;
     virtual void updateScaleDiv(const QwtScaleDiv &,
-        const QwtScaleDiv &, const QwtDoubleInterval &);
+        const QwtScaleDiv &, const QwtInterval &);
 
     virtual int marginHint() const;
 

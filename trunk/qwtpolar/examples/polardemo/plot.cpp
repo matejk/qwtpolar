@@ -1,5 +1,5 @@
 #include <qpen.h>
-#include <qwt_data.h>
+#include <qwt_series_data.h>
 #include <qwt_symbol.h>
 #include <qwt_legend.h>
 #include <qwt_polar_grid.h>
@@ -8,14 +8,14 @@
 #include <qwt_scale_engine.h>
 #include "plot.h"
 
-const QwtDoubleInterval radialInterval(0.0, 10.0);
-const QwtDoubleInterval azimuthInterval(0.0, 360.0);
+const QwtInterval radialInterval(0.0, 10.0);
+const QwtInterval azimuthInterval(0.0, 360.0);
 
-class Data: public QwtData
+class Data: public QwtSeriesData<QPointF>
 {
 public:
-    Data(const QwtDoubleInterval &radialInterval, 
-            const QwtDoubleInterval &azimuthInterval, size_t size):
+    Data(const QwtInterval &radialInterval, 
+            const QwtInterval &azimuthInterval, size_t size):
         d_radialInterval(radialInterval),
         d_azimuthInterval(azimuthInterval),
         d_size(size)
@@ -28,63 +28,67 @@ public:
     }
 
 protected:
-    QwtDoubleInterval d_radialInterval;
-    QwtDoubleInterval d_azimuthInterval;
+    QwtInterval d_radialInterval;
+    QwtInterval d_azimuthInterval;
     size_t d_size;
 };
 
 class SpiralData: public Data
 {
 public:
-    SpiralData(const QwtDoubleInterval &radialInterval, 
-            const QwtDoubleInterval &azimuthInterval, size_t size):
+    SpiralData(const QwtInterval &radialInterval, 
+            const QwtInterval &azimuthInterval, size_t size):
         Data(radialInterval, azimuthInterval, size)
     {
     }
 
-    virtual QwtData *copy() const
+    virtual QPointF sample(size_t i) const
     {
-        return new SpiralData(d_radialInterval, d_azimuthInterval, d_size);
+        const double stepX = 4 * d_azimuthInterval.width() / d_size;
+        const double x = d_azimuthInterval.minValue() + i * stepX;
+
+        const double stepY = d_radialInterval.width() / d_size;
+        const double y = d_radialInterval.minValue() + i * stepY;
+
+		return QPointF(x, y);
     }
 
-    virtual double x(size_t i) const
-    {
-        const double step = 4 * d_azimuthInterval.width() / d_size;
-        return d_azimuthInterval.minValue() + i * step;
-    }
+	virtual QRectF boundingRect() const
+	{
+		if ( d_boundingRect.width() < 0.0 )
+			d_boundingRect = qwtBoundingRect( *this );
 
-    virtual double y(size_t i) const
-    {
-        const double step = d_radialInterval.width() / d_size;
-        return d_radialInterval.minValue() + i * step;
-    }
+		return d_boundingRect;
+	}
 };
 
 class RoseData: public Data
 {
 public:
-    RoseData(const QwtDoubleInterval &radialInterval, 
-            const QwtDoubleInterval &azimuthInterval, size_t size):
+    RoseData(const QwtInterval &radialInterval, 
+            const QwtInterval &azimuthInterval, size_t size):
         Data(radialInterval, azimuthInterval, size)
     {
     }
 
-    virtual QwtData *copy() const
+    virtual QPointF sample(size_t i) const
     {
-        return new RoseData(d_radialInterval, d_azimuthInterval, d_size);
+        const double stepX = d_azimuthInterval.width() / d_size;
+        const double x = d_azimuthInterval.minValue() + i * stepX;
+
+        const double a = x / 360.0 * M_PI;
+        const double y = d_radialInterval.maxValue() * qAbs(::sin(4 * a));
+
+		return QPointF(x, y);
     }
 
-    virtual double x(size_t i) const
-    {
-        const double step = d_azimuthInterval.width() / d_size;
-        return d_azimuthInterval.minValue() + i * step;
-    }
+	virtual QRectF boundingRect() const
+	{
+		if ( d_boundingRect.width() < 0.0 )
+			d_boundingRect = qwtBoundingRect( *this );
 
-    virtual double y(size_t i) const
-    {
-        const double a = x(i) / 360.0 * M_PI;
-        return d_radialInterval.maxValue() * qwtAbs(::sin(4 * a));
-    }
+		return d_boundingRect;
+	}
 };
 
 
@@ -140,16 +144,14 @@ Plot::Plot(QWidget *parent):
     // markers
     QwtPolarMarker *marker = new QwtPolarMarker();
     marker->setPosition(QwtPolarPoint(57.3, 4.72));
-    marker->setSymbol( QwtSymbol(QwtSymbol::Ellipse,
+    marker->setSymbol( new QwtSymbol(QwtSymbol::Ellipse,
         QBrush(Qt::white), QPen(Qt::green), QSize(9, 9)) );
     marker->setLabelAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
     QwtText text("Marker");
     text.setColor(Qt::black);
     QColor bg(Qt::white);
-#if QT_VERSION >= 0x040300
     bg.setAlpha(200);
-#endif
     text.setBackgroundBrush( QBrush( bg ));
 
     marker->setLabel(text);
@@ -187,10 +189,8 @@ PlotSettings Plot::settings() const
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
     s.flags[PlotSettings::Inverted] = sd->lowerBound() > sd->upperBound();
 
-#if QT_VERSION >= 0x040000
     s.flags[PlotSettings::Antialiasing] = d_grid->testRenderHint(
         QwtPolarItem::RenderAntialiased );
-#endif
 
     for ( int curveId = 0; curveId < PlotSettings::NumCurves; curveId++ )
     {
@@ -220,7 +220,7 @@ void Plot::applySettings(const PlotSettings& s)
     d_grid->setGridAttribute(QwtPolarGrid::AutoScaling,
         s.flags[PlotSettings::AutoScaling]);
 
-    const QwtDoubleInterval interval = 
+    const QwtInterval interval = 
         scaleDiv(QwtPolar::Radius)->interval().normalized();
     if ( s.flags[PlotSettings::Inverted] )
     {
@@ -247,17 +247,13 @@ void Plot::applySettings(const PlotSettings& s)
     }
     delete transform;
 
-#if QT_VERSION >= 0x040000
     d_grid->setRenderHint( QwtPolarItem::RenderAntialiased, 
         s.flags[PlotSettings::Antialiasing] );
-#endif
 
     for ( int curveId = 0; curveId < PlotSettings::NumCurves; curveId++ )
     {
-#if QT_VERSION >= 0x040000
         d_curve[curveId]->setRenderHint(QwtPolarItem::RenderAntialiased,
             s.flags[PlotSettings::Antialiasing] );
-#endif
         d_curve[curveId]->setVisible(
             s.flags[PlotSettings::CurveBegin + curveId]);
     }
@@ -277,20 +273,20 @@ QwtPolarCurve *Plot::createCurve(int id) const
         {
             curve->setTitle("Spiral");
             curve->setPen(QPen(Qt::yellow, 2));
-            curve->setSymbol( QwtSymbol(QwtSymbol::Rect, 
+            curve->setSymbol( new QwtSymbol(QwtSymbol::Rect, 
                 QBrush(Qt::yellow), QPen(Qt::white), QSize(3, 3)) );
             curve->setData(
-                SpiralData(radialInterval, azimuthInterval, numPoints));
+                new SpiralData(radialInterval, azimuthInterval, numPoints));
             break;
         }
         case PlotSettings::Rose:
         {
             curve->setTitle("Rose");
             curve->setPen(QPen(Qt::red, 2)); 
-            curve->setSymbol( QwtSymbol(QwtSymbol::Rect,
+            curve->setSymbol( new QwtSymbol(QwtSymbol::Rect,
                 QBrush(Qt::cyan), QPen(Qt::white), QSize(3, 3)) );
             curve->setData(
-                RoseData(radialInterval, azimuthInterval, numPoints));
+                new RoseData(radialInterval, azimuthInterval, numPoints));
             break;
         }
     }

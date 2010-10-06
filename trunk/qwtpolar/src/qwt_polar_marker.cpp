@@ -31,13 +31,9 @@ public:
     }
 
     QwtText label;
-#if QT_VERSION < 0x040000
-    int align;
-#else
     Qt::Alignment align;
-#endif
     QPen pen;
-    QwtSymbol *symbol;
+    const QwtSymbol *symbol;
 
     QwtPolarPoint pos;
 };
@@ -92,11 +88,11 @@ void QwtPolarMarker::setPosition(const QwtPolarPoint &pos)
 */
 void QwtPolarMarker::draw(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, double /* radius */,
-    const QwtDoubleRect & /* canvasRect */) const
+    const QPointF &pole, double /* radius */,
+    const QRectF & /* canvasRect */) const
 {
-    const double r = radialMap.xTransform(d_data->pos.radius());
-    const double a = azimuthMap.xTransform(d_data->pos.azimuth());
+    const double r = radialMap.transform(d_data->pos.radius());
+    const double a = azimuthMap.transform(d_data->pos.azimuth());
 
     const QPoint pos = qwtPolar2Pos(pole, r, a).toPoint();
 
@@ -106,21 +102,21 @@ void QwtPolarMarker::draw(QPainter *painter,
     if (d_data->symbol->style() != QwtSymbol::NoSymbol)
     {
         sSym = d_data->symbol->size();
-        d_data->symbol->draw(painter, pos.x(), pos.y());
+        d_data->symbol->drawSymbol(painter, pos);
     }
 
     // draw label
     if (!d_data->label.isEmpty())
     {
-        int xlw = qwtMax(int(d_data->pen.width()), 1);
+        int xlw = qMax(int(d_data->pen.width()), 1);
         int ylw = xlw;
 
-        int xlw1 = qwtMax((xlw + 1) / 2, (sSym.width() + 1) / 2) + LabelDist;
-        xlw = qwtMax(xlw / 2, (sSym.width() + 1) / 2) + LabelDist;
-        int ylw1 = qwtMax((ylw + 1) / 2, (sSym.height() + 1) / 2) + LabelDist;
-        ylw = qwtMax(ylw / 2, (sSym. height() + 1) / 2) + LabelDist;
+        int xlw1 = qMax((xlw + 1) / 2, (sSym.width() + 1) / 2) + LabelDist;
+        xlw = qMax(xlw / 2, (sSym.width() + 1) / 2) + LabelDist;
+        int ylw1 = qMax((ylw + 1) / 2, (sSym.height() + 1) / 2) + LabelDist;
+        ylw = qMax(ylw / 2, (sSym. height() + 1) / 2) + LabelDist;
 
-        QRect tr(QPoint(0, 0), d_data->label.textSize(painter->font()));
+        QRect tr(QPoint(0, 0), d_data->label.textSize(painter->font()).toSize() );
         tr.moveCenter(QPoint(0, 0));
 
         int dx = pos.x();
@@ -136,34 +132,33 @@ void QwtPolarMarker::draw(QPainter *painter,
         else if (d_data->align & (int) Qt::AlignRight)
             dx -= tr.x() - xlw1;
 
-#if QT_VERSION < 0x040000
-        tr.moveBy(dx, dy);
-#else
         tr.translate(dx, dy);
-#endif
         d_data->label.draw(painter, tr);
     }
 }
 
 /*!
   \brief Assign a symbol
-  \param s New symbol 
+  \param symbol New symbol 
   \sa symbol()
 */
-void QwtPolarMarker::setSymbol(const QwtSymbol &s)
+void QwtPolarMarker::setSymbol(const QwtSymbol *symbol)
 {
-    delete d_data->symbol;
-    d_data->symbol = s.clone();
-    itemChanged();
+	if ( d_data->symbol != symbol )
+	{
+    	delete d_data->symbol;
+    	d_data->symbol = symbol;
+    	itemChanged();
+	}
 }
 
 /*!
   \return the symbol
   \sa setSymbol(), QwtSymbol
 */
-const QwtSymbol &QwtPolarMarker::symbol() const 
+const QwtSymbol *QwtPolarMarker::symbol() const 
 { 
-    return *d_data->symbol; 
+    return d_data->symbol; 
 }
 
 /*!
@@ -200,11 +195,7 @@ QwtText QwtPolarMarker::label() const
     AlignVCenter.  
   \sa labelAlignment()
 */
-#if QT_VERSION < 0x040000
-void QwtPolarMarker::setLabelAlignment(int align)
-#else
 void QwtPolarMarker::setLabelAlignment(Qt::Alignment align)
-#endif
 {
     if ( align == d_data->align )
         return;
@@ -217,11 +208,7 @@ void QwtPolarMarker::setLabelAlignment(Qt::Alignment align)
   \return the label alignment
   \sa setLabelAlignment()
 */
-#if QT_VERSION < 0x040000
-int QwtPolarMarker::labelAlignment() const 
-#else
 Qt::Alignment QwtPolarMarker::labelAlignment() const 
-#endif
 { 
     return d_data->align; 
 }
@@ -235,10 +222,10 @@ Qt::Alignment QwtPolarMarker::labelAlignment() const
 
    \sa position()
 */
-QwtDoubleInterval QwtPolarMarker::boundingInterval(int scaleId) const
+QwtInterval QwtPolarMarker::boundingInterval(int scaleId) const
 {
     const double v = ( scaleId == QwtPolar::ScaleRadius ) 
         ? d_data->pos.radius() : d_data-> pos.azimuth();
 
-    return QwtDoubleInterval(v, v);
+    return QwtInterval(v, v);
 }

@@ -10,7 +10,7 @@
 #define QWT_POLAR_POINT_H 1
 
 #include "qwt_polar_global.h"
-#include "qwt_double_rect.h"
+#include <qpoint.h>
 
 /*!
   \brief A point in polar coordinates
@@ -25,10 +25,10 @@ public:
     QwtPolarPoint();
     QwtPolarPoint(double azimuth, double radius);
     QwtPolarPoint(const QwtPolarPoint &);
-    QwtPolarPoint(const QwtDoublePoint &);
+    QwtPolarPoint(const QPointF &);
 
-    void setPoint(const QwtDoublePoint &);
-    QwtDoublePoint toPoint() const;
+    void setPoint(const QPointF &);
+    QPointF toPoint() const;
 
     bool isValid() const;
     bool isNull() const;
@@ -54,7 +54,7 @@ private:
 
 /*!
     Constructs a null point, with a radius and azimuth set to 0.0.
-    \sa QwtDoublePoint::isNull
+    \sa QPointF::isNull
 */
 inline QwtPolarPoint::QwtPolarPoint():
     d_azimuth(0.0),

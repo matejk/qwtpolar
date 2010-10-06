@@ -11,7 +11,6 @@
 
 #include <qframe.h>
 #include "qwt_polar_global.h"
-#include "qwt_double_rect.h"
 
 class QPainter;
 class QwtPolarPlot;
@@ -65,7 +64,7 @@ protected:
 
     virtual void drawContents(QPainter *);
 
-    void drawCanvas(QPainter *, const QwtDoubleRect &);
+    void drawCanvas(QPainter *, const QRectF &);
 
     class PrivateData;
     PrivateData *d_data;

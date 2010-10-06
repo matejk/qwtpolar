@@ -11,12 +11,7 @@
 class QwtPolarItemDict::PrivateData
 {
 public:
-
-#if QT_VERSION < 0x040000
-    class ItemList: public QValueList<QwtPolarItem *>
-#else
     class ItemList: public QList<QwtPolarItem *>
-#endif
     {
     public:
         void insertItem(QwtPolarItem *item)
@@ -28,15 +23,7 @@ public:
             // for lists in Qt4. The implementation below
             // is slow, but there shouldn't be many plot items.
 
-#ifdef __GNUC__
-#warning binary search missing
-#endif
-
-#if QT_VERSION < 0x040000
-            QValueListIterator<QwtPolarItem *> it;
-#else
             QList<QwtPolarItem *>::Iterator it;
-#endif
             for ( it = begin(); it != end(); ++it )
             {
                 if ( *it == item )
@@ -58,20 +45,12 @@ public:
 
             int i = 0;
 
-#if QT_VERSION < 0x040000
-            QValueListIterator<QwtPolarItem *> it;
-#else
             QList<QwtPolarItem *>::Iterator it;
-#endif
             for ( it = begin(); it != end(); ++it )
             {
                 if ( item == *it )
                 {
-#if QT_VERSION < 0x040000
-                    remove(it);
-#else
                     removeAt(i);
-#endif
                     return;
                 }
                 i++;

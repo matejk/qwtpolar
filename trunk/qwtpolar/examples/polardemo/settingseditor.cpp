@@ -82,7 +82,7 @@ void SettingsEditor::edited()
     updateEditor();
 
     const PlotSettings s = settings();
-    emit edited(s);
+    Q_EMIT edited(s);
 }
 
 void SettingsEditor::updateEditor()
@@ -122,10 +122,8 @@ QString SettingsEditor::label(int flag) const
             return "Inverted";
         case PlotSettings::Logarithmic:
             return "Logarithmic";
-#if QT_VERSION >= 0x040000
         case PlotSettings::Antialiasing:
             return "Antialiasing";
-#endif
         case PlotSettings::CurveBegin + PlotSettings::Spiral:
             return "Spiral Curve";
         case PlotSettings::CurveBegin + PlotSettings::Rose:

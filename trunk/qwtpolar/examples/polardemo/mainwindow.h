@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = NULL);
 
-private slots:
+private Q_SLOTS:
     void enableZoomMode(bool on);
     void print();
     void exportSVG();
