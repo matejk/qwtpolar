@@ -16,10 +16,10 @@ public:
     void showSettings(const PlotSettings &);
     PlotSettings settings() const;
     
-signals:
+Q_SIGNALS:
     void edited(const PlotSettings&);
 
-private slots:
+private Q_SLOTS:
     void edited();
 
 private:

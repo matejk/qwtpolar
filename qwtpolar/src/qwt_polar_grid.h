@@ -135,28 +135,28 @@ public:
 
     virtual void draw(QPainter *p, 
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QwtDoublePoint &pole, double radius,
-        const QwtDoubleRect &rect) const;
+        const QPointF &pole, double radius,
+        const QRectF &rect) const;
 
     virtual void updateScaleDiv(const QwtScaleDiv &azimuthMap,
-        const QwtScaleDiv &radialMap, const QwtDoubleInterval &);
+        const QwtScaleDiv &radialMap, const QwtInterval &);
 
     virtual int marginHint() const;
 
 protected:
-    void drawRays(QPainter *, const QwtDoubleRect &,
-        const QwtDoublePoint &pole, double radius, 
-        const QwtScaleMap &azimuthMap, const QwtValueList &) const;
-    void drawCircles(QPainter *, const QwtDoubleRect &,
-        const QwtDoublePoint &pole, const QwtScaleMap &radialMap, 
-        const QwtValueList &) const;
+    void drawRays(QPainter *, const QRectF &,
+        const QPointF &pole, double radius, 
+        const QwtScaleMap &azimuthMap, const QList<double> &) const;
+    void drawCircles(QPainter *, const QRectF &,
+        const QPointF &pole, const QwtScaleMap &radialMap, 
+        const QList<double> &) const;
 
     void drawAxis(QPainter *, int axisId) const;
 
 private:
     void updateScaleDraws( 
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
-        const QwtDoublePoint &pole, const double radius) const;
+        const QPointF &pole, const double radius) const;
 
 private:
     class GridData;

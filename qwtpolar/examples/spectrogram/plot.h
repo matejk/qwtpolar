@@ -12,7 +12,7 @@ public:
 
     const QwtPolarSpectrogram *spectrogram() const;
 
-public slots:
+public Q_SLOTS:
     void printPlot();
     void showGrid(bool);
 

@@ -1,7 +1,5 @@
 #include <qprinter.h>
-#if QT_VERSION >= 0x040000
 #include <qprintdialog.h>
-#endif
 #include <qpen.h>
 #include <qwt_raster_data.h>
 #include <qwt_color_map.h>
@@ -21,9 +19,12 @@ public:
         return new SpectrogramData();
     }
 
-    virtual QwtDoubleInterval range() const
+    virtual QwtInterval interval(Qt::Axis axis) const
     {
-        return QwtDoubleInterval(0.0, 10.0);
+		if ( axis == Qt::ZAxis )
+        	return QwtInterval(0.0, 10.0);
+
+		return QwtInterval();
     }
 
     virtual double value(double azimuth, double radius) const
@@ -78,14 +79,14 @@ Plot::Plot(QWidget *parent):
 
     d_spectrogram = new QwtPolarSpectrogram();
 
-    QwtLinearColorMap colorMap(Qt::darkBlue, Qt::yellow);
-    colorMap.addColorStop(0.05, Qt::blue);
-    colorMap.addColorStop(0.3, Qt::cyan);
-    colorMap.addColorStop(0.6, Qt::green);
-    colorMap.addColorStop(0.98, Qt::red);
+    QwtLinearColorMap *colorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::yellow);
+    colorMap->addColorStop(0.05, Qt::blue);
+    colorMap->addColorStop(0.3, Qt::cyan);
+    colorMap->addColorStop(0.6, Qt::green);
+    colorMap->addColorStop(0.98, Qt::red);
 
     d_spectrogram->setColorMap(colorMap);
-    d_spectrogram->setData(SpectrogramData());
+    d_spectrogram->setData(new SpectrogramData());
 
     d_spectrogram->attach(this);
 
@@ -105,18 +106,10 @@ void Plot::printPlot()
 {
     QPrinter printer;
     printer.setOrientation(QPrinter::Landscape);
-#if QT_VERSION < 0x040000
-    printer.setColorMode(QPrinter::Color);
-    printer.setOutputFileName("/tmp/spectrogram.ps");
-    if (printer.setup())
-#else
     printer.setOutputFileName("/tmp/spectrogram.pdf");
     QPrintDialog dialog(&printer);
     if ( dialog.exec() )
-#endif
-    {
         renderTo(printer);
-    }
 }
 
 void Plot::showGrid(bool on)

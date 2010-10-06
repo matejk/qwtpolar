@@ -11,9 +11,7 @@
 #include "qwt_painter.h"
 #include "qwt_polar.h"
 #include "qwt_scale_map.h"
-#include "qwt_double_rect.h"
 #include "qwt_math.h"
-#include "qwt_polygon.h"
 #include "qwt_symbol.h"
 #include "qwt_legend.h"
 #include "qwt_legend_item.h"
@@ -53,7 +51,7 @@ public:
     }
 
     QwtPolarCurve::CurveStyle style;
-    QwtSymbol *symbol;
+    const QwtSymbol *symbol;
     QPen pen;
     QwtCurveFitter *curveFitter;
 };
@@ -88,7 +86,7 @@ QwtPolarCurve::QwtPolarCurve(const QString &title):
 //! Destructor
 QwtPolarCurve::~QwtPolarCurve()
 {
-    delete d_points;
+    delete d_series;
     delete d_data;
 }
 
@@ -96,14 +94,13 @@ QwtPolarCurve::~QwtPolarCurve()
 void QwtPolarCurve::init()
 {
     d_data = new PrivateData;
-    d_points = new QwtPolygonFData(QwtArray<QwtDoublePoint>());
+    d_series = NULL;
 
     setItemAttribute(QwtPolarItem::AutoScale);
     setItemAttribute(QwtPolarItem::Legend);
     setZ(20.0);
-#if QT_VERSION >= 0x040000
+
     setRenderHint(RenderAntialiased, true);
-#endif
 }
 
 //! \return QwtPolarCurve::Rtti_PolarCurve
@@ -138,23 +135,26 @@ QwtPolarCurve::CurveStyle QwtPolarCurve::style() const
 
 /*!
   \brief Assign a symbol
-  \param s symbol
+  \param symbol Symbol
   \sa symbol()
 */
-void QwtPolarCurve::setSymbol(const QwtSymbol &s )
+void QwtPolarCurve::setSymbol(const QwtSymbol *symbol )
 {
-    delete d_data->symbol;
-    d_data->symbol = s.clone();
-    itemChanged();
+	if ( symbol != d_data->symbol )
+	{
+    	delete d_data->symbol;
+    	d_data->symbol = symbol;
+    	itemChanged();
+	}
 }
 
 /*!
     \brief Return the current symbol
     \sa setSymbol()
 */
-const QwtSymbol &QwtPolarCurve::symbol() const 
+const QwtSymbol *QwtPolarCurve::symbol() const 
 { 
-    return *d_data->symbol; 
+    return d_data->symbol; 
 }
 
 /*!
@@ -189,11 +189,14 @@ const QPen& QwtPolarCurve::pen() const
   \param data Data
   \sa QwtData::copy()
 */
-void QwtPolarCurve::setData(const QwtData &data)
+void QwtPolarCurve::setData(QwtSeriesData<QPointF> *data)
 {
-    delete d_points;
-    d_points = data.copy();
-    itemChanged();
+    if ( d_series != data )
+    {
+        delete d_series;
+        d_series = data;
+        itemChanged();
+    }
 }
 
 /*!
@@ -237,8 +240,8 @@ QwtCurveFitter *QwtPolarCurve::curveFitter() const
 */
 void QwtPolarCurve::draw(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, double /*radius*/,
-    const QwtDoubleRect &) const
+    const QPointF &pole, double /*radius*/,
+    const QRectF &) const
 {
     draw(painter, azimuthMap, radialMap, pole, 0, -1);
 }
@@ -257,7 +260,7 @@ void QwtPolarCurve::draw(QPainter *painter,
 */
 void QwtPolarCurve::draw(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, int from, int to) const
+    const QPointF &pole, int from, int to) const
 {
     if ( !painter || dataSize() <= 0 )
         return;
@@ -298,7 +301,7 @@ void QwtPolarCurve::draw(QPainter *painter,
 */
 void QwtPolarCurve::drawCurve(QPainter *painter, int style, 
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, int from, int to) const
+    const QPointF &pole, int from, int to) const
 {
     switch (style)
     {
@@ -324,22 +327,18 @@ void QwtPolarCurve::drawCurve(QPainter *painter, int style,
 */
 void QwtPolarCurve::drawLines(QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, int from, int to) const
+    const QPointF &pole, int from, int to) const
 {
     int size = to - from + 1;
     if ( size <= 0 )
         return;
 
-    QwtPolygon polyline;
+    QPolygon polyline;
     if ( d_data->curveFitter )
     {
-#if QT_VERSION < 0x040000
-        QwtArray<QwtDoublePoint> points(size);
-#else
-        QwtPolygonF points(size);
-#endif
+        QPolygonF points(size);
         for (int j = from; j <= to; j++)
-            points[j - from] = QwtDoublePoint(azimuth(j), radius(j));
+            points[j - from] = QPointF(azimuth(j), radius(j));
 
         points = d_data->curveFitter->fitCurve(points);
 
@@ -348,8 +347,8 @@ void QwtPolarCurve::drawLines(QPainter *painter,
         {
             const QwtPolarPoint point(points[i].x(), points[i].y());
 
-            double r = radialMap.xTransform(point.radius());
-            const double a = azimuthMap.xTransform(point.azimuth());
+            double r = radialMap.transform(point.radius());
+            const double a = azimuthMap.transform(point.azimuth());
             polyline.setPoint(i, qwtPolar2Pos(pole, r, a).toPoint() );
         }
     }
@@ -361,8 +360,8 @@ void QwtPolarCurve::drawLines(QPainter *painter,
         {
             const QwtPolarPoint point = sample(i);
 
-            double r = radialMap.xTransform(point.radius());
-            const double a = azimuthMap.xTransform(point.azimuth());
+            double r = radialMap.transform(point.radius());
+            const double a = azimuthMap.transform(point.azimuth());
             polyline.setPoint(i - from, qwtPolar2Pos(pole, r, a).toPoint() );
         }
     }
@@ -390,24 +389,20 @@ void QwtPolarCurve::drawLines(QPainter *painter,
 */
 void QwtPolarCurve::drawSymbols(QPainter *painter, const QwtSymbol &symbol, 
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QwtDoublePoint &pole, int from, int to) const
+    const QPointF &pole, int from, int to) const
 {
     painter->setBrush(symbol.brush());
     painter->setPen(symbol.pen());
 
-    QRect rect;
-    rect.setSize(QwtPainter::metricsMap().screenToLayout(symbol.size()));
-
     for (int i = from; i <= to; i++)
     {
         const QwtPolarPoint point = sample(i);
-        const double r = radialMap.xTransform(point.radius());
-        const double a = azimuthMap.xTransform(point.azimuth());
+        const double r = radialMap.transform(point.radius());
+        const double a = azimuthMap.transform(point.azimuth());
 
         const QPoint pos = qwtPolar2Pos(pole, r, a).toPoint();
 
-        rect.moveCenter(pos);
-        symbol.draw(painter, rect);
+        symbol.drawSymbol(painter, pos);
     }
 }
 
@@ -417,7 +412,7 @@ void QwtPolarCurve::drawSymbols(QPainter *painter, const QwtSymbol &symbol,
 */
 int QwtPolarCurve::dataSize() const
 {
-    return d_points->size();
+    return d_series->size();
 }
 
 //!  Update the widget that represents the curve on the legend
@@ -434,15 +429,11 @@ void QwtPolarCurve::updateLegend(QwtLegend *legend) const
         
     QwtLegendItem *legendItem = (QwtLegendItem *)widget;
     
-#if QT_VERSION < 0x040000
-    const bool doUpdate = legendItem->isUpdatesEnabled();
-#else
     const bool doUpdate = legendItem->updatesEnabled();
-#endif
     legendItem->setUpdatesEnabled(false);
     
+#if 0
     const int policy = legend->displayPolicy();
-    
     if (policy == QwtLegend::FixedIdentifier)
     {
         int mode = legend->identifierMode();
@@ -485,6 +476,7 @@ void QwtPolarCurve::updateLegend(QwtLegend *legend) const
         }
         legendItem->setIdentifierMode(mode);
     }
+#endif
 
     legendItem->setUpdatesEnabled(doUpdate);
     legendItem->update();
@@ -499,13 +491,13 @@ void QwtPolarCurve::updateLegend(QwtLegend *legend) const
 
    \sa QwtData::boundingRect()
 */
-QwtDoubleInterval QwtPolarCurve::boundingInterval(int scaleId) const
+QwtInterval QwtPolarCurve::boundingInterval(int scaleId) const
 {
-    const QwtDoubleRect boundingRect = d_points->boundingRect();
+    const QRectF boundingRect = d_series->boundingRect();
     if ( scaleId == QwtPolar::ScaleAzimuth )
-        return QwtDoubleInterval(boundingRect.left(), boundingRect.right());
+        return QwtInterval(boundingRect.left(), boundingRect.right());
     else  if ( scaleId == QwtPolar::ScaleRadius )
-        return QwtDoubleInterval(boundingRect.top(), boundingRect.bottom());
+        return QwtInterval(boundingRect.top(), boundingRect.bottom());
 
-    return QwtDoubleInterval();
+    return QwtInterval();
 }

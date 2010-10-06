@@ -27,9 +27,7 @@ public:
         Inverted,
         Logarithmic,
 
-#if QT_VERSION >= 0x040000
         Antialiasing,
-#endif
 
         CurveBegin,
 
@@ -47,7 +45,7 @@ public:
     Plot(QWidget * = NULL);
     PlotSettings settings() const;
 
-public slots:
+public Q_SLOTS:
     void applySettings(const PlotSettings &);
 
 private:

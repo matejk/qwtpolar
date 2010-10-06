@@ -59,7 +59,7 @@ void QwtPolarLayout::LayoutData::init(
 
         const QSize hint = plot->legend()->sizeHint();
 
-        int w = qwtMin(hint.width(), rect.width());
+        int w = qMin(hint.width(), rect.width());
         int h = plot->legend()->heightForWidth(w);
         if ( h == 0 )
             h = hint.height();
@@ -284,7 +284,7 @@ QRect QwtPolarLayout::layoutLegend(int options,
         // We don't allow vertical legends to take more than
         // half of the available space.
 
-        dim = qwtMin(hint.width(), int(rect.width() * d_data->legendRatio));
+        dim = qMin(hint.width(), int(rect.width() * d_data->legendRatio));
 
         if ( !(options & IgnoreScrollbars) )
         {
@@ -299,8 +299,8 @@ QRect QwtPolarLayout::layoutLegend(int options,
     }
     else
     {
-        dim = qwtMin(hint.height(), int(rect.height() * d_data->legendRatio));
-        dim = qwtMax(dim, d_data->layoutData.legend.hScrollBarHeight);
+        dim = qMin(hint.height(), int(rect.height() * d_data->legendRatio));
+        dim = qMax(dim, d_data->layoutData.legend.hScrollBarHeight);
     }
 
     QRect legendRect = rect;
@@ -421,7 +421,7 @@ void QwtPolarLayout::activate(const QwtPolarPlot *plot,
         // In full state we know, that we want 
         // to display something circular.
 
-        const int dim = qwtMin(rect.width(), rect.height());
+        const int dim = qMin(rect.width(), rect.height());
         
         d_data->canvasRect.setX(rect.center().x() - dim / 2);
         d_data->canvasRect.setY(rect.y());

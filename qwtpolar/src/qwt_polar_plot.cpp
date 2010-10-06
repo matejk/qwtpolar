@@ -7,13 +7,8 @@
  *****************************************************************************/
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
-#include <qguardedptr.h>
-#include <qpaintdevicemetrics.h>
-#else
 #include <qpointer.h>
 #include <qpaintengine.h>
-#endif
 #include <qpainter.h>
 #include <qevent.h>
 #include "qwt_painter.h"
@@ -30,7 +25,7 @@
 #include "qwt_polar_plot.h"
 
 static inline double qwtDistance(
-    const QwtDoublePoint &p1, const QwtDoublePoint &p2)
+    const QPointF &p1, const QPointF &p2)
 {
     double dx = p2.x() - p1.x();
     double dy = p2.y() - p1.y();
@@ -74,15 +69,9 @@ public:
     double zoomFactor;
 
     ScaleData scaleData[QwtPolar::ScaleCount];
-#if QT_VERSION < 0x040000
-    QGuardedPtr<QwtTextLabel> titleLabel;
-    QGuardedPtr<QwtPolarCanvas> canvas;
-    QGuardedPtr<QwtLegend> legend;
-#else
     QPointer<QwtTextLabel> titleLabel;
     QPointer<QwtPolarCanvas> canvas;
     QPointer<QwtLegend> legend;
-#endif
     double azimuthOrigin;
 
     QwtPolarLayout *layout;
@@ -209,13 +198,7 @@ void QwtPolarPlot::insertLegend(QwtLegend *legend,
             if ( pos != ExternalLegend )
             {
                 if ( d_data->legend->parent() != this )
-                {
-#if QT_VERSION < 0x040000
-                    d_data->legend->reparent(this, QPoint(0, 0));
-#else
                     d_data->legend->setParent(this);
-#endif
-                }
             }
 
             const QwtPolarItemList& itmList = itemList();
@@ -277,7 +260,7 @@ void QwtPolarPlot::legendItemClicked()
     {
         QwtPolarItem *plotItem = (QwtPolarItem*)d_data->legend->find((QWidget *)sender());
         if ( plotItem )
-            emit legendClicked(plotItem);
+            Q_EMIT legendClicked(plotItem);
     }
 }
 
@@ -291,7 +274,7 @@ void QwtPolarPlot::legendItemChecked(bool on)
     {
         QwtPolarItem *plotItem = (QwtPolarItem*)d_data->legend->find((QWidget *)sender());
         if ( plotItem )
-            emit legendChecked(plotItem, on);
+            Q_EMIT legendChecked(plotItem, on);
     }
 }
 
@@ -653,7 +636,7 @@ double QwtPolarPlot::azimuthOrigin() const
 */
 void QwtPolarPlot::zoom(const QwtPolarPoint &zoomPos, double zoomFactor)
 {
-    zoomFactor = qwtAbs(zoomFactor);
+    zoomFactor = qAbs(zoomFactor);
     if ( zoomPos != d_data->zoomPos || 
         zoomFactor != d_data->zoomFactor )
     {
@@ -714,7 +697,7 @@ double QwtPolarPlot::zoomFactor() const
 */
 QwtScaleMap QwtPolarPlot::scaleMap(int scaleId) const
 {
-    const QwtDoubleRect pr = plotRect();
+    const QRectF pr = plotRect();
     return scaleMap(scaleId, pr.width() / 2.0);
 }
 
@@ -745,12 +728,12 @@ QwtScaleMap QwtPolarPlot::scaleMap(int scaleId, const double radius) const
 
     if ( scaleId == QwtPolar::Azimuth)
     {
-        map.setPaintXInterval(d_data->azimuthOrigin, 
+        map.setPaintInterval(d_data->azimuthOrigin, 
             d_data->azimuthOrigin + M_2PI); 
     }
     else
     {
-        map.setPaintXInterval(0.0, radius);
+        map.setPaintInterval(0.0, radius);
     }
 
     return map;
@@ -762,18 +745,12 @@ bool QwtPolarPlot::event(QEvent *e)
     bool ok = QWidget::event(e);
     switch(e->type())
     {
-#if QT_VERSION < 0x040000
-        case QEvent::LayoutHint:
-#else
         case QEvent::LayoutRequest:
-#endif
             updateLayout();
             break;
-#if QT_VERSION >= 0x040000
         case QEvent::PolishRequest:
             polish();
             break;
-#endif
         default:;
     }
     return ok;
@@ -793,11 +770,7 @@ void QwtPolarPlot::initPlot(const QwtText &title)
 
     QwtText text(title);
     int flags = Qt::AlignCenter;
-#if QT_VERSION < 0x040000
-    flags |= Qt::WordBreak | Qt::ExpandTabs;
-#else
     flags |= Qt::TextWordWrap;
-#endif
     text.setRenderFlags(flags);
 
     d_data->titleLabel = new QwtTextLabel(text, this);
@@ -887,7 +860,7 @@ void QwtPolarPlot::updateLayout()
     }
 
     d_data->canvas->setGeometry(d_data->layout->canvasRect());
-    emit layoutChanged();
+    Q_EMIT layoutChanged();
 }
 
 /*!
@@ -932,10 +905,10 @@ const QwtPolarCanvas *QwtPolarPlot::canvas() const
   \param canvasRect Contents rect of the canvas
 */
 void QwtPolarPlot::drawCanvas(QPainter *painter, 
-    const QwtDoubleRect &canvasRect) const
+    const QRectF &canvasRect) const
 {
-    const QwtDoubleRect cr = canvasRect;
-    const QwtDoubleRect pr = plotRect(cr.toRect());
+    const QRectF cr = canvasRect;
+    const QRectF pr = plotRect(cr.toRect());
 
     const double radius = pr.width() / 2.0;
 
@@ -954,12 +927,8 @@ void QwtPolarPlot::drawCanvas(QPainter *painter,
         }
         else
         {
-#if QT_VERSION < 0x040000
-            QwtPainter::drawEllipse(painter, pr.toRect());
-#else
             painter->setRenderHint(QPainter::Antialiasing, true);
             QwtPainter::drawEllipse(painter, pr.toRect());
-#endif
         }
         painter->restore();
     }
@@ -982,10 +951,10 @@ void QwtPolarPlot::drawCanvas(QPainter *painter,
 */
 void QwtPolarPlot::drawItems(QPainter *painter,
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QwtDoublePoint &pole, double radius,
-        const QwtDoubleRect &canvasRect) const
+        const QPointF &pole, double radius,
+        const QRectF &canvasRect) const
 {
-    const QwtDoubleRect pr = plotRect(canvasRect.toRect());
+    const QRectF pr = plotRect(canvasRect.toRect());
 
     const QwtPolarItemList& itmList = itemList();
     for ( QwtPolarItemIterator it = itmList.begin();
@@ -1002,7 +971,7 @@ void QwtPolarPlot::drawItems(QPainter *painter,
             bool doClipping = false;
             if ( item->rtti() != QwtPolarItem::Rtti_PolarGrid )
             {
-                const QwtDoubleInterval intv = 
+                const QwtInterval intv = 
                     item->boundingInterval(QwtPolar::Radius);
 
                 if ( !intv.isValid() )
@@ -1019,27 +988,18 @@ void QwtPolarPlot::drawItems(QPainter *painter,
             if ( doClipping )
             {
                 const int margin = item->marginHint();
-                const QwtDoubleRect clipRect(pr.x() - margin, pr.y() - margin,
+                const QRectF clipRect(pr.x() - margin, pr.y() - margin,
                     pr.width() + 2 * margin, pr.height() + 2 * margin);
 
                 if ( !clipRect.contains(canvasRect) )
                 {
                     QRegion clipRegion(clipRect.toRect(), QRegion::Ellipse);
-#if QT_VERSION >= 0x040000
                     painter->setClipRegion(clipRegion, Qt::IntersectClip);
-#else
-                    if ( painter->hasClipping() )
-                        clipRegion &= painter->clipRegion();
-
-                    painter->setClipRegion(clipRegion);
-#endif
                 }
             }
 
-#if QT_VERSION >= 0x040000
             painter->setRenderHint(QPainter::Antialiasing,
                 item->testRenderHint(QwtPolarItem::RenderAntialiased) );
-#endif
 
             item->draw(painter, azimuthMap, radialMap, 
                 pole, radius, canvasRect);
@@ -1067,7 +1027,7 @@ void QwtPolarPlot::updateScale(int scaleId)
 
     if ( scaleId == QwtPolar::ScaleRadius && d.doAutoScale )
     {
-        QwtDoubleInterval interval;
+        QwtInterval interval;
 
         const QwtPolarItemList& itmList = itemList();
         for ( QwtPolarItemIterator it = itmList.begin(); 
@@ -1093,7 +1053,7 @@ void QwtPolarPlot::updateScale(int scaleId)
             d.maxMajor, d.maxMinor, stepSize);
     }
 
-    const QwtDoubleInterval interval = visibleInterval();
+    const QwtInterval interval = visibleInterval();
 
     const QwtPolarItemList& itmList = itemList();
     for ( QwtPolarItemIterator it = itmList.begin(); 
@@ -1110,10 +1070,6 @@ void QwtPolarPlot::polish()
 {
     updateLayout();
     replot();
-
-#if QT_VERSION < 0x040000
-    QWidget::polish();
-#endif
 }
 
 /*! 
@@ -1144,7 +1100,7 @@ int QwtPolarPlot::plotMarginHint() const
    The plot area depends on the size of the canvas
    and the zoom parameters.
 */
-QwtDoubleRect QwtPolarPlot::plotRect() const
+QRectF QwtPolarPlot::plotRect() const
 {
     return plotRect(canvas()->contentsRect());
 }
@@ -1157,18 +1113,18 @@ QwtDoubleRect QwtPolarPlot::plotRect() const
    \param canvasRect Rectangle of the canvas
    \return Rectangle for displaying 100% of the plot
 */
-QwtDoubleRect QwtPolarPlot::plotRect(const QRect &canvasRect) const
+QRectF QwtPolarPlot::plotRect(const QRect &canvasRect) const
 {
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
     const QwtScaleEngine *se = scaleEngine(QwtPolar::Radius);
 
     const int margin = plotMarginHint();
     const QRect cr = canvasRect;
-    const int radius = qwtMin(cr.width(), cr.height()) / 2 - margin;
+    const int radius = qMin(cr.width(), cr.height()) / 2 - margin;
 
     QwtScaleMap map;
     map.setTransformation(se->transformation());
-    map.setPaintXInterval(0.0, radius / d_data->zoomFactor);
+    map.setPaintInterval(0.0, radius / d_data->zoomFactor);
     map.setScaleInterval(sd->lowerBound(), sd->upperBound());
 
     double v = map.s1();
@@ -1176,15 +1132,15 @@ QwtDoubleRect QwtPolarPlot::plotRect(const QRect &canvasRect) const
         v += d_data->zoomPos.radius();
     else
         v -= d_data->zoomPos.radius();
-    v = map.xTransform(v);
+    v = map.transform(v);
 
-    const QwtDoublePoint off =
+    const QPointF off =
         QwtPolarPoint(d_data->zoomPos.azimuth(), v).toPoint();
 
-    QwtDoublePoint center(cr.center().x(), cr.top() + margin + radius);
-    center -= QwtDoublePoint(off.x(), -off.y());
+    QPointF center(cr.center().x(), cr.top() + margin + radius);
+    center -= QPointF(off.x(), -off.y());
 
-    QwtDoubleRect rect(0, 0, 2 * map.p2(), 2 * map.p2());
+    QRectF rect(0, 0, 2 * map.p2(), 2 * map.p2());
     rect.moveCenter(center);
 
     return rect;
@@ -1194,19 +1150,19 @@ QwtDoubleRect QwtPolarPlot::plotRect(const QRect &canvasRect) const
    Calculate the bounding interval of the radial scale that is
    visible on the canvas. 
 */
-QwtDoubleInterval QwtPolarPlot::visibleInterval() const
+QwtInterval QwtPolarPlot::visibleInterval() const
 {
     const QwtScaleDiv *sd = scaleDiv(QwtPolar::Radius);
 
-    const QwtDoubleRect cRect = canvas()->contentsRect();
-    const QwtDoubleRect pRect = plotRect(cRect.toRect());
+    const QRectF cRect = canvas()->contentsRect();
+    const QRectF pRect = plotRect(cRect.toRect());
     if ( cRect.contains(pRect.toRect()) || !cRect.intersects(pRect) )
     {
-        return QwtDoubleInterval(sd->lowerBound(), sd->upperBound());
+        return QwtInterval(sd->lowerBound(), sd->upperBound());
     }
 
-    const QwtDoublePoint pole = pRect.center();
-    const QwtDoubleRect scaleRect = pRect & cRect;
+    const QPointF pole = pRect.center();
+    const QRectF scaleRect = pRect & cRect;
     
     const QwtScaleMap map = scaleMap(QwtPolar::Radius);
 
@@ -1216,7 +1172,7 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
     {
         dmin = 0.0;
 
-        QwtDoublePoint corners[4];
+        QPointF corners[4];
         corners[0] = scaleRect.bottomRight();
         corners[1] = scaleRect.topRight();
         corners[2] = scaleRect.topLeft();
@@ -1247,7 +1203,7 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
             else
             {
                 dmin = scaleRect.left() - pole.x();
-                dmax = qwtMax(qwtDistance(pole, scaleRect.bottomRight()),
+                dmax = qMax(qwtDistance(pole, scaleRect.bottomRight()),
                     qwtDistance(pole, scaleRect.topRight()) );
             }
         } 
@@ -1266,20 +1222,20 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
             else
             {
                 dmin = pole.x() - scaleRect.right();
-                dmax = qwtMax(qwtDistance(pole, scaleRect.bottomLeft()),
+                dmax = qMax(qwtDistance(pole, scaleRect.bottomLeft()),
                     qwtDistance(pole, scaleRect.topLeft()) );
             }
         }
         else if ( pole.y() < scaleRect.top() )
         {
             dmin = scaleRect.top() - pole.y();
-            dmax = qwtMax(qwtDistance(pole, scaleRect.bottomLeft()),
+            dmax = qMax(qwtDistance(pole, scaleRect.bottomLeft()),
                 qwtDistance(pole, scaleRect.bottomRight()));
         }
         else if ( pole.y() > scaleRect.bottom() )
         {
             dmin = pole.y() - scaleRect.bottom();
-            dmax = qwtMax(qwtDistance(pole, scaleRect.topLeft()),
+            dmax = qMax(qwtDistance(pole, scaleRect.topLeft()),
                 qwtDistance(pole, scaleRect.topRight()));
         }
     }
@@ -1288,7 +1244,7 @@ QwtDoubleInterval QwtPolarPlot::visibleInterval() const
     if ( dmax > radius )
         dmax = radius;
 
-    QwtDoubleInterval interval;
+    QwtInterval interval;
     interval.setMinValue(map.invTransform(dmin));
     interval.setMaxValue(map.invTransform(dmax));
     
@@ -1321,20 +1277,10 @@ const QwtPolarLayout *QwtPolarPlot::plotLayout() const
 */
 void QwtPolarPlot::renderTo(QPaintDevice &paintDev) const
 {
-#if QT_VERSION < 0x040000
-    QPaintDeviceMetrics mpr(&paintDev);
-    int w = mpr.width();
-    int h = mpr.height();
-#else
-    int w = paintDev.width();
-    int h = paintDev.height();
-#endif
-
-    const QRect rect(0, 0, w, h);
+    const QRect rect(0, 0, paintDev.width(), paintDev.height() );
 
     QPainter p(&paintDev);
     renderTo(&p, rect);
-
 }
 
 /*!
@@ -1354,15 +1300,11 @@ void QwtPolarPlot::renderTo(QPainter *painter, const QRect &plotRect) const
     // All paint operations need to be scaled according to
     // the paint device metrics.
 
-    QwtPainter::setMetricsMap(this, painter->device());
-    const QwtMetricsMap &metricsMap = QwtPainter::metricsMap();
-
     int layoutOptions = QwtPolarLayout::IgnoreScrollbars
         | QwtPolarLayout::IgnoreFrames;
 
     ((QwtPolarPlot *)this)->plotLayout()->activate(this,
-        QwtPainter::metricsMap().deviceToLayout(plotRect),
-        layoutOptions);
+        plotRect, layoutOptions);
 
     painter->save();
     renderTitle(painter, plotLayout()->titleRect());
@@ -1373,16 +1315,11 @@ void QwtPolarPlot::renderTo(QPainter *painter, const QRect &plotRect) const
     painter->restore();
 
     QRect canvasRect = plotLayout()->canvasRect();
-    canvasRect = metricsMap.layoutToDevice(canvasRect);
-
-    QwtPainter::setMetricsMap(painter->device(), painter->device());
 
     painter->save();
     painter->setClipRect(canvasRect);
     drawCanvas(painter, canvasRect);
     painter->restore();
-
-    QwtPainter::resetMetricsMap();
 
     ((QwtPolarPlot *)this)->plotLayout()->invalidate();
 }
@@ -1398,14 +1335,8 @@ void QwtPolarPlot::renderTitle(QPainter *painter, const QRect &rect) const
 {   
     painter->setFont(titleLabel()->font());
 
-    const QColor color = 
-#if QT_VERSION < 0x040000
-        titleLabel()->palette().color(
-            QPalette::Active, QColorGroup::Text);
-#else
-        titleLabel()->palette().color(
+    const QColor color = titleLabel()->palette().color(
             QPalette::Active, QPalette::Text);
-#endif
 
     painter->setPen(color);
     titleLabel()->text().draw(painter, rect);
@@ -1434,32 +1365,19 @@ void QwtPolarPlot::renderLegend(QPainter *painter, const QRect &rect) const
     QwtDynGridLayout *legendLayout = (QwtDynGridLayout *)l;
 
     uint numCols = legendLayout->columnsForWidth(rect.width());
-#if QT_VERSION < 0x040000
-    QValueList<QRect> itemRects =
-        legendLayout->layoutItems(rect, numCols);
-#else
-    QList<QRect> itemRects =
-        legendLayout->layoutItems(rect, numCols);
-#endif
+    QList<QRect> itemRects = legendLayout->layoutItems(rect, numCols);
 
     int index = 0;
 
-#if QT_VERSION < 0x040000
-    QLayoutIterator layoutIterator = legendLayout->iterator();
-    for ( QLayoutItem *item = layoutIterator.current();
-        item != 0; item = ++layoutIterator)
-    {
-#else
     for ( int i = 0; i < legendLayout->count(); i++ )
     {
         QLayoutItem *item = legendLayout->itemAt(i);
-#endif
         QWidget *w = item->widget();
         if ( w )
         {
             painter->save();
             painter->setClipping(true);
-            QwtPainter::setClipRect(painter, itemRects[index]);
+            painter->setClipRect(itemRects[index]);
 
             renderLegendItem(painter, w, itemRects[index]);
 
@@ -1480,9 +1398,8 @@ void QwtPolarPlot::renderLegend(QPainter *painter, const QRect &rect) const
 void QwtPolarPlot::renderLegendItem(QPainter *painter,
     const QWidget *w, const QRect &rect) const
 {
-#if 1
+#if 0
     // Shift this code into QwtLegend, so that Qwt/QwtPolar can share it
-#endif
     if ( w->inherits("QwtLegendItem") )
     {
         QwtLegendItem *item = (QwtLegendItem *)w;
@@ -1490,4 +1407,5 @@ void QwtPolarPlot::renderLegendItem(QPainter *painter,
         painter->setFont(item->font());
         item->drawItem(painter, rect);
     }
+#endif
 }

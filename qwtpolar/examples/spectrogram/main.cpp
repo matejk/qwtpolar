@@ -25,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent):
     QToolButton *btnPrint = new QToolButton(toolBar);
     QToolButton *btnGrid = new QToolButton(toolBar);
 
-#if QT_VERSION >= 0x040000
     btnPrint->setText("Print");
     btnPrint->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     toolBar->addWidget(btnPrint);
@@ -35,15 +34,6 @@ MainWindow::MainWindow(QWidget *parent):
     btnGrid->setCheckable(true);
     btnGrid->setChecked(true);
     toolBar->addWidget(btnGrid);
-#else
-    btnPrint->setTextLabel("Print");
-    btnPrint->setUsesTextLabel(true);
-
-    btnGrid->setTextLabel("Print");
-    btnGrid->setUsesTextLabel(true);
-    btnGrid->setToggleButton(true);
-    btnGrid->setOn(true);
-#endif
 
     addToolBar(toolBar);
 
@@ -58,10 +48,6 @@ int main(int argc, char **argv)
     QApplication a(argc, argv);
 
     MainWindow mainWindow;
-#if QT_VERSION < 0x040000
-    a.setMainWidget(&mainWindow);
-#endif
-
     mainWindow.resize(700,600);
     mainWindow.show();
 

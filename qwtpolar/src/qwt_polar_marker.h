@@ -46,26 +46,21 @@ public:
     void setPosition(const QwtPolarPoint &);
     QwtPolarPoint position() const;
 
-    void setSymbol(const QwtSymbol &s);
-    const QwtSymbol &symbol() const;
+    void setSymbol(const QwtSymbol *s);
+    const QwtSymbol *symbol() const;
 
     void setLabel(const QwtText&);
     QwtText label() const;
 
-#if QT_VERSION < 0x040000
-    void setLabelAlignment(int align);
-    int labelAlignment() const;
-#else
     void setLabelAlignment(Qt::Alignment);
     Qt::Alignment labelAlignment() const;
-#endif
 
     virtual void draw(QPainter *painter,
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QwtDoublePoint &pole, double radius,
-        const QwtDoubleRect &canvasRect) const;
+        const QPointF &pole, double radius,
+        const QRectF &canvasRect) const;
 
-    virtual QwtDoubleInterval boundingInterval(int scaleId) const;
+    virtual QwtInterval boundingInterval(int scaleId) const;
 
 private:
     class PrivateData;

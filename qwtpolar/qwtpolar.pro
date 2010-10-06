@@ -6,17 +6,23 @@
 # modify it under the terms of the Qwt License, Version 1.0
 #################################################################
 
-include( qwtpolar.pri )
+include( qwtpolarconfig.pri )
 
 TEMPLATE = subdirs
+CONFIG   += ordered
 
 SUBDIRS = src
 
-contains(CONFIG, QwtPolarDesigner ) {
+contains(QWT_POLAR_CONFIG, QwtPolarDesigner ) {
     SUBDIRS += designer
 }
 
-contains(CONFIG, QwtPolarExamples ) {
+contains(QWT_POLAR_CONFIG, QwtPolarExamples ) {
 	SUBDIRS += examples
 }
+
+qwtpolarspec.files  = qwtpolarconfig.pri qwtpolar.prf
+qwtpolarspec.path  = $${QWT_POLAR_INSTALL_FEATURES}
+
+INSTALLS += qwtpolarspec
 

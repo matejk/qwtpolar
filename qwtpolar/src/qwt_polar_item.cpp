@@ -18,9 +18,7 @@ public:
         plot(NULL),
         isVisible(true),
         attributes(0),
-#if QT_VERSION >= 0x040000
         renderHints(0),
-#endif
         z(0.0)
     {
     }
@@ -29,9 +27,7 @@ public:
 
     bool isVisible;
     int attributes;
-#if QT_VERSION >= 0x040000
     int renderHints;
-#endif
     double z;
 
     QwtText title;
@@ -220,8 +216,6 @@ bool QwtPolarItem::testItemAttribute(ItemAttribute attribute) const
     return d_data->attributes & attribute;
 }
 
-#if QT_VERSION >= 0x040000
-
 /*!
    Toggle an render hint
  
@@ -254,8 +248,6 @@ bool QwtPolarItem::testRenderHint(RenderHint hint) const
 {
     return (d_data->renderHints & hint);
 }
-
-#endif
 
 //! Show the item
 void QwtPolarItem::show()
@@ -319,9 +311,9 @@ void QwtPolarItem::itemChanged()
 
    \param scaleId Scale id ( QwtPolar::Scale )
 */
-QwtDoubleInterval QwtPolarItem::boundingInterval(int /*scaleId*/) const
+QwtInterval QwtPolarItem::boundingInterval(int /*scaleId*/) const
 {
-    return QwtDoubleInterval(); // invalid
+    return QwtInterval(); // invalid
 }
 
 /*!
@@ -341,7 +333,7 @@ QwtDoubleInterval QwtPolarItem::boundingInterval(int /*scaleId*/) const
 */
 void QwtPolarItem::updateScaleDiv(const QwtScaleDiv & /* azimuthScaleDiv */,
     const QwtScaleDiv & /* radialScaleDiv */, 
-    const QwtDoubleInterval & /*interval */ ) 
+    const QwtInterval & /*interval */ ) 
 { 
 }
 
@@ -411,11 +403,7 @@ void QwtPolarItem::updateLegend(QwtLegend *legend) const
 */
 QWidget *QwtPolarItem::legendItem() const
 {
-#if QWT_VERSION >= 0x050300
-    return new QwtLegendCurveItem;
-#else
     return new QwtLegendItem;
-#endif
 }
 
 /*!

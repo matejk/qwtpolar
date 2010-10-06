@@ -30,12 +30,7 @@ public:
     void setStepCount(int size);
     int stepCount() const;
 
-#if QT_VERSION < 0x040000
-    virtual QwtArray<QwtDoublePoint> fitCurve(
-        const QwtArray<QwtDoublePoint> &) const;
-#else
     virtual QPolygonF fitCurve(const QPolygonF &) const;
-#endif
 
 private:
     class PrivateData;

@@ -76,16 +76,16 @@ void QwtPolarPanner::movePlot(int dx, int dy)
     if ( map.s1() <= map.s2() )
     {
         pos.setRadius(
-            map.xTransform(map.s1() + pos.radius()) - map.p1());
-        pos.setPoint(pos.toPoint() - QwtDoublePoint(dx, -dy));
+            map.transform(map.s1() + pos.radius()) - map.p1());
+        pos.setPoint(pos.toPoint() - QPointF(dx, -dy));
         pos.setRadius(
             map.invTransform(map.p1() + pos.radius()) - map.s1());
     }
     else
     {
         pos.setRadius(
-            map.xTransform(map.s1() - pos.radius()) - map.p1());
-        pos.setPoint(pos.toPoint() - QwtDoublePoint(dx, -dy));
+            map.transform(map.s1() - pos.radius()) - map.p1());
+        pos.setPoint(pos.toPoint() - QPointF(dx, -dy));
         pos.setRadius(
             map.s1() - map.invTransform(map.p1() + pos.radius()));
     }

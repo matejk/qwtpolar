@@ -17,7 +17,7 @@
    \param p Point in Cartesian coordinates
    \sa setPoint(), toPoint()
 */
-QwtPolarPoint::QwtPolarPoint(const QwtDoublePoint &p)
+QwtPolarPoint::QwtPolarPoint(const QPointF &p)
 {
     d_radius = ::sqrt(qwtSqr(p.x()) + qwtSqr(p.y()) );
     d_azimuth = ::atan2(p.y(), p.x());
@@ -27,7 +27,7 @@ QwtPolarPoint::QwtPolarPoint(const QwtDoublePoint &p)
    Convert and assign values from a point in Cartesian coordinates
    \param p Point in Cartesian coordinates
 */
-void QwtPolarPoint::setPoint(const QwtDoublePoint &p)
+void QwtPolarPoint::setPoint(const QPointF &p)
 {
     d_radius = ::sqrt(qwtSqr(p.x()) + qwtSqr(p.y()) );
     d_azimuth = ::atan2(p.y(), p.x());
@@ -36,18 +36,18 @@ void QwtPolarPoint::setPoint(const QwtDoublePoint &p)
 /*! 
    Convert and return values in Cartesian coordinates
 
-   \note Invalid or null points will be returned as QwtDoublePoint(0.0, 0.0)
+   \note Invalid or null points will be returned as QPointF(0.0, 0.0)
    \sa isValid(), isNull()
 */
-QwtDoublePoint QwtPolarPoint::toPoint() const
+QPointF QwtPolarPoint::toPoint() const
 {
     if ( d_radius <= 0.0 )
-        return QwtDoublePoint(0.0, 0.0);
+        return QPointF(0.0, 0.0);
 
     const double x = d_radius * ::cos(d_azimuth);
     const double y = d_radius * ::sin(d_azimuth);
 
-    return QwtDoublePoint(x, y);
+    return QPointF(x, y);
 }
 
 /*!
@@ -86,7 +86,7 @@ bool QwtPolarPoint::operator!=(const QwtPolarPoint &other) const
 */
 QwtPolarPoint QwtPolarPoint::normalized() const
 {
-    const double radius = qwtMax(d_radius, 0.0);
+    const double radius = qMax(d_radius, 0.0);
 
     double azimuth = d_azimuth;
     if ( azimuth < -2.0 * M_PI || azimuth >= 2 * M_PI )

@@ -11,7 +11,7 @@
 
 #include <qframe.h>
 #include "qwt_polar_global.h"
-#include "qwt_double_interval.h"
+#include "qwt_interval.h"
 #include "qwt_scale_map.h"
 #include "qwt_polar.h"
 #include "qwt_polar_point.h"
@@ -141,7 +141,7 @@ public:
     void setPlotBackground (const QBrush &c);
     const QBrush& plotBackground() const;
 
-    virtual void drawCanvas(QPainter *, const QwtDoubleRect &) const;
+    virtual void drawCanvas(QPainter *, const QRectF &) const;
 
 
     // Legend
@@ -156,16 +156,16 @@ public:
     QwtPolarLayout *plotLayout();
     const QwtPolarLayout *plotLayout() const;
 
-    QwtDoubleInterval visibleInterval() const;
-    QwtDoubleRect plotRect() const;
-    QwtDoubleRect plotRect(const QRect &) const;
+    QwtInterval visibleInterval() const;
+    QRectF plotRect() const;
+    QRectF plotRect(const QRect &) const;
 
     int plotMarginHint() const;
 
     void renderTo(QPaintDevice &) const;
     virtual void renderTo(QPainter *, const QRect &) const;
 
-signals:
+Q_SIGNALS:
     /*!
       A signal which is emitted when the user has clicked on
       a legend item, which is in QwtLegend::ClickableItem mode.
@@ -197,12 +197,12 @@ signals:
      */
     void layoutChanged();
 
-public slots:
+public Q_SLOTS:
     virtual void replot();
     void autoRefresh();
     void setAzimuthOrigin(double);
 
-protected slots:
+protected Q_SLOTS:
     virtual void legendItemClicked();
     virtual void legendItemChecked(bool);
 
@@ -214,8 +214,8 @@ protected:
 
     virtual void drawItems(QPainter *painter, 
         const QwtScaleMap &radialMap, const QwtScaleMap &azimuthMap,
-        const QwtDoublePoint &pole, double radius,
-        const QwtDoubleRect &canvasRect) const;
+        const QPointF &pole, double radius,
+        const QRectF &canvasRect) const;
 
     virtual void renderTitle(QPainter *, const QRect &) const;
     virtual void renderLegend(QPainter *, const QRect &) const;

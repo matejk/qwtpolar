@@ -6,104 +6,38 @@
 # modify it under the terms of the Qwt License, Version 1.0
 ##############################################
 
-QWTPOLAR_ROOT = ..
+QWT_POLAR_ROOT = ..
 
-include ( $${QWTPOLAR_ROOT}/qwtpolar.pri )
+include ( $${QWT_POLAR_ROOT}/qwtpolar.pri )
 
-contains(CONFIG, QwtPolarDesigner) {
+contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 
+	CONFIG    += qt designer plugin
 	CONFIG    += warn_on
 
-	SUFFIX_STR =
-
-    VVERSION = $$[QT_VERSION]
-    isEmpty(VVERSION) {
-
-        # Qt 3
-        debug {
-            SUFFIX_STR = $${DEBUG_SUFFIX}
-        }
-        else {
-            SUFFIX_STR = $${RELEASE_SUFFIX}
-        }
-    }
-    else {
-
-        CONFIG(debug, debug|release) {
-            SUFFIX_STR = $${DEBUG_SUFFIX}
-        }
-        else {
-            SUFFIX_STR = $${RELEASE_SUFFIX}
-        }
-    }
-
 	TEMPLATE        = lib
-	MOC_DIR         = moc
-	OBJECTS_DIR     = obj$${SUFFIX_STR}
+	TARGET          = qwt_polar_designer_plugin
+
 	DESTDIR         = plugins/designer
-	INCLUDEPATH    += $${QWTPOLAR_ROOT}/src 
-	DEPENDPATH     += $${QWTPOLAR_ROOT}/src 
 
-	INCLUDEPATH += $$QWT_INCLUDEPATH
-	DEPENDPATH  += $$QWT_INCLUDEPATH
+	INCLUDEPATH    += $${QWT_POLAR_ROOT}/src 
+	DEPENDPATH     += $${QWT_POLAR_ROOT}/src 
 
-    LIBNAME         = qwtpolar$${SUFFIX_STR}
+	LIBS      += -L$${QWT_POLAR_ROOT}/lib
+	qtAddLibrary(qwtpolar)
+
 	contains(CONFIG, QwtPolarDll) {
 		win32 {
-			DEFINES += QT_DLL QWT_DLL QWTPOLAR_DLL
-			LIBNAME = $${LIBNAME}$${VER_MAJ}
+			DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
 		}
 	}
 
-	unix:LIBS      += -L$${QWTPOLAR_ROOT}/lib -l$${LIBNAME}
-	win32-msvc:LIBS  += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-msvc.net:LIBS  += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-msvc2002:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-msvc2003:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-msvc2005:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-msvc2008:LIBS += $${QWTPOLAR_ROOT}/lib/$${LIBNAME}.lib
-	win32-g++:LIBS   += -L$${QWTPOLAR_ROOT}/lib -l$${LIBNAME}
+	HEADERS += qwt_polar_designer_plugin.h
+	SOURCES += qwt_polar_designer_plugin.cpp
+	RESOURCES += qwt_polar_designer_plugin.qrc
 
-	# isEmpty(QT_VERSION) does not work with Qt-4.1.0/MinGW
-
-	VVERSION = $$[QT_VERSION]
-	isEmpty(VVERSION) {
-		# Qt 3 
-		TARGET    = qwtpolarplugin$${SUFFIX_STR}
-		CONFIG   += qt plugin
-
-		UI_DIR    = ui
-
-		HEADERS  += qwt_polar_plugin.h
-		SOURCES  += qwt_polar_plugin.cpp
-
-		target.path = $(QTDIR)/plugins/designer
-		INSTALLS += target
-
-		IMAGES  += \
-			pixmaps/qwt_polar_plot.png
-
-	} else {
-
-		# Qt 4
-
-		TARGET    = qwt_polar_designer_plugin$${SUFFIX_STR}
-		CONFIG    += qt designer plugin 
-
-		RCC_DIR   = resources
-
-		HEADERS += \
-			qwt_polar_designer_plugin.h
-
-		SOURCES += \
-			qwt_polar_designer_plugin.cpp
-
-		RESOURCES += \
-			qwt_polar_designer_plugin.qrc
-
-		target.path = $$[QT_INSTALL_PLUGINS]/designer
-		INSTALLS += target
-	}
+	target.path = $$[QWT_POLAR_INSTALL_PLUGINS]/designer
+	INSTALLS += target
 }
 else {
 	TEMPLATE        = subdirs # do nothing
