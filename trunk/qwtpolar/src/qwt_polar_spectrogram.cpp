@@ -41,28 +41,9 @@ static bool needsClipping(const QRectF &plotRect,
 class QwtPolarSpectrogram::PrivateData
 {
 public:
-    class DummyData: public QwtRasterData
+    PrivateData():
+		data(NULL)
     {
-    public:
-        virtual QwtRasterData *copy() const
-        {
-            return new DummyData();
-        }
-
-        virtual double value(double, double) const
-        {
-            return 0.0;
-        }
-
-        virtual QwtInterval range() const
-        {
-            return QwtInterval(0.0, 1.0);
-        }
-    };
-
-    PrivateData()
-    {
-        data = new DummyData();
         colorMap = new QwtLinearColorMap();
     }
 
@@ -231,9 +212,12 @@ void QwtPolarSpectrogram::draw(QPainter *painter,
        QwtColorMap::colorIndex()
 */
 QImage QwtPolarSpectrogram::renderImage(
-        const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QPointF &pole, const QRect &rect) const
+    const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
+    const QPointF &pole, const QRect &rect) const
 {
+	if ( d_data->data == NULL || d_data->colorMap == NULL )
+		return QImage();
+
     QImage image(rect.size(), d_data->colorMap->format() == QwtColorMap::RGB 
         ? QImage::Format_ARGB32 : QImage::Format_Indexed8 );
 
@@ -324,9 +308,7 @@ QImage QwtPolarSpectrogram::renderImage(
 QwtInterval QwtPolarSpectrogram::boundingInterval(int scaleId) const
 {
     if ( scaleId == QwtPolar::ScaleRadius )
-    {
-		const QwtInterval intervalY = d_data->data->interval( Qt::YAxis );
-        return intervalY.normalized();
-    }
+		return d_data->data->interval( Qt::YAxis );
+
     return QwtPolarItem::boundingInterval(scaleId);
 }
