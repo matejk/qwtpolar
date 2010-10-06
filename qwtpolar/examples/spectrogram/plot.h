@@ -9,8 +9,7 @@ class Plot: public QwtPolarPlot
 
 public:
     Plot(QWidget * = NULL);
-
-    const QwtPolarSpectrogram *spectrogram() const;
+    QwtPolarSpectrogram *spectrogram();
 
 public Q_SLOTS:
     void printPlot();

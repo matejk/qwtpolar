@@ -16,7 +16,9 @@ include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 TEMPLATE          = lib
 TARGET            = $$qtLibraryTarget(qwtpolar)
 
-contains(CONFIG, QwtPolarDll ) {
+DESTDIR           = $${QWT_POLAR_ROOT}/lib
+
+contains(QWT_POLAR_CONFIG, QwtPolarDll ) {
 
     CONFIG += dll
 	win32|symbian: DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL

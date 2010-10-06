@@ -2,9 +2,23 @@
 #include <qwt_raster_data.h>
 #include <qwt_polar_spectrogram.h>
 #include <qwt_scale_widget.h>
+#include <qwt_color_map.h>
 #include <qlayout.h>
 #include "plot.h"
 #include "plotwindow.h"
+
+class ColorMap: public QwtLinearColorMap
+{
+public:
+	ColorMap():
+    	QwtLinearColorMap(Qt::darkBlue, Qt::yellow)
+	{
+    	addColorStop(0.05, Qt::blue);
+    	addColorStop(0.3, Qt::cyan);
+    	addColorStop(0.6, Qt::green);
+    	addColorStop(0.98, Qt::red);
+	}
+};
 
 PlotWindow::PlotWindow(QWidget *parent):
     QWidget(parent)
@@ -21,14 +35,15 @@ PlotWindow::PlotWindow(QWidget *parent):
     title.setFont(font);
     d_colorScale->setTitle(title);
     
-    const QwtInterval range = d_plot->spectrogram()->data()->interval(Qt::ZAxis);
-#if 0
-    d_colorScale->setColorMap(range, d_plot->spectrogram()->colorMap());
-#endif
+    const QwtInterval interval = 
+		d_plot->spectrogram()->data()->interval(Qt::ZAxis);
+
+    d_colorScale->setColorMap( interval, new ColorMap() );
+	d_plot->spectrogram()->setColorMap( new ColorMap() );
     
     QwtLinearScaleEngine scaleEngine;
     d_colorScale->setScaleDiv(scaleEngine.transformation(),
-        scaleEngine.divideScale(range.minValue(), range.maxValue(), 8, 5));
+        scaleEngine.divideScale(interval.minValue(), interval.maxValue(), 8, 5));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(d_plot, 10);

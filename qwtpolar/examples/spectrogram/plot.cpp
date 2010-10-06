@@ -2,7 +2,6 @@
 #include <qprintdialog.h>
 #include <qpen.h>
 #include <qwt_raster_data.h>
-#include <qwt_color_map.h>
 #include <qwt_polar_panner.h>
 #include <qwt_polar_magnifier.h>
 #include <qwt_polar_grid.h>
@@ -14,18 +13,10 @@
 class SpectrogramData: public QwtRasterData
 {
 public:
-    virtual QwtRasterData *copy() const
-    {
-        return new SpectrogramData();
-    }
-
-    virtual QwtInterval interval(Qt::Axis axis) const
-    {
-		if ( axis == Qt::ZAxis )
-        	return QwtInterval(0.0, 10.0);
-
-		return QwtInterval();
-    }
+	SpectrogramData()
+	{
+		setInterval(Qt::ZAxis, QwtInterval(0.0, 10.0));
+	}
 
     virtual double value(double azimuth, double radius) const
     {
@@ -78,16 +69,7 @@ Plot::Plot(QWidget *parent):
     // spectrogram
 
     d_spectrogram = new QwtPolarSpectrogram();
-
-    QwtLinearColorMap *colorMap = new QwtLinearColorMap(Qt::darkBlue, Qt::yellow);
-    colorMap->addColorStop(0.05, Qt::blue);
-    colorMap->addColorStop(0.3, Qt::cyan);
-    colorMap->addColorStop(0.6, Qt::green);
-    colorMap->addColorStop(0.98, Qt::red);
-
-    d_spectrogram->setColorMap(colorMap);
     d_spectrogram->setData(new SpectrogramData());
-
     d_spectrogram->attach(this);
 
     d_spectrogram->setZ(1.0);
@@ -97,7 +79,7 @@ Plot::Plot(QWidget *parent):
     new QwtPolarMagnifier(canvas());
 }
 
-const QwtPolarSpectrogram *Plot::spectrogram() const
+QwtPolarSpectrogram *Plot::spectrogram() 
 {
     return d_spectrogram;
 }
