@@ -6,23 +6,21 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <qglobal.h>
+#include "qwt_polar_plot.h"
+#include "qwt_polar_canvas.h"
+#include "qwt_polar_layout.h"
+#include <qwt_painter.h>
+#include <qwt_scale_engine.h>
+#include <qwt_scale_div.h>
+#include <qwt_text_label.h>
+#include <qwt_round_scale_draw.h>
+#include <qwt_legend.h>
+#include <qwt_legend_item.h>
+#include <qwt_dyngrid_layout.h>
 #include <qpointer.h>
 #include <qpaintengine.h>
 #include <qpainter.h>
 #include <qevent.h>
-#include "qwt_painter.h"
-#include "qwt_math.h"
-#include "qwt_scale_engine.h"
-#include "qwt_scale_div.h"
-#include "qwt_text_label.h"
-#include "qwt_round_scale_draw.h"
-#include "qwt_polar_canvas.h"
-#include "qwt_legend.h"
-#include "qwt_legend_item.h"
-#include "qwt_dyngrid_layout.h"
-#include "qwt_polar_layout.h"
-#include "qwt_polar_plot.h"
 
 static inline double qwtDistance(
     const QPointF &p1, const QPointF &p2 )
@@ -65,7 +63,7 @@ public:
 
     bool autoReplot;
 
-    QwtPolarPoint zoomPos;
+    QwtPointPolar zoomPos;
     double zoomFactor;
 
     ScaleData scaleData[QwtPolar::ScaleCount];
@@ -634,7 +632,7 @@ double QwtPolarPlot::azimuthOrigin() const
 
    \sa unzoom(), zoomPos(), zoomFactor()
 */
-void QwtPolarPlot::zoom( const QwtPolarPoint &zoomPos, double zoomFactor )
+void QwtPolarPlot::zoom( const QwtPointPolar &zoomPos, double zoomFactor )
 {
     zoomFactor = qAbs( zoomFactor );
     if ( zoomPos != d_data->zoomPos ||
@@ -656,7 +654,7 @@ void QwtPolarPlot::unzoom()
     if ( d_data->zoomFactor != 1.0 || d_data->zoomPos.isValid() )
     {
         d_data->zoomFactor = 1.0;
-        d_data->zoomPos = QwtPolarPoint();
+        d_data->zoomPos = QwtPointPolar();
         autoRefresh();
     }
 }
@@ -665,7 +663,7 @@ void QwtPolarPlot::unzoom()
    \return Zoom position
    \sa zoom(), zoomFactor()
 */
-QwtPolarPoint QwtPolarPlot::zoomPos() const
+QwtPointPolar QwtPolarPlot::zoomPos() const
 {
     return d_data->zoomPos;
 }
@@ -1131,7 +1129,7 @@ QRectF QwtPolarPlot::plotRect( const QRect &canvasRect ) const
     v = map.transform( v );
 
     const QPointF off =
-        QwtPolarPoint( d_data->zoomPos.azimuth(), v ).toPoint();
+        QwtPointPolar( d_data->zoomPos.azimuth(), v ).toPoint();
 
     QPointF center( cr.center().x(), cr.top() + margin + radius );
     center -= QPointF( off.x(), -off.y() );

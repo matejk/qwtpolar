@@ -6,10 +6,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "qwt_scale_div.h"
+#include "qwt_polar_panner.h"
 #include "qwt_polar_plot.h"
 #include "qwt_polar_canvas.h"
-#include "qwt_polar_panner.h"
+#include <qwt_scale_div.h>
+#include <qwt_point_polar.h>
 
 //! Create a plot panner for a polar plot canvas
 QwtPolarPanner::QwtPolarPanner( QwtPolarCanvas *canvas ):
@@ -72,7 +73,7 @@ void QwtPolarPanner::movePlot( int dx, int dy )
 
     const QwtScaleMap map = plot->scaleMap( QwtPolar::Radius );
 
-    QwtPolarPoint pos = plot->zoomPos();
+    QwtPointPolar pos = plot->zoomPos();
     if ( map.s1() <= map.s2() )
     {
         pos.setRadius(

@@ -18,6 +18,7 @@
 #include <qprinter.h>
 #include <qimagewriter.h>
 #include <qfileinfo.h>
+#include <qmath.h>
 
 static inline double qwtDistance(
     const QPointF &p1, const QPointF &p2 )
@@ -30,10 +31,10 @@ static inline double qwtDistance(
 class QwtPolarRenderer::PrivateData
 {
 public:
-	PrivateData():
-		plot(NULL)
-	{
-	}
+    PrivateData():
+        plot(NULL)
+    {
+    }
 
     QwtPolarPlot *plot;
 };
@@ -45,7 +46,7 @@ public:
 QwtPolarRenderer::QwtPolarRenderer( QObject *parent ):
     QObject( parent )
 {
-	d_data = new PrivateData;
+    d_data = new PrivateData;
 }
 
 //! Destructor
@@ -255,7 +256,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
         return;
     }
 
-	d_data->plot = plot;
+    d_data->plot = plot;
 
     /*
       The layout engine uses the same methods as they are used
@@ -269,7 +270,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
 
     const QRectF layoutRect = transform.inverted().mapRect( plotRect );
 
-	QwtPolarLayout *layout = plot->plotLayout();
+    QwtPolarLayout *layout = plot->plotLayout();
 
     // All paint operations need to be scaled according to
     // the paint device metrics.
@@ -279,7 +280,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
 
     layout->activate( plot, layoutRect, layoutOptions );
 
-	painter->save();
+    painter->save();
     painter->setWorldTransform( transform, true );
 
     painter->save();
@@ -297,11 +298,11 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     plot->drawCanvas( painter, canvasRect );
     painter->restore();
 
-	painter->restore();
+    painter->restore();
 
     layout->invalidate();
 
-	d_data->plot = NULL;
+    d_data->plot = NULL;
 }
 
 /*!
@@ -313,7 +314,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
 
 void QwtPolarRenderer::renderTitle( QPainter *painter, const QRectF &rect ) const
 {
-	QwtTextLabel *title = d_data->plot->titleLabel();
+    QwtTextLabel *title = d_data->plot->titleLabel();
 
     painter->setFont( title->font() );
 
@@ -334,7 +335,7 @@ void QwtPolarRenderer::renderTitle( QPainter *painter, const QRectF &rect ) cons
 void QwtPolarRenderer::renderLegend( 
     QPainter *painter, const QRectF &rect ) const
 {
-	QwtLegend *legend = d_data->plot->legend();
+    QwtLegend *legend = d_data->plot->legend();
     if ( legend == NULL || legend->isEmpty() )
         return;
 

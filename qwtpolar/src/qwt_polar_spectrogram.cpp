@@ -6,13 +6,13 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <qpainter.h>
-#include <qwt_scale_map.h>
-#include <qwt_raster_data.h>
-#include <qwt_color_map.h>
+#include "qwt_polar_spectrogram.h"
 #include "qwt_polar.h"
 #include "qwt_polar_plot.h"
-#include "qwt_polar_spectrogram.h"
+#include <qwt_color_map.h>
+#include <qwt_scale_map.h>
+#include <qwt_raster_data.h>
+#include <qpainter.h>
 
 static bool needsClipping( const QRectF &plotRect, const QRectF &rect )
 {

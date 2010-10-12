@@ -6,18 +6,17 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <qpainter.h>
-#include "qwt_global.h"
-#include "qwt_painter.h"
-#include "qwt_polar.h"
-#include "qwt_scale_map.h"
-#include "qwt_math.h"
-#include "qwt_symbol.h"
-#include "qwt_legend.h"
-#include "qwt_legend_item.h"
-#include "qwt_curve_fitter.h"
-#include "qwt_clipper.h"
 #include "qwt_polar_curve.h"
+#include <qwt_painter.h>
+#include <qwt_polar.h>
+#include <qwt_scale_map.h>
+#include <qwt_math.h>
+#include <qwt_symbol.h>
+#include <qwt_legend.h>
+#include <qwt_legend_item.h>
+#include <qwt_curve_fitter.h>
+#include <qwt_clipper.h>
+#include <qpainter.h>
 
 static int verifyRange( int size, int &i1, int &i2 )
 {
@@ -208,7 +207,7 @@ const QPen& QwtPolarCurve::pen() const
 }
 
 /*!
-  Initialize data with a pointer to QwtData.
+  Initialize data with a pointer to QwtSeriesData<QwtPointPolar>.
 
   The x-values of the data object represent the azimuth,
   the y-value respresent the radius.
@@ -216,7 +215,7 @@ const QPen& QwtPolarCurve::pen() const
   \param data Data
   \sa QwtData::copy()
 */
-void QwtPolarCurve::setData( QwtSeriesData<QPointF> *data )
+void QwtPolarCurve::setData( QwtSeriesData<QwtPointPolar> *data )
 {
     if ( d_series != data )
     {
@@ -365,33 +364,36 @@ void QwtPolarCurve::drawLines( QPainter *painter,
     {
         QPolygonF points( size );
         for ( int j = from; j <= to; j++ )
-            points[j - from] = QPointF( azimuth( j ), radius( j ) );
+        {
+            const QwtPointPolar point = sample( j );
+            points[j - from] = QPointF( point.azimuth(), point.radius() );
+        }
 
         points = d_data->curveFitter->fitCurve( points );
 
         polyline.resize( points.size() );
 
-		QPointF *polylineData = polyline.data();
-		QPointF *pointsData = polyline.data();
+        QPointF *polylineData = polyline.data();
+        QPointF *pointsData = polyline.data();
 
         for ( int i = 0; i < ( int )points.size(); i++ )
         {
-            const QwtPolarPoint point( pointsData[i].x(), pointsData[i].y() );
+            const QwtPointPolar point( pointsData[i].x(), pointsData[i].y() );
 
             double r = radialMap.transform( point.radius() );
             const double a = azimuthMap.transform( point.azimuth() );
 
-			polylineData[i] = qwtPolar2Pos( pole, r, a );
+            polylineData[i] = qwtPolar2Pos( pole, r, a );
         }
     }
     else
     {
         polyline.resize( size );
-		QPointF *polylineData = polyline.data();
+        QPointF *polylineData = polyline.data();
 
         for ( int i = from; i <= to; i++ )
         {
-            const QwtPolarPoint point = sample( i );
+            const QwtPointPolar point = sample( i );
 
             double r = radialMap.transform( point.radius() );
             const double a = azimuthMap.transform( point.azimuth() );
@@ -426,7 +428,7 @@ void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
 
     for ( int i = from; i <= to; i++ )
     {
-        const QwtPolarPoint point = sample( i );
+        const QwtPointPolar point = sample( i );
         const double r = radialMap.transform( point.radius() );
         const double a = azimuthMap.transform( point.azimuth() );
 
@@ -440,7 +442,7 @@ void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
   Return the size of the data arrays
   \sa setData()
 */
-int QwtPolarCurve::dataSize() const
+size_t QwtPolarCurve::dataSize() const
 {
     return d_series->size();
 }

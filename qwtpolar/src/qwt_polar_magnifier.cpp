@@ -6,12 +6,12 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <math.h>
-#include <qevent.h>
+#include "qwt_polar_magnifier.h"
 #include "qwt_polar_plot.h"
 #include "qwt_polar_canvas.h"
-#include "qwt_scale_div.h"
-#include "qwt_polar_magnifier.h"
+#include <qwt_scale_div.h>
+#include <qwt_point_polar.h>
+#include <qevent.h>
 
 class QwtPolarMagnifier::PrivateData
 {
@@ -135,7 +135,7 @@ void QwtPolarMagnifier::rescale( double factor )
     if ( plt == NULL )
         return;
 
-    QwtPolarPoint zoomPos;
+    QwtPointPolar zoomPos;
     double newZoomFactor = plt->zoomFactor() * factor;
 
     if ( newZoomFactor >= 1.0 )

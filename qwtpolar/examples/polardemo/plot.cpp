@@ -11,7 +11,7 @@
 const QwtInterval radialInterval( 0.0, 10.0 );
 const QwtInterval azimuthInterval( 0.0, 360.0 );
 
-class Data: public QwtSeriesData<QPointF>
+class Data: public QwtSeriesData<QwtPointPolar>
 {
 public:
     Data( const QwtInterval &radialInterval,
@@ -42,15 +42,15 @@ public:
     {
     }
 
-    virtual QPointF sample( size_t i ) const
+    virtual QwtPointPolar sample( size_t i ) const
     {
-        const double stepX = 4 * d_azimuthInterval.width() / d_size;
-        const double x = d_azimuthInterval.minValue() + i * stepX;
+        const double stepA = 4 * d_azimuthInterval.width() / d_size;
+        const double a = d_azimuthInterval.minValue() + i * stepA;
 
-        const double stepY = d_radialInterval.width() / d_size;
-        const double y = d_radialInterval.minValue() + i * stepY;
+        const double stepR = d_radialInterval.width() / d_size;
+        const double r = d_radialInterval.minValue() + i * stepR;
 
-        return QPointF( x, y );
+        return QwtPointPolar( a, r );
     }
 
     virtual QRectF boundingRect() const
@@ -71,15 +71,15 @@ public:
     {
     }
 
-    virtual QPointF sample( size_t i ) const
+    virtual QwtPointPolar sample( size_t i ) const
     {
-        const double stepX = d_azimuthInterval.width() / d_size;
-        const double x = d_azimuthInterval.minValue() + i * stepX;
+        const double stepA = d_azimuthInterval.width() / d_size;
+        const double a = d_azimuthInterval.minValue() + i * stepA;
 
-        const double a = x / 360.0 * M_PI;
-        const double y = d_radialInterval.maxValue() * qAbs( qSin( 4 * a ) );
+        const double d = a / 360.0 * M_PI;
+        const double r = d_radialInterval.maxValue() * qAbs( qSin( 4 * d ) );
 
-        return QPointF( x, y );
+        return QwtPointPolar( a, r );
     }
 
     virtual QRectF boundingRect() const
@@ -143,7 +143,7 @@ Plot::Plot( QWidget *parent ):
 
     // markers
     QwtPolarMarker *marker = new QwtPolarMarker();
-    marker->setPosition( QwtPolarPoint( 57.3, 4.72 ) );
+    marker->setPosition( QwtPointPolar( 57.3, 4.72 ) );
     marker->setSymbol( new QwtSymbol( QwtSymbol::Ellipse,
         QBrush( Qt::white ), QPen( Qt::green ), QSize( 9, 9 ) ) );
     marker->setLabelAlignment( Qt::AlignHCenter | Qt::AlignTop );

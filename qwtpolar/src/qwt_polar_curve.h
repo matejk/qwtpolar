@@ -10,9 +10,9 @@
 #define QWT_POLAR_CURVE_H
 
 #include "qwt_polar_global.h"
-#include "qwt_series_data.h"
-#include "qwt_polar_point.h"
 #include "qwt_polar_item.h"
+#include <qwt_point_polar.h>
+#include <qwt_series_data.h>
 
 class QPainter;
 class QwtSymbol;
@@ -83,14 +83,11 @@ public:
     void setLegendAttribute( LegendAttribute, bool on = true );
     bool testLegendAttribute( LegendAttribute ) const;
 
-    void setData( QwtSeriesData<QPointF> *data );
-    QwtSeriesData<QPointF> *data();
-    const QwtSeriesData<QPointF> *data() const;
+    void setData( QwtSeriesData<QwtPointPolar> *data );
+    const QwtSeriesData<QwtPointPolar> *data() const;
 
-    int dataSize() const;
-    double radius( int i ) const;
-    double azimuth( int i ) const;
-    QwtPolarPoint sample( int i ) const;
+    size_t dataSize() const;
+    QwtPointPolar sample( int i ) const;
 
     void setPen( const QPen & );
     const QPen &pen() const;
@@ -135,49 +132,25 @@ protected:
         const QPointF &pole, int from, int to ) const;
 
 private:
-    QwtSeriesData<QPointF> *d_series;
+    QwtSeriesData<QwtPointPolar> *d_series;
 
     class PrivateData;
     PrivateData *d_data;
 };
 
 //! \return the the curve data
-inline QwtSeriesData<QPointF> *QwtPolarCurve::data()
+inline const QwtSeriesData<QwtPointPolar> *QwtPolarCurve::data() const
 {
     return d_series;
-}
-
-//! \return the the curve data
-inline const QwtSeriesData<QPointF> *QwtPolarCurve::data() const
-{
-    return d_series;
-}
-
-/*!
-    \param i index
-    \return azimuth at position i
-*/
-inline double QwtPolarCurve::azimuth( int i ) const
-{
-    return d_series->sample( i ).x();
-}
-
-/*!
-    \param i index
-    \return radius at position i
-*/
-inline double QwtPolarCurve::radius( int i ) const
-{
-    return d_series->sample( i ).y();
 }
 
 /*!
     \param i index
     \return point at position i
 */
-inline QwtPolarPoint QwtPolarCurve::sample( int i ) const
+inline QwtPointPolar QwtPolarCurve::sample( int i ) const
 {
-    return QwtPolarPoint( azimuth( i ), radius( i ) );
+    return d_series->sample( i );
 }
 
 #endif

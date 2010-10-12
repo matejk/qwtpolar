@@ -13,7 +13,6 @@
 #include "qwt_polar.h"
 #include "qwt_polar_item.h"
 #include "qwt_polar_plot.h"
-#include "qwt_scale_div.h"
 
 class QPainter;
 class QPen;

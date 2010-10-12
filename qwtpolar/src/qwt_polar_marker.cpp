@@ -6,13 +6,12 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <qpainter.h>
-#include "qwt_polar.h"
-#include "qwt_scale_map.h"
 #include "qwt_polar_marker.h"
-#include "qwt_symbol.h"
-#include "qwt_text.h"
-#include "qwt_math.h"
+#include "qwt_polar.h"
+#include <qwt_scale_map.h>
+#include <qwt_symbol.h>
+#include <qwt_text.h>
+#include <qpainter.h>
 
 static const int LabelDist = 2;
 
@@ -35,7 +34,7 @@ public:
     QPen pen;
     const QwtSymbol *symbol;
 
-    QwtPolarPoint pos;
+    QwtPointPolar pos;
 };
 
 //! Sets alignment to Qt::AlignCenter, and style to NoLine
@@ -61,13 +60,13 @@ int QwtPolarMarker::rtti() const
 }
 
 //! \return Position of the marker
-QwtPolarPoint QwtPolarMarker::position() const
+QwtPointPolar QwtPolarMarker::position() const
 {
     return d_data->pos;
 }
 
 //! Change the position of the marker
-void QwtPolarMarker::setPosition( const QwtPolarPoint &pos )
+void QwtPolarMarker::setPosition( const QwtPointPolar &pos )
 {
     if ( d_data->pos != pos )
     {
