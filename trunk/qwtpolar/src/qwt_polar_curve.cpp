@@ -360,7 +360,7 @@ void QwtPolarCurve::drawLines( QPainter *painter,
     if ( size <= 0 )
         return;
 
-    QPolygon polyline;
+    QPolygonF polyline;
     if ( d_data->curveFitter )
     {
         QPolygonF points( size );
@@ -370,18 +370,24 @@ void QwtPolarCurve::drawLines( QPainter *painter,
         points = d_data->curveFitter->fitCurve( points );
 
         polyline.resize( points.size() );
+
+		QPointF *polylineData = polyline.data();
+		QPointF *pointsData = polyline.data();
+
         for ( int i = 0; i < ( int )points.size(); i++ )
         {
-            const QwtPolarPoint point( points[i].x(), points[i].y() );
+            const QwtPolarPoint point( pointsData[i].x(), pointsData[i].y() );
 
             double r = radialMap.transform( point.radius() );
             const double a = azimuthMap.transform( point.azimuth() );
-            polyline.setPoint( i, qwtPolar2Pos( pole, r, a ).toPoint() );
+
+			polylineData[i] = qwtPolar2Pos( pole, r, a );
         }
     }
     else
     {
         polyline.resize( size );
+		QPointF *polylineData = polyline.data();
 
         for ( int i = from; i <= to; i++ )
         {
@@ -389,15 +395,12 @@ void QwtPolarCurve::drawLines( QPainter *painter,
 
             double r = radialMap.transform( point.radius() );
             const double a = azimuthMap.transform( point.azimuth() );
-            polyline.setPoint( i - from, qwtPolar2Pos( pole, r, a ).toPoint() );
+            polylineData[i - from] = qwtPolar2Pos( pole, r, a );
         }
     }
 
-    QRect clipRect = painter->window();
-    clipRect.setRect( clipRect.x() - 1, clipRect.y() - 1,
-                      clipRect.width() + 2, clipRect.height() + 2 );
-
-    polyline = QwtClipper::clipPolygon( clipRect, polyline );
+    const QRectF clipRect = painter->window();
+    polyline = QwtClipper::clipPolygonF( clipRect, polyline );
 
     QwtPainter::drawPolyline( painter, polyline );
 }
@@ -427,7 +430,7 @@ void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
         const double r = radialMap.transform( point.radius() );
         const double a = azimuthMap.transform( point.azimuth() );
 
-        const QPoint pos = qwtPolar2Pos( pole, r, a ).toPoint();
+        const QPointF pos = qwtPolar2Pos( pole, r, a );
 
         symbol.drawSymbol( painter, pos );
     }
@@ -481,10 +484,9 @@ void QwtPolarCurve::drawLegendIdentifier(
     if ( rect.isEmpty() )
         return;
 
-    const int dim = qMin( rect.width(), rect.height() );
+    const double dim = qMin( rect.width(), rect.height() );
 
-    QSize size( dim, dim );
-    size = size;
+    QSizeF size( dim, dim );
 
     QRectF r( 0, 0, size.width(), size.height() );
     r.moveCenter( rect.center() );

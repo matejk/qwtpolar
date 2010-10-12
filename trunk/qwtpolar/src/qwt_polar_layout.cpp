@@ -17,14 +17,14 @@
 class QwtPolarLayout::LayoutData
 {
 public:
-    void init( const QwtPolarPlot *, const QRect &rect );
+    void init( const QwtPolarPlot *, const QRectF &rect );
 
     struct t_legendData
     {
         int frameWidth;
         int vScrollBarWidth;
         int hScrollBarHeight;
-        QSize hint;
+        QSizeF hint;
     } legend;
 
     struct t_titleData
@@ -44,7 +44,7 @@ public:
 */
 
 void QwtPolarLayout::LayoutData::init(
-    const QwtPolarPlot *plot, const QRect &rect )
+    const QwtPolarPlot *plot, const QRectF &rect )
 {
     // legend
 
@@ -57,17 +57,17 @@ void QwtPolarLayout::LayoutData::init(
         legend.hScrollBarHeight =
             plot->legend()->horizontalScrollBar()->sizeHint().height();
 
-        const QSize hint = plot->legend()->sizeHint();
+        const QSizeF hint = plot->legend()->sizeHint();
 
-        int w = qMin( hint.width(), rect.width() );
-        int h = plot->legend()->heightForWidth( w );
-        if ( h == 0 )
+        double w = qMin( hint.width(), rect.width() );
+        double h = plot->legend()->heightForWidth( w );
+        if ( h == 0.0 )
             h = hint.height();
 
         if ( h > rect.height() )
             w += legend.vScrollBarWidth;
 
-        legend.hint = QSize( w, h );
+        legend.hint = QSizeF( w, h );
     }
 
     // title
@@ -272,9 +272,9 @@ QSize QwtPolarLayout::minimumSizeHint( const QwtPolarPlot * ) const
   \return Geometry for the legend
 */
 
-QRect QwtPolarLayout::layoutLegend( int options, const QRect &rect ) const
+QRectF QwtPolarLayout::layoutLegend( int options, QRectF &rect ) const
 {
-    const QSize hint( d_data->layoutData.legend.hint );
+    const QSizeF hint( d_data->layoutData.legend.hint );
 
     int dim;
     if ( d_data->legendPos == QwtPolarPlot::LeftLegend
@@ -283,7 +283,7 @@ QRect QwtPolarLayout::layoutLegend( int options, const QRect &rect ) const
         // We don't allow vertical legends to take more than
         // half of the available space.
 
-        dim = qMin( hint.width(), int( rect.width() * d_data->legendRatio ) );
+        dim = qMin( hint.width(), rect.width() * d_data->legendRatio );
 
         if ( !( options & IgnoreScrollbars ) )
         {
@@ -298,27 +298,39 @@ QRect QwtPolarLayout::layoutLegend( int options, const QRect &rect ) const
     }
     else
     {
-        dim = qMin( hint.height(), int( rect.height() * d_data->legendRatio ) );
+        dim = qMin( hint.height(), rect.height() * d_data->legendRatio );
         dim = qMax( dim, d_data->layoutData.legend.hScrollBarHeight );
     }
 
-    QRect legendRect = rect;
+    QRectF legendRect = rect;
     switch( d_data->legendPos )
     {
         case QwtPolarPlot::LeftLegend:
+		{
             legendRect.setWidth( dim );
+			rect.setLeft( legendRect.right() );
             break;
+		}
         case QwtPolarPlot::RightLegend:
+		{
             legendRect.setX( rect.right() - dim + 1 );
             legendRect.setWidth( dim );
+			rect.setRight( legendRect.left() );
             break;
+		}
         case QwtPolarPlot::TopLegend:
+		{
             legendRect.setHeight( dim );
+			rect.setTop( legendRect.bottom() );
             break;
+		}
         case QwtPolarPlot::BottomLegend:
+		{
             legendRect.setY( rect.bottom() - dim + 1 );
             legendRect.setHeight( dim );
+			rect.setBottom( legendRect.top() );
             break;
+		}
         case QwtPolarPlot::ExternalLegend:
             break;
     }
@@ -340,15 +352,9 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
 {
     invalidate();
 
-    QRect rect( boundingRect.toRect() ); // undistributed rest of the plot rect
-
-    // subtract the margin
-    rect.setRect(
-        rect.x() + d_data->margin,
-        rect.y() + d_data->margin,
-        rect.width() - 2 * d_data->margin,
-        rect.height() - 2 * d_data->margin
-    );
+    QRectF rect( boundingRect ); // undistributed rest of the plot rect
+	rect.adjust( d_data->margin, d_data->margin, 
+        -d_data->margin, -d_data->margin);
 
     // We extract all layout relevant data from the widgets
     // and save them to d_data->layoutData.
@@ -359,12 +365,6 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
             && plot->legend() && !plot->legend()->isEmpty() )
     {
         d_data->legendRect = layoutLegend( options, rect );
-
-        // subtract d_data->legendRect from rect
-
-        const QRegion region( rect );
-        rect = region.subtract( d_data->legendRect.toRect() ).boundingRect();
-
         if ( d_data->layoutData.legend.frameWidth &&
                 !( options & IgnoreFrames ) )
         {
@@ -399,8 +399,7 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
         if ( !( options & IgnoreFrames ) )
             h += 2 * d_data->layoutData.title.frameWidth;
 
-        d_data->titleRect = QRect( rect.x(), rect.y(),
-                                   rect.width(), h );
+        d_data->titleRect = QRectF( rect.x(), rect.y(), rect.width(), h );
 
         // subtract title
         rect.setTop( rect.top() + h + d_data->spacing );
@@ -442,33 +441,5 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
                 d_data->legendRect.setHeight( d_data->canvasRect.height() );
             }
         }
-
-        // Shift the legend, so that it is
-        // aligned to the canvas
-
-        switch( d_data->legendPos )
-        {
-            case QwtPolarPlot::LeftLegend:
-            {
-                d_data->legendRect.moveRight( d_data->canvasRect.left() - 1 );
-                break;
-            }
-            case QwtPolarPlot::RightLegend:
-            {
-                d_data->legendRect.moveLeft( d_data->canvasRect.right() + 1 );
-                break;
-            }
-            case QwtPolarPlot::TopLegend:
-            {
-                d_data->legendRect.moveBottom( d_data->canvasRect.top() - 1 );
-                break;
-            }
-            case QwtPolarPlot::BottomLegend:
-            {
-                d_data->legendRect.moveTop( d_data->canvasRect.bottom() + 1 );
-                break;
-            }
-            default:;
-        }
-    }
+	}
 }

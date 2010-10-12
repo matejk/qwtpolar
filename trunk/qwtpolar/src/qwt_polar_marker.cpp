@@ -94,7 +94,7 @@ void QwtPolarMarker::draw( QPainter *painter,
     const double r = radialMap.transform( d_data->pos.radius() );
     const double a = azimuthMap.transform( d_data->pos.azimuth() );
 
-    const QPoint pos = qwtPolar2Pos( pole, r, a ).toPoint();
+    const QPointF pos = qwtPolar2Pos( pole, r, a );
 
 
     // draw symbol

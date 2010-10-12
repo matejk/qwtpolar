@@ -29,7 +29,7 @@ static inline double qwtDistance(
 {
     double dx = p2.x() - p1.x();
     double dy = p2.y() - p1.y();
-    return ::sqrt( dx * dx + dy * dy );
+    return qSqrt( dx * dx + dy * dy );
 }
 
 class QwtPolarPlot::ScaleData

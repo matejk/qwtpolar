@@ -77,7 +77,7 @@ public:
         const double x = d_azimuthInterval.minValue() + i * stepX;
 
         const double a = x / 360.0 * M_PI;
-        const double y = d_radialInterval.maxValue() * qAbs( ::sin( 4 * a ) );
+        const double y = d_radialInterval.maxValue() * qAbs( qSin( 4 * a ) );
 
         return QPointF( x, y );
     }
@@ -145,7 +145,7 @@ Plot::Plot( QWidget *parent ):
     QwtPolarMarker *marker = new QwtPolarMarker();
     marker->setPosition( QwtPolarPoint( 57.3, 4.72 ) );
     marker->setSymbol( new QwtSymbol( QwtSymbol::Ellipse,
-                                      QBrush( Qt::white ), QPen( Qt::green ), QSize( 9, 9 ) ) );
+        QBrush( Qt::white ), QPen( Qt::green ), QSize( 9, 9 ) ) );
     marker->setLabelAlignment( Qt::AlignHCenter | Qt::AlignTop );
 
     QwtText text( "Marker" );
@@ -276,7 +276,7 @@ QwtPolarCurve *Plot::createCurve( int id ) const
             curve->setTitle( "Spiral" );
             curve->setPen( QPen( Qt::yellow, 2 ) );
             curve->setSymbol( new QwtSymbol( QwtSymbol::Rect,
-                                             QBrush( Qt::yellow ), QPen( Qt::white ), QSize( 3, 3 ) ) );
+                QBrush( Qt::cyan ), QPen( Qt::white ), QSize( 3, 3 ) ) );
             curve->setData(
                 new SpiralData( radialInterval, azimuthInterval, numPoints ) );
             break;
@@ -286,7 +286,7 @@ QwtPolarCurve *Plot::createCurve( int id ) const
             curve->setTitle( "Rose" );
             curve->setPen( QPen( Qt::red, 2 ) );
             curve->setSymbol( new QwtSymbol( QwtSymbol::Rect,
-                                             QBrush( Qt::cyan ), QPen( Qt::white ), QSize( 3, 3 ) ) );
+                QBrush( Qt::cyan ), QPen( Qt::white ), QSize( 3, 3 ) ) );
             curve->setData(
                 new RoseData( radialInterval, azimuthInterval, numPoints ) );
             break;
