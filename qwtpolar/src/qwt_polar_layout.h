@@ -71,7 +71,7 @@ public:
     class LayoutData;
 
 protected:
-    QRect layoutLegend( int options, const QRect & ) const;
+    QRectF layoutLegend( int options, QRectF & ) const;
 
 private:
     class PrivateData;

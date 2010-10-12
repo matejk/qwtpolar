@@ -210,7 +210,7 @@ void QwtPolarCanvas::drawContents( QPainter *painter )
   \sa QwtPolarPlot::drawCanvas, setPaintAttributes(), testPaintAttributes()
 */
 void QwtPolarCanvas::drawCanvas( QPainter *painter,
-                                 const QRectF& canvasRect )
+    const QRectF& canvasRect )
 {
     if ( !canvasRect.isValid() )
         return;

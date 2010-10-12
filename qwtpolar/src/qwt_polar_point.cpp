@@ -19,8 +19,8 @@
 */
 QwtPolarPoint::QwtPolarPoint( const QPointF &p )
 {
-    d_radius = ::sqrt( qwtSqr( p.x() ) + qwtSqr( p.y() ) );
-    d_azimuth = ::atan2( p.y(), p.x() );
+    d_radius = qSqrt( qwtSqr( p.x() ) + qwtSqr( p.y() ) );
+    d_azimuth = qAtan2( p.y(), p.x() );
 }
 
 /*!
@@ -29,8 +29,8 @@ QwtPolarPoint::QwtPolarPoint( const QPointF &p )
 */
 void QwtPolarPoint::setPoint( const QPointF &p )
 {
-    d_radius = ::sqrt( qwtSqr( p.x() ) + qwtSqr( p.y() ) );
-    d_azimuth = ::atan2( p.y(), p.x() );
+    d_radius = qSqrt( qwtSqr( p.x() ) + qwtSqr( p.y() ) );
+    d_azimuth = qAtan2( p.y(), p.x() );
 }
 
 /*!
@@ -44,8 +44,8 @@ QPointF QwtPolarPoint::toPoint() const
     if ( d_radius <= 0.0 )
         return QPointF( 0.0, 0.0 );
 
-    const double x = d_radius * ::cos( d_azimuth );
-    const double y = d_radius * ::sin( d_azimuth );
+    const double x = d_radius * qCos( d_azimuth );
+    const double y = d_radius * qSin( d_azimuth );
 
     return QPointF( x, y );
 }

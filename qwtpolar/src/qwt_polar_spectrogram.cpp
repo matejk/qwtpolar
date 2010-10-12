@@ -30,7 +30,7 @@ static bool needsClipping( const QRectF &plotRect, const QRectF &rect )
         const double dx = points[i].x() - pole.x();
         const double dy = points[i].y() - pole.y();
 
-        if ( ::sqrt( dx * dx + dy * dy ) > radius )
+        if ( qSqrt( dx * dx + dy * dy ) > radius )
             return true;
     }
 
@@ -247,11 +247,11 @@ QImage QwtPolarSpectrogram::renderImage(
             {
                 const double dx = x - pole.x();
 
-                double a = ::atan2( dy, dx );
+                double a = qAtan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
 
-                const double r = ::sqrt( qwtSqr( dx ) + dy2 );
+                const double r = qSqrt( qwtSqr( dx ) + dy2 );
 
                 const double azimuth = azimuthMap.invTransform( a );
                 const double radius = radialMap.invTransform( r );
@@ -275,11 +275,11 @@ QImage QwtPolarSpectrogram::renderImage(
             {
                 const double dx = x - pole.x();
 
-                double a = ::atan2( dy, dx );
+                double a = qAtan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
 
-                const double r = ::sqrt( qwtSqr( dx ) + dy2 );
+                const double r = qSqrt( qwtSqr( dx ) + dy2 );
 
                 const double azimuth = azimuthMap.invTransform( a );
                 const double radius = radialMap.invTransform( r );

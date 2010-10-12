@@ -22,12 +22,12 @@ MainWindow::MainWindow( QWidget *parent ):
 
     QToolBar *toolBar = new QToolBar( this );
 
-    QToolButton *btnPrint = new QToolButton( toolBar );
+    QToolButton *btnExport = new QToolButton( toolBar );
     QToolButton *btnGrid = new QToolButton( toolBar );
 
-    btnPrint->setText( "Print" );
-    btnPrint->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
-    toolBar->addWidget( btnPrint );
+    btnExport->setText( "Export" );
+    btnExport->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
+    toolBar->addWidget( btnExport );
 
     btnGrid->setText( "Grid" );
     btnGrid->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
@@ -37,8 +37,8 @@ MainWindow::MainWindow( QWidget *parent ):
 
     addToolBar( toolBar );
 
-    connect( btnPrint, SIGNAL( clicked() ),
-             d_plotWindow->plot(), SLOT( export() ) );
+    connect( btnExport, SIGNAL( clicked() ),
+             d_plotWindow->plot(), SLOT( exportDocument() ) );
     connect( btnGrid, SIGNAL( toggled( bool ) ),
              d_plotWindow->plot(), SLOT( showGrid( bool ) ) );
 }
