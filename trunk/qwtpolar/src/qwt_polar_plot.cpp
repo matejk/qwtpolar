@@ -642,9 +642,7 @@ void QwtPolarPlot::zoom(const QwtPolarPoint &zoomPos, double zoomFactor)
     {
         d_data->zoomPos = zoomPos;
         d_data->zoomFactor = zoomFactor;
-#if 1
         updateLayout();
-#endif
         autoRefresh();
     }
 }
@@ -1349,63 +1347,77 @@ void QwtPolarPlot::renderTitle(QPainter *painter, const QRect &rect) const
   \param rect Bounding rectangle
 */
 
-void QwtPolarPlot::renderLegend(QPainter *painter, const QRect &rect) const
+void QwtPolarPlot::renderLegend(QPainter *painter, const QRectF &rect) const
 {
-#if 1
-    // Shift this code into QwtLegend, so that Qwt/QwtPolar can share it
-#endif
-
     if ( !legend() || legend()->isEmpty() )
         return;
 
     QLayout *l = legend()->contentsWidget()->layout();
-    if ( l == 0 || !l->inherits("QwtDynGridLayout") )
+    if ( l == 0 || !l->inherits( "QwtDynGridLayout" ) )
         return;
 
-    QwtDynGridLayout *legendLayout = (QwtDynGridLayout *)l;
+    QwtDynGridLayout *legendLayout = ( QwtDynGridLayout * )l;
 
-    uint numCols = legendLayout->columnsForWidth(rect.width());
-    QList<QRect> itemRects = legendLayout->layoutItems(rect, numCols);
+    uint numCols = legendLayout->columnsForWidth( rect.width() );
+    QList<QRect> itemRects =
+        legendLayout->layoutItems( rect.toRect(), numCols );
 
     int index = 0;
 
     for ( int i = 0; i < legendLayout->count(); i++ )
     {
-        QLayoutItem *item = legendLayout->itemAt(i);
+        QLayoutItem *item = legendLayout->itemAt( i );
         QWidget *w = item->widget();
         if ( w )
         {
             painter->save();
-            painter->setClipping(true);
-            painter->setClipRect(itemRects[index]);
 
-            renderLegendItem(painter, w, itemRects[index]);
+            painter->setClipRect( itemRects[index] );
+            renderLegendItem( painter, w, itemRects[index] );
 
             index++;
             painter->restore();
         }
     }
+
 }
 
-/*!
-  Render the legend item into a given rectangle.
+/*! 
+  Print the legend item into a given rectangle.
 
   \param painter Painter
-  \param w Widget representing a legend item
+  \param widget Widget representing a legend item
   \param rect Bounding rectangle
+    
+  \note When widget is not derived from QwtLegendItem renderLegendItem
+        does nothing and needs to be overloaded
 */
-
-void QwtPolarPlot::renderLegendItem(QPainter *painter,
-    const QWidget *w, const QRect &rect) const
+void QwtPolarPlot::renderLegendItem( QPainter *painter,
+    const QWidget *widget, const QRectF &rect ) const
 {
-#if 0
-    // Shift this code into QwtLegend, so that Qwt/QwtPolar can share it
-    if ( w->inherits("QwtLegendItem") )
+    if ( widget->inherits( "QwtLegendItem" ) )
     {
-        QwtLegendItem *item = (QwtLegendItem *)w;
+        QwtLegendItem *item = ( QwtLegendItem * )widget;
 
-        painter->setFont(item->font());
-        item->drawItem(painter, rect);
+        const QRect identifierRect(
+            rect.x() + item->margin(), rect.y(),
+            item->identifierSize().width(), rect.height() );
+
+        QwtLegendItemManager *itemManger = legend()->find( item );
+        if ( itemManger )
+        {
+            painter->save();
+            itemManger->drawLegendIdentifier( painter, identifierRect );
+            painter->restore();
+        }
+
+        // Label
+
+        QRectF titleRect = rect;
+        titleRect.setX( identifierRect.right() + 2 * item->spacing() );
+
+        painter->setFont( item->font() );
+        item->text().draw( painter, titleRect );
     }
-#endif
 }
+

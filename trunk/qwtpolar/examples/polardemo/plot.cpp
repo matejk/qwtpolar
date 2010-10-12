@@ -267,6 +267,8 @@ QwtPolarCurve *Plot::createCurve(int id) const
 
     QwtPolarCurve *curve = new QwtPolarCurve();
     curve->setStyle(QwtPolarCurve::Lines);
+	//curve->setLegendAttribute( QwtPolarCurve::LegendShowLine, true );
+	//curve->setLegendAttribute( QwtPolarCurve::LegendShowSymbol, true );
     switch(id)
     {
         case PlotSettings::Spiral:
