@@ -50,17 +50,17 @@ public:
     explicit QwtPolarLayout();
     virtual ~QwtPolarLayout();
 
-    void setLegendPosition(QwtPolarPlot::LegendPosition pos, double ratio);
-    void setLegendPosition(QwtPolarPlot::LegendPosition pos);
+    void setLegendPosition( QwtPolarPlot::LegendPosition pos, double ratio );
+    void setLegendPosition( QwtPolarPlot::LegendPosition pos );
     QwtPolarPlot::LegendPosition legendPosition() const;
 
-    void setLegendRatio(double ratio);
+    void setLegendRatio( double ratio );
     double legendRatio() const;
 
-    virtual QSize minimumSizeHint(const QwtPolarPlot *) const;    
+    virtual QSize minimumSizeHint( const QwtPolarPlot * ) const;
 
-    virtual void activate(const QwtPolarPlot *, 
-        const QRect &rect, int options = 0);
+    virtual void activate( const QwtPolarPlot *,
+        const QRect &rect, int options = 0 );
 
     virtual void invalidate();
 
@@ -71,7 +71,7 @@ public:
     class LayoutData;
 
 protected:
-    QRect layoutLegend(int options, const QRect &) const;
+    QRect layoutLegend( int options, const QRect & ) const;
 
 private:
     class PrivateData;

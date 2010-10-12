@@ -43,7 +43,7 @@ public:
         having to enable runtime type information of the compiler.
      */
     enum RttiValues
-    { 
+    {
         Rtti_PolarItem = 0,
 
         Rtti_PolarGrid,
@@ -57,13 +57,13 @@ public:
 
     /*!
        \brief Plot Item Attributes
-    
+
        - Legend\n
          The item is represented on the legend.
        - AutoScale \n
          The boundingRect() of the item is included in the
          autoscaling calculation.
-  
+
        \sa setItemAttribute(), testItemAttribute()
      */
     enum ItemAttribute
@@ -78,40 +78,40 @@ public:
         RenderAntialiased = 1
     };
 
-    explicit QwtPolarItem(const QwtText &title = QwtText());
+    explicit QwtPolarItem( const QwtText &title = QwtText() );
     virtual ~QwtPolarItem();
 
-    void attach(QwtPolarPlot *plot);
+    void attach( QwtPolarPlot *plot );
 
     /*!
-       \brief This method detaches a QwtPolarItem from any QwtPolarPlot it 
+       \brief This method detaches a QwtPolarItem from any QwtPolarPlot it
               has been associated with.
 
        detach() is equivalent to calling attach( NULL )
        \sa attach( QwtPolarPlot* plot )
     */
-    void detach() { attach(NULL); }
+    void detach() { attach( NULL ); }
 
     QwtPolarPlot *plot() const;
-    
-    void setTitle(const QString &title);
-    void setTitle(const QwtText &title);
+
+    void setTitle( const QString &title );
+    void setTitle( const QwtText &title );
     const QwtText &title() const;
 
     virtual int rtti() const;
 
-    void setItemAttribute(ItemAttribute, bool on = true);
-    bool testItemAttribute(ItemAttribute) const;
+    void setItemAttribute( ItemAttribute, bool on = true );
+    bool testItemAttribute( ItemAttribute ) const;
 
-    void setRenderHint(RenderHint, bool on = true);
-    bool testRenderHint(RenderHint) const;
+    void setRenderHint( RenderHint, bool on = true );
+    bool testRenderHint( RenderHint ) const;
 
-    double z() const; 
-    void setZ(double z);
+    double z() const;
+    void setZ( double z );
 
     void show();
     void hide();
-    virtual void setVisible(bool);
+    virtual void setVisible( bool );
     bool isVisible () const;
 
     virtual void itemChanged();
@@ -126,18 +126,18 @@ public:
       \param radius Radius of the complete plot area in painter coordinates
       \param canvasRect Contents rect of the canvas in painter coordinates
     */
-    virtual void draw(QPainter *painter, 
+    virtual void draw( QPainter *painter,
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QPointF &pole, double radius,
-        const QRectF &canvasRect) const = 0;
+        const QRectF &canvasRect ) const = 0;
 
-    virtual QwtInterval boundingInterval(int scaleId) const;
+    virtual QwtInterval boundingInterval( int scaleId ) const;
 
     virtual QWidget *legendItem() const;
 
-    virtual void updateLegend(QwtLegend *) const;
-    virtual void updateScaleDiv(const QwtScaleDiv &,
-        const QwtScaleDiv &, const QwtInterval &);
+    virtual void updateLegend( QwtLegend * ) const;
+    virtual void updateScaleDiv( const QwtScaleDiv &,
+        const QwtScaleDiv &, const QwtInterval & );
 
     virtual int marginHint() const;
 
@@ -149,5 +149,5 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
-            
+
 #endif

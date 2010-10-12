@@ -14,8 +14,7 @@
 #include "qwt_polar_plot.h"
 #include "qwt_polar_spectrogram.h"
 
-static bool needsClipping(const QRectF &plotRect, 
-    const QRectF &rect)
+static bool needsClipping( const QRectF &plotRect, const QRectF &rect )
 {
     QPointF points[4];
     points[0] = rect.topLeft();
@@ -31,7 +30,7 @@ static bool needsClipping(const QRectF &plotRect,
         const double dx = points[i].x() - pole.x();
         const double dy = points[i].y() - pole.y();
 
-        if ( ::sqrt(dx * dx + dy * dy) > radius )
+        if ( ::sqrt( dx * dx + dy * dy ) > radius )
             return true;
     }
 
@@ -42,7 +41,7 @@ class QwtPolarSpectrogram::PrivateData
 {
 public:
     PrivateData():
-		data(NULL)
+        data( NULL )
     {
         colorMap = new QwtLinearColorMap();
     }
@@ -57,14 +56,14 @@ public:
 
 //!  Constructor
 QwtPolarSpectrogram::QwtPolarSpectrogram():
-    QwtPolarItem(QwtText("Spectrogram"))
+    QwtPolarItem( QwtText( "Spectrogram" ) )
 {
     d_data = new PrivateData;
 
-    setItemAttribute(QwtPolarItem::AutoScale);
-    setItemAttribute(QwtPolarItem::Legend, false);
+    setItemAttribute( QwtPolarItem::AutoScale );
+    setItemAttribute( QwtPolarItem::Legend, false );
 
-    setZ(20.0);
+    setZ( 20.0 );
 }
 
 //! Destructor
@@ -85,19 +84,19 @@ int QwtPolarSpectrogram::rtti() const
   \param data Spectrogram Data
   \sa data()
 
-  \warning QwtRasterData::initRaster() is called each time before the 
+  \warning QwtRasterData::initRaster() is called each time before the
            image is rendered, but without any useful parameters.
            Also QwtRasterData::rasterHint() is not used.
 */
-void QwtPolarSpectrogram::setData(QwtRasterData *data)
+void QwtPolarSpectrogram::setData( QwtRasterData *data )
 {
-	if ( data != d_data->data )
+    if ( data != d_data->data )
     {
         delete d_data->data;
         d_data->data = data;
 
-    	itemChanged();
-	}
+        itemChanged();
+    }
 }
 
 /*!
@@ -120,16 +119,16 @@ const QwtRasterData *QwtPolarSpectrogram::data() const
   \sa colorMap(), QwtScaleWidget::setColorBarEnabled(),
       QwtScaleWidget::setColorMap()
 */
-void QwtPolarSpectrogram::setColorMap(QwtColorMap *colorMap)
+void QwtPolarSpectrogram::setColorMap( QwtColorMap *colorMap )
 {
     if ( d_data->colorMap != colorMap )
-	{
-    	delete d_data->colorMap;
-    	d_data->colorMap = colorMap;
-	}
-   
+    {
+        delete d_data->colorMap;
+        d_data->colorMap = colorMap;
+    }
+
     itemChanged();
-}  
+}
 
 /*!
    \return Color Map used for mapping the intensity values to colors
@@ -150,45 +149,45 @@ const QwtColorMap *QwtPolarSpectrogram::colorMap() const
   \param radius Radius of the complete plot area in painter coordinates
   \param canvasRect Contents rect of the canvas in painter coordinates
 */
-void QwtPolarSpectrogram::draw(QPainter *painter,
+void QwtPolarSpectrogram::draw( QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
     const QPointF &pole, double,
-    const QRectF &canvasRect) const
+    const QRectF &canvasRect ) const
 {
-    const QRectF plotRect = plot()->plotRect(canvasRect.toRect());
+    const QRectF plotRect = plot()->plotRect( canvasRect.toRect() );
 
-    QRegion clipRegion(canvasRect.toRect());
-    if ( needsClipping(plotRect, canvasRect) )
+    QRegion clipRegion( canvasRect.toRect() );
+    if ( needsClipping( plotRect, canvasRect ) )
     {
         // For large plotRects the ellipse becomes a huge polygon.
         // So we better clip only, when we really need to.
 
-        clipRegion &= QRegion(plotRect.toRect(), QRegion::Ellipse);
+        clipRegion &= QRegion( plotRect.toRect(), QRegion::Ellipse );
     }
 
     QRect imageRect = canvasRect.toRect();
 
-    const QwtInterval radialInterval = 
-        boundingInterval(QwtPolar::ScaleRadius);
+    const QwtInterval radialInterval =
+        boundingInterval( QwtPolar::ScaleRadius );
     if ( radialInterval.isValid() )
     {
-        const double radius = radialMap.transform(radialInterval.maxValue()) -
-            radialMap.transform(radialInterval.minValue());
+        const double radius = radialMap.transform( radialInterval.maxValue() ) -
+                              radialMap.transform( radialInterval.minValue() );
 
-        QRectF r(0, 0, 2 * radius, 2 * radius);
-        r.moveCenter(pole);
+        QRectF r( 0, 0, 2 * radius, 2 * radius );
+        r.moveCenter( pole );
 
-        clipRegion &= QRegion(r.toRect(), QRegion::Ellipse);;
+        clipRegion &= QRegion( r.toRect(), QRegion::Ellipse );;
 
         imageRect &= r.toRect();
     }
-    
-    const QImage image = renderImage(azimuthMap, radialMap, pole, imageRect);
+
+    const QImage image = renderImage( azimuthMap, radialMap, pole, imageRect );
 
     painter->save();
-    painter->setClipRegion(clipRegion);
+    painter->setClipRegion( clipRegion );
 
-    painter->drawImage(imageRect, image);
+    painter->drawImage( imageRect, image );
 
     painter->restore();
 }
@@ -213,15 +212,15 @@ void QwtPolarSpectrogram::draw(QPainter *painter,
 */
 QImage QwtPolarSpectrogram::renderImage(
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QPointF &pole, const QRect &rect) const
+    const QPointF &pole, const QRect &rect ) const
 {
-	if ( d_data->data == NULL || d_data->colorMap == NULL )
-		return QImage();
+    if ( d_data->data == NULL || d_data->colorMap == NULL )
+        return QImage();
 
-    QImage image(rect.size(), d_data->colorMap->format() == QwtColorMap::RGB 
-        ? QImage::Format_ARGB32 : QImage::Format_Indexed8 );
+    QImage image( rect.size(), d_data->colorMap->format() == QwtColorMap::RGB
+                  ? QImage::Format_ARGB32 : QImage::Format_Indexed8 );
 
-    const QwtInterval intensityRange = d_data->data->interval(Qt::ZAxis);
+    const QwtInterval intensityRange = d_data->data->interval( Qt::ZAxis );
     if ( !intensityRange.isValid() )
         return image;
 
@@ -231,7 +230,7 @@ QImage QwtPolarSpectrogram::renderImage(
      ( How to map rect into something, that is useful to initialize a matrix
        of values in polar coordinates ? )
      */
-    d_data->data->initRaster(QRectF(), QSize());
+    d_data->data->initRaster( QRectF(), QSize() );
 
     // Now we can collect the values and calculate the colors
     // using the color map.
@@ -241,52 +240,52 @@ QImage QwtPolarSpectrogram::renderImage(
         for ( int y = rect.top(); y <= rect.bottom(); y++ )
         {
             const double dy = pole.y() - y;
-            const double dy2 = qwtSqr(dy);
+            const double dy2 = qwtSqr( dy );
 
-            QRgb *line = (QRgb *)image.scanLine(y - rect.top());
+            QRgb *line = ( QRgb * )image.scanLine( y - rect.top() );
             for ( int x = rect.left(); x <= rect.right(); x++ )
             {
                 const double dx = x - pole.x();
-                
-                double a = ::atan2(dy, dx);
+
+                double a = ::atan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
 
-                const double r = ::sqrt(qwtSqr(dx) + dy2);
+                const double r = ::sqrt( qwtSqr( dx ) + dy2 );
 
-                const double azimuth = azimuthMap.invTransform(a);
-                const double radius = radialMap.invTransform(r);
+                const double azimuth = azimuthMap.invTransform( a );
+                const double radius = radialMap.invTransform( r );
 
-                const double value = d_data->data->value(azimuth, radius);
-                *line++ = d_data->colorMap->rgb(intensityRange, value);
+                const double value = d_data->data->value( azimuth, radius );
+                *line++ = d_data->colorMap->rgb( intensityRange, value );
             }
         }
     }
     else if ( d_data->colorMap->format() == QwtColorMap::Indexed )
     {
-        image.setColorTable(d_data->colorMap->colorTable(intensityRange));
+        image.setColorTable( d_data->colorMap->colorTable( intensityRange ) );
 
         for ( int y = rect.top(); y <= rect.bottom(); y++ )
         {
             const double dy = pole.y() - y;
-            const double dy2 = qwtSqr(dy);
+            const double dy2 = qwtSqr( dy );
 
-            unsigned char *line = image.scanLine(y - rect.top());
+            unsigned char *line = image.scanLine( y - rect.top() );
             for ( int x = rect.left(); x <= rect.right(); x++ )
             {
                 const double dx = x - pole.x();
 
-                double a = ::atan2(dy, dx);
+                double a = ::atan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
 
-                const double r = ::sqrt(qwtSqr(dx) + dy2);
+                const double r = ::sqrt( qwtSqr( dx ) + dy2 );
 
-                const double azimuth = azimuthMap.invTransform(a);
-                const double radius = radialMap.invTransform(r);
+                const double azimuth = azimuthMap.invTransform( a );
+                const double radius = radialMap.invTransform( r );
 
-                const double value = d_data->data->value(azimuth, radius);
-                *line++ = d_data->colorMap->colorIndex(intensityRange, value);
+                const double value = d_data->data->value( azimuth, radius );
+                *line++ = d_data->colorMap->colorIndex( intensityRange, value );
             }
         }
     }
@@ -296,7 +295,7 @@ QImage QwtPolarSpectrogram::renderImage(
     return image;
 }
 
-/*! 
+/*!
    Interval, that is necessary to display the item
    This interval can be useful for operations like clipping or autoscaling
 
@@ -305,10 +304,10 @@ QImage QwtPolarSpectrogram::renderImage(
 
    \sa position()
 */
-QwtInterval QwtPolarSpectrogram::boundingInterval(int scaleId) const
+QwtInterval QwtPolarSpectrogram::boundingInterval( int scaleId ) const
 {
     if ( scaleId == QwtPolar::ScaleRadius )
-		return d_data->data->interval( Qt::YAxis );
+        return d_data->data->interval( Qt::YAxis );
 
-    return QwtPolarItem::boundingInterval(scaleId);
+    return QwtPolarItem::boundingInterval( scaleId );
 }

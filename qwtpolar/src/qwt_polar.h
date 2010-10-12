@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -50,7 +50,7 @@ namespace QwtPolar
     };
 
     /*!
-      Indices used to identify a scale. 
+      Indices used to identify a scale.
 
       - ScaleAzimuth\n
       - ScaleRadius\n
@@ -62,7 +62,7 @@ namespace QwtPolar
         ScaleAzimuth = Azimuth,
         ScaleRadius = Radius,
 
-        ScaleCount 
+        ScaleCount
     };
 
 };

@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -16,9 +16,9 @@ class QPainter;
 class QwtPolarPlot;
 
 /*!
-  \brief Canvas of a QwtPolarPlot.       
+  \brief Canvas of a QwtPolarPlot.
 
-  The canvas is the widget, where all polar items are painted to. 
+  The canvas is the widget, where all polar items are painted to.
 
   \note In opposite to QwtPlot all axes are painted on the canvas.
   \sa QwtPolarPlot
@@ -45,26 +45,26 @@ public:
         PaintCached = 1
     };
 
-    explicit QwtPolarCanvas(QwtPolarPlot *);
+    explicit QwtPolarCanvas( QwtPolarPlot * );
     virtual ~QwtPolarCanvas();
 
     QwtPolarPlot *plot();
     const QwtPolarPlot *plot() const;
 
-    void setPaintAttribute(PaintAttribute, bool on = true);
-    bool testPaintAttribute(PaintAttribute) const;
+    void setPaintAttribute( PaintAttribute, bool on = true );
+    bool testPaintAttribute( PaintAttribute ) const;
 
     QPixmap *paintCache();
     const QPixmap *paintCache() const;
     void invalidatePaintCache();
 
 protected:
-    virtual void paintEvent(QPaintEvent *);
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void paintEvent( QPaintEvent * );
+    virtual void resizeEvent( QResizeEvent * );
 
-    virtual void drawContents(QPainter *);
+    virtual void drawContents( QPainter * );
 
-    void drawCanvas(QPainter *, const QRectF &);
+    void drawCanvas( QPainter *, const QRectF & );
 
     class PrivateData;
     PrivateData *d_data;

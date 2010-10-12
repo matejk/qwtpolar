@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -14,7 +14,7 @@ public:
     class ItemList: public QList<QwtPolarItem *>
     {
     public:
-        void insertItem(QwtPolarItem *item)
+        void insertItem( QwtPolarItem *item )
         {
             if ( item == NULL )
                 return;
@@ -29,16 +29,16 @@ public:
                 if ( *it == item )
                     return;
 
-                if ( (*it)->z() > item->z() )
+                if ( ( *it )->z() > item->z() )
                 {
-                    insert(it, item);
+                    insert( it, item );
                     return;
                 }
             }
-            append(item);
+            append( item );
         }
 
-        void removeItem(QwtPolarItem *item)
+        void removeItem( QwtPolarItem *item )
         {
             if ( item == NULL )
                 return;
@@ -50,7 +50,7 @@ public:
             {
                 if ( item == *it )
                 {
-                    removeAt(i);
+                    removeAt( i );
                     return;
                 }
                 i++;
@@ -62,8 +62,8 @@ public:
     bool autoDelete;
 };
 
-/*! 
-   Constructor 
+/*!
+   Constructor
 
    Auto deletion is enabled.
    \sa setAutoDelete, attachItem
@@ -74,7 +74,7 @@ QwtPolarItemDict::QwtPolarItemDict()
     d_data->autoDelete = true;
 }
 
-/*! 
+/*!
    Destructor
 
    If autoDelete is on, all attached items will be deleted
@@ -82,7 +82,7 @@ QwtPolarItemDict::QwtPolarItemDict()
 */
 QwtPolarItemDict::~QwtPolarItemDict()
 {
-    detachItems(QwtPolarItem::Rtti_PolarItem, d_data->autoDelete);
+    detachItems( QwtPolarItem::Rtti_PolarItem, d_data->autoDelete );
     delete d_data;
 }
 
@@ -94,7 +94,7 @@ QwtPolarItemDict::~QwtPolarItemDict()
 
    \sa autoDelete, attachItem
 */
-void QwtPolarItemDict::setAutoDelete(bool autoDelete)
+void QwtPolarItemDict::setAutoDelete( bool autoDelete )
 {
     d_data->autoDelete = autoDelete;
 }
@@ -120,22 +120,22 @@ bool QwtPolarItemDict::autoDelete() const
 
    \sa setAutoDelete, ~QwtPolarItemDict
 */
-void QwtPolarItemDict::attachItem(QwtPolarItem *item, bool on)
+void QwtPolarItemDict::attachItem( QwtPolarItem *item, bool on )
 {
     if ( on )
-        d_data->itemList.insertItem(item);
+        d_data->itemList.insertItem( item );
     else
-        d_data->itemList.removeItem(item);
+        d_data->itemList.removeItem( item );
 }
 
 /*!
    Detach items from the dictionary
 
-   \param rtti In case of QwtPolarItem::Rtti_PlotItem detach all items 
+   \param rtti In case of QwtPolarItem::Rtti_PlotItem detach all items
                otherwise only those items of the type rtti.
    \param autoDelete If true, delete all detached items
 */
-void QwtPolarItemDict::detachItems(int rtti, bool autoDelete)
+void QwtPolarItemDict::detachItems( int rtti, bool autoDelete )
 {
     PrivateData::ItemList list = d_data->itemList;
     QwtPolarItemIterator it = list.begin();
@@ -147,7 +147,7 @@ void QwtPolarItemDict::detachItems(int rtti, bool autoDelete)
 
         if ( rtti == QwtPolarItem::Rtti_PolarItem || item->rtti() == rtti )
         {
-            item->attach(NULL);
+            item->attach( NULL );
             if ( autoDelete )
                 delete item;
         }

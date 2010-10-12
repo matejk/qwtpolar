@@ -6,7 +6,7 @@ class QwtScaleWidget;
 class PlotWindow: public QWidget
 {
 public:
-    PlotWindow(QWidget * = NULL);
+    PlotWindow( QWidget * = NULL );
 
     Plot *plot() { return d_plot; }
 

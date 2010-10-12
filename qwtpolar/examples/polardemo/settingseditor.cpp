@@ -3,69 +3,69 @@
 #include <qlayout.h>
 #include "settingseditor.h"
 
-SettingsEditor::SettingsEditor(QWidget *parent):
-    QFrame(parent)
+SettingsEditor::SettingsEditor( QWidget *parent ):
+    QFrame( parent )
 {
-    QGroupBox *axesBox = new QGroupBox("Axes", this);
-    QVBoxLayout* axesBoxLayout = new QVBoxLayout(axesBox);
-    axesBoxLayout->setMargin(20);
+    QGroupBox *axesBox = new QGroupBox( "Axes", this );
+    QVBoxLayout* axesBoxLayout = new QVBoxLayout( axesBox );
+    axesBoxLayout->setMargin( 20 );
 
 
-    for ( int i = PlotSettings::AxisBegin; 
-        i <= PlotSettings::Logarithmic; i++ ) 
+    for ( int i = PlotSettings::AxisBegin;
+            i <= PlotSettings::Logarithmic; i++ )
     {
-        d_checkBox[i] = new QCheckBox(axesBox);
-        axesBoxLayout->addWidget(d_checkBox[i]);
+        d_checkBox[i] = new QCheckBox( axesBox );
+        axesBoxLayout->addWidget( d_checkBox[i] );
     }
 
-    QGroupBox *gridBox = new QGroupBox("Grids", this);
-    QVBoxLayout* gridBoxLayout = new QVBoxLayout(gridBox);
-    gridBoxLayout->setMargin(20);
-    
+    QGroupBox *gridBox = new QGroupBox( "Grids", this );
+    QVBoxLayout* gridBoxLayout = new QVBoxLayout( gridBox );
+    gridBoxLayout->setMargin( 20 );
+
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
     {
         int idx = PlotSettings::MajorGridBegin + scaleId;
-        d_checkBox[idx] = new QCheckBox(gridBox);
-        gridBoxLayout->addWidget(d_checkBox[idx]);
+        d_checkBox[idx] = new QCheckBox( gridBox );
+        gridBoxLayout->addWidget( d_checkBox[idx] );
 
         idx = PlotSettings::MinorGridBegin + scaleId;
-        d_checkBox[idx] = new QCheckBox(gridBox);
-        gridBoxLayout->addWidget(d_checkBox[idx]);
+        d_checkBox[idx] = new QCheckBox( gridBox );
+        gridBoxLayout->addWidget( d_checkBox[idx] );
     }
-    gridBoxLayout->addStretch(10);
+    gridBoxLayout->addStretch( 10 );
 
-    QGroupBox *otherBox = new QGroupBox("Other", this);
-    QVBoxLayout* otherBoxLayout = new QVBoxLayout(otherBox);
-    otherBoxLayout->setMargin(20);
+    QGroupBox *otherBox = new QGroupBox( "Other", this );
+    QVBoxLayout* otherBoxLayout = new QVBoxLayout( otherBox );
+    otherBoxLayout->setMargin( 20 );
 
     for ( int i = PlotSettings::Logarithmic + 1;
-        i < PlotSettings::NumFlags; i++ )
+            i < PlotSettings::NumFlags; i++ )
     {
-        d_checkBox[i] = new QCheckBox(otherBox);
-        otherBoxLayout->addWidget(d_checkBox[i]);
+        d_checkBox[i] = new QCheckBox( otherBox );
+        otherBoxLayout->addWidget( d_checkBox[i] );
     }
-    otherBoxLayout->addStretch(10);
+    otherBoxLayout->addStretch( 10 );
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(axesBox);
-    layout->addWidget(gridBox);
-    layout->addWidget(otherBox);
-    layout->addStretch(10);
+    QVBoxLayout *layout = new QVBoxLayout( this );
+    layout->addWidget( axesBox );
+    layout->addWidget( gridBox );
+    layout->addWidget( otherBox );
+    layout->addStretch( 10 );
 
     for ( int i = 0; i < PlotSettings::NumFlags; i++ )
     {
-        d_checkBox[i]->setText(label(i));
-        connect(d_checkBox[i], SIGNAL(clicked()), this, SLOT(edited()) );
+        d_checkBox[i]->setText( label( i ) );
+        connect( d_checkBox[i], SIGNAL( clicked() ), this, SLOT( edited() ) );
     }
 }
 
-void SettingsEditor::showSettings(const PlotSettings &settings)
+void SettingsEditor::showSettings( const PlotSettings &settings )
 {
-    blockSignals(true);
+    blockSignals( true );
     for ( int i = 0; i < PlotSettings::NumFlags; i++ )
-        d_checkBox[i]->setChecked(settings.flags[i]);
+        d_checkBox[i]->setChecked( settings.flags[i] );
 
-    blockSignals(false);
+    blockSignals( false );
     updateEditor();
 }
 
@@ -82,7 +82,7 @@ void SettingsEditor::edited()
     updateEditor();
 
     const PlotSettings s = settings();
-    Q_EMIT edited(s);
+    Q_EMIT edited( s );
 }
 
 void SettingsEditor::updateEditor()
@@ -90,13 +90,13 @@ void SettingsEditor::updateEditor()
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
     {
         d_checkBox[PlotSettings::MinorGridBegin+scaleId]->setEnabled(
-            d_checkBox[PlotSettings::MajorGridBegin+scaleId]->isChecked());
+            d_checkBox[PlotSettings::MajorGridBegin+scaleId]->isChecked() );
     }
 }
 
-QString SettingsEditor::label(int flag) const
+QString SettingsEditor::label( int flag ) const
 {
-    switch(flag)
+    switch( flag )
     {
         case PlotSettings::MajorGridBegin + QwtPolar::ScaleAzimuth:
             return "Azimuth";
@@ -116,7 +116,7 @@ QString SettingsEditor::label(int flag) const
             return "Top";
         case PlotSettings::AxisBegin + QwtPolar::AxisBottom:
             return "Bottom";
-        case PlotSettings::AutoScaling: 
+        case PlotSettings::AutoScaling:
             return "Auto Scaling";
         case PlotSettings::Inverted:
             return "Inverted";

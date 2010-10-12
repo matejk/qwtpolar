@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -35,18 +35,18 @@ public:
     explicit QwtPolarItemDict();
     ~QwtPolarItemDict();
 
-    void setAutoDelete(bool);
+    void setAutoDelete( bool );
     bool autoDelete() const;
 
     const QwtPolarItemList& itemList() const;
 
-    void detachItems(int rtti = QwtPolarItem::Rtti_PolarItem,
-        bool autoDelete = true);
+    void detachItems( int rtti = QwtPolarItem::Rtti_PolarItem,
+                      bool autoDelete = true );
 
 private:
     friend class QwtPolarItem;
 
-    void attachItem(QwtPolarItem *, bool);
+    void attachItem( QwtPolarItem *, bool );
 
     class PrivateData;
     PrivateData *d_data;
