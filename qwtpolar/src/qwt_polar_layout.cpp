@@ -99,9 +99,9 @@ public:
     {
     }
 
-    QRect titleRect;
-    QRect legendRect;
-    QRect canvasRect;
+    QRectF titleRect;
+    QRectF legendRect;
+    QRectF canvasRect;
 
     QwtPolarLayout::LayoutData layoutData;
 
@@ -223,7 +223,7 @@ double QwtPolarLayout::legendRatio() const
   \sa activate(), invalidate()
 */
 
-const QRect &QwtPolarLayout::titleRect() const
+const QRectF &QwtPolarLayout::titleRect() const
 {
     return d_data->titleRect;
 }
@@ -233,7 +233,7 @@ const QRect &QwtPolarLayout::titleRect() const
   \sa activate(), invalidate()
 */
 
-const QRect &QwtPolarLayout::legendRect() const
+const QRectF &QwtPolarLayout::legendRect() const
 {
     return d_data->legendRect;
 }
@@ -242,7 +242,7 @@ const QRect &QwtPolarLayout::legendRect() const
   \return Geometry for the canvas
   \sa activate(), invalidate()
 */
-const QRect &QwtPolarLayout::canvasRect() const
+const QRectF &QwtPolarLayout::canvasRect() const
 {
     return d_data->canvasRect;
 }
@@ -336,11 +336,11 @@ QRect QwtPolarLayout::layoutLegend( int options, const QRect &rect ) const
   \sa invalidate(), titleRect(), legendRect(), canvasRect()
 */
 void QwtPolarLayout::activate( const QwtPolarPlot *plot,
-    const QRect &boundingRect, int options )
+    const QRectF &boundingRect, int options )
 {
     invalidate();
 
-    QRect rect( boundingRect ); // undistributed rest of the plot rect
+    QRect rect( boundingRect.toRect() ); // undistributed rest of the plot rect
 
     // subtract the margin
     rect.setRect(
@@ -363,7 +363,7 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
         // subtract d_data->legendRect from rect
 
         const QRegion region( rect );
-        rect = region.subtract( d_data->legendRect ).boundingRect();
+        rect = region.subtract( d_data->legendRect.toRect() ).boundingRect();
 
         if ( d_data->layoutData.legend.frameWidth &&
                 !( options & IgnoreFrames ) )

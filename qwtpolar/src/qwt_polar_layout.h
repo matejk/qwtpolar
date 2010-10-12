@@ -60,13 +60,13 @@ public:
     virtual QSize minimumSizeHint( const QwtPolarPlot * ) const;
 
     virtual void activate( const QwtPolarPlot *,
-        const QRect &rect, int options = 0 );
+        const QRectF &rect, int options = 0 );
 
     virtual void invalidate();
 
-    const QRect &titleRect() const;
-    const QRect &legendRect() const;
-    const QRect &canvasRect() const;
+    const QRectF &titleRect() const;
+    const QRectF &legendRect() const;
+    const QRectF &canvasRect() const;
 
     class LayoutData;
 
