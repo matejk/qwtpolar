@@ -12,7 +12,7 @@ public:
     QwtPolarSpectrogram *spectrogram();
 
 public Q_SLOTS:
-    void printPlot();
+    void exportDocument();
     void showGrid( bool );
 
 private:

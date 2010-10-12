@@ -162,9 +162,6 @@ public:
 
     int plotMarginHint() const;
 
-    void renderTo( QPaintDevice & ) const;
-    virtual void renderTo( QPainter *, const QRect & ) const;
-
 Q_SIGNALS:
     /*!
       A signal which is emitted when the user has clicked on
@@ -216,12 +213,6 @@ protected:
         const QwtScaleMap &radialMap, const QwtScaleMap &azimuthMap,
         const QPointF &pole, double radius,
         const QRectF &canvasRect ) const;
-
-    virtual void renderTitle( QPainter *, const QRect & ) const;
-    virtual void renderLegend( QPainter *, const QRectF & ) const;
-
-    virtual void renderLegendItem( QPainter *,
-        const QWidget *, const QRectF & ) const;
 
 private:
     void initPlot( const QwtText & );

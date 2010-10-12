@@ -14,8 +14,8 @@ public:
 
 private Q_SLOTS:
     void enableZoomMode( bool on );
-    void print();
-    void exportSVG();
+    void printDocument();
+    void exportDocument();
 
 private:
     Plot *d_plot;

@@ -2,15 +2,17 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qprinter.h>
+#include <qprintdialog.h>
 #include <qfiledialog.h>
+#include <qimagewriter.h>
+#include <qfileinfo.h>
 #include <qlayout.h>
 #ifdef QT_SVG_LIB
 #include <qsvggenerator.h>
 #endif
-#include <qprintdialog.h>
-#include <qfileinfo.h>
 #include <qwt_polar_panner.h>
 #include <qwt_polar_magnifier.h>
+#include <qwt_polar_renderer.h>
 #include "mainwindow.h"
 #include "plot.h"
 #include "settingseditor.h"
@@ -63,60 +65,81 @@ MainWindow::MainWindow( QWidget *parent ):
     btnPrint->setIcon( QIcon( print_xpm ) );
     btnPrint->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
     toolBar->addWidget( btnPrint );
-    connect( btnPrint, SIGNAL( clicked() ), SLOT( print() ) );
+    connect( btnPrint, SIGNAL( clicked() ), SLOT( printDocument() ) );
 
 #ifdef QT_SVG_LIB
-    QToolButton *btnSVG = new QToolButton( toolBar );
-    btnSVG->setText( "SVG" );
-    btnSVG->setIcon( QIcon( print_xpm ) );
-    btnSVG->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
-    toolBar->addWidget( btnSVG );
+    QToolButton *btnExport = new QToolButton( toolBar );
+    btnExport->setText( "Export" );
+    btnExport->setIcon( QIcon( print_xpm ) );
+    btnExport->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
+    toolBar->addWidget( btnExport );
 
-    connect( btnSVG, SIGNAL( clicked() ), SLOT( exportSVG() ) );
+    connect( btnExport, SIGNAL( clicked() ), SLOT( exportDocument() ) );
 #endif
 
     addToolBar( toolBar );
 }
 
-void MainWindow::print()
+void MainWindow::printDocument()
 {
-    QPrinter printer( QPrinter::HighResolution );
-    printer.setOutputFileName( "/tmp/polardemo.pdf" );
+    QPrinter printer(QPrinter::HighResolution);
 
     QString docName = d_plot->title().text();
     if ( !docName.isEmpty() )
     {
-        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
-        printer.setDocName ( docName );
+        docName.replace (QRegExp (QString::fromLatin1 ("\n")), tr (" -- "));
+        printer.setDocName (docName);
     }
 
-    printer.setCreator( "Polardemo example" );
-    printer.setOrientation( QPrinter::Landscape );
+    printer.setCreator("polar plot demo example");
+    printer.setOrientation(QPrinter::Landscape);
 
-    QPrintDialog dialog( &printer );
+    QPrintDialog dialog(&printer);
     if ( dialog.exec() )
-        d_plot->renderTo( printer );
+    {
+        QwtPolarRenderer renderer;
+        renderer.renderTo(d_plot, printer);
+    }
 }
 
-void MainWindow::exportSVG()
+void MainWindow::exportDocument()
 {
-    QString fileName = "polardemo.svg";
+    QString fileName = "polarplot.pdf";
 
-#ifdef QT_SVG_LIB
 #ifndef QT_NO_FILEDIALOG
+    const QList<QByteArray> imageFormats =
+        QImageWriter::supportedImageFormats();
+
+    QStringList filter;
+    filter += "PDF Documents (*.pdf)";
+    filter += "SVG Documents (*.svg)";
+    filter += "Postscript Documents (*.ps)";
+
+    if ( imageFormats.size() > 0 )
+    {
+        QString imageFilter("Images (");
+        for ( int i = 0; i < imageFormats.size(); i++ )
+        {
+            if ( i > 0 )
+                imageFilter += " ";
+            imageFilter += "*.";
+            imageFilter += imageFormats[i];
+        }
+        imageFilter += ")";
+
+        filter += imageFilter;
+    }
+
     fileName = QFileDialog::getSaveFileName(
-                   this, "Export File Name", QString(),
-                   "SVG Documents (*.svg)" );
+        this, "Export File Name", fileName,
+        filter.join(";;"), NULL, QFileDialog::DontConfirmOverwrite);
 #endif
+
     if ( !fileName.isEmpty() )
     {
-        QSvgGenerator generator;
-        generator.setFileName( fileName );
-        generator.setSize( QSize( 800, 600 ) );
-
-        d_plot->renderTo( generator );
+        QwtPolarRenderer renderer;
+        renderer.renderDocument(d_plot, fileName, QSizeF(300, 200), 85);
     }
-#endif
 }
 
 void MainWindow::enableZoomMode( bool on )

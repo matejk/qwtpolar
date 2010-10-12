@@ -835,7 +835,7 @@ void QwtPolarPlot::updateLayout()
     {
         if ( !d_data->titleLabel->text().isEmpty() )
         {
-            d_data->titleLabel->setGeometry( d_data->layout->titleRect() );
+            d_data->titleLabel->setGeometry( d_data->layout->titleRect().toRect() );
             if ( !d_data->titleLabel->isVisible() )
                 d_data->titleLabel->show();
         }
@@ -848,14 +848,14 @@ void QwtPolarPlot::updateLayout()
     {
         if ( d_data->legend->itemCount() > 0 )
         {
-            d_data->legend->setGeometry( d_data->layout->legendRect() );
+            d_data->legend->setGeometry( d_data->layout->legendRect().toRect() );
             d_data->legend->show();
         }
         else
             d_data->legend->hide();
     }
 
-    d_data->canvas->setGeometry( d_data->layout->canvasRect() );
+    d_data->canvas->setGeometry( d_data->layout->canvasRect().toRect() );
     Q_EMIT layoutChanged();
 }
 
@@ -1262,160 +1262,3 @@ const QwtPolarLayout *QwtPolarPlot::plotLayout() const
 {
     return d_data->layout;
 }
-
-/*!
-   \brief Render the plot to a paint device ( f.e a QPrinter )
-
-   A convenience method, that calculates the target rectangle
-   from the paintdevice metrics.
-
-   \sa renderTo(QPainter *, const QRect &)
-*/
-void QwtPolarPlot::renderTo( QPaintDevice &paintDev ) const
-{
-    const QRect rect( 0, 0, paintDev.width(), paintDev.height() );
-
-    QPainter p( &paintDev );
-    renderTo( &p, rect );
-}
-
-/*!
-   \brief Render the plot to a given rectangle ( f.e on a QPrinter, QSvgRenderer )
-
-   \param painter Painter
-   \param plotRect Bounding rectangle for the plot
-*/
-void QwtPolarPlot::renderTo( QPainter *painter, const QRect &plotRect ) const
-{
-    if ( painter == 0 || !painter->isActive() ||
-            !plotRect.isValid() || size().isNull() )
-    {
-        return;
-    }
-
-    // All paint operations need to be scaled according to
-    // the paint device metrics.
-
-    int layoutOptions = QwtPolarLayout::IgnoreScrollbars
-                        | QwtPolarLayout::IgnoreFrames;
-
-    ( ( QwtPolarPlot * )this )->plotLayout()->activate( this,
-            plotRect, layoutOptions );
-
-    painter->save();
-    renderTitle( painter, plotLayout()->titleRect() );
-    painter->restore();
-
-    painter->save();
-    renderLegend( painter, plotLayout()->legendRect() );
-    painter->restore();
-
-    QRect canvasRect = plotLayout()->canvasRect();
-
-    painter->save();
-    painter->setClipRect( canvasRect );
-    drawCanvas( painter, canvasRect );
-    painter->restore();
-
-    ( ( QwtPolarPlot * )this )->plotLayout()->invalidate();
-}
-
-/*!
-  Render the title into a given rectangle.
-
-  \param painter Painter
-  \param rect Bounding rectangle
-*/
-
-void QwtPolarPlot::renderTitle( QPainter *painter, const QRect &rect ) const
-{
-    painter->setFont( titleLabel()->font() );
-
-    const QColor color = titleLabel()->palette().color(
-                             QPalette::Active, QPalette::Text );
-
-    painter->setPen( color );
-    titleLabel()->text().draw( painter, rect );
-}
-
-/*!
-  Render the legend into a given rectangle.
-
-  \param painter Painter
-  \param rect Bounding rectangle
-*/
-
-void QwtPolarPlot::renderLegend( QPainter *painter, const QRectF &rect ) const
-{
-    if ( !legend() || legend()->isEmpty() )
-        return;
-
-    QLayout *l = legend()->contentsWidget()->layout();
-    if ( l == 0 || !l->inherits( "QwtDynGridLayout" ) )
-        return;
-
-    QwtDynGridLayout *legendLayout = ( QwtDynGridLayout * )l;
-
-    uint numCols = legendLayout->columnsForWidth( rect.width() );
-    QList<QRect> itemRects =
-        legendLayout->layoutItems( rect.toRect(), numCols );
-
-    int index = 0;
-
-    for ( int i = 0; i < legendLayout->count(); i++ )
-    {
-        QLayoutItem *item = legendLayout->itemAt( i );
-        QWidget *w = item->widget();
-        if ( w )
-        {
-            painter->save();
-
-            painter->setClipRect( itemRects[index] );
-            renderLegendItem( painter, w, itemRects[index] );
-
-            index++;
-            painter->restore();
-        }
-    }
-
-}
-
-/*!
-  Print the legend item into a given rectangle.
-
-  \param painter Painter
-  \param widget Widget representing a legend item
-  \param rect Bounding rectangle
-
-  \note When widget is not derived from QwtLegendItem renderLegendItem
-        does nothing and needs to be overloaded
-*/
-void QwtPolarPlot::renderLegendItem( QPainter *painter,
-    const QWidget *widget, const QRectF &rect ) const
-{
-    if ( widget->inherits( "QwtLegendItem" ) )
-    {
-        QwtLegendItem *item = ( QwtLegendItem * )widget;
-
-        const QRect identifierRect(
-            rect.x() + item->margin(), rect.y(),
-            item->identifierSize().width(), rect.height() );
-
-        QwtLegendItemManager *itemManger = legend()->find( item );
-        if ( itemManger )
-        {
-            painter->save();
-            itemManger->drawLegendIdentifier( painter, identifierRect );
-            painter->restore();
-        }
-
-        // Label
-
-        QRectF titleRect = rect;
-        titleRect.setX( identifierRect.right() + 2 * item->spacing() );
-
-        painter->setFont( item->font() );
-        item->text().draw( painter, titleRect );
-    }
-}
-

@@ -1,11 +1,12 @@
-#include <qprinter.h>
-#include <qprintdialog.h>
+#include <qfiledialog.h>
+#include <qimagewriter.h>
 #include <qpen.h>
 #include <qwt_raster_data.h>
 #include <qwt_polar_panner.h>
 #include <qwt_polar_magnifier.h>
 #include <qwt_polar_grid.h>
 #include <qwt_polar_spectrogram.h>
+#include <qwt_polar_renderer.h>
 #include "plot.h"
 
 // Pointless synthetic data, showing something nice
@@ -84,14 +85,43 @@ QwtPolarSpectrogram *Plot::spectrogram()
     return d_spectrogram;
 }
 
-void Plot::printPlot()
+void Plot::exportDocument()
 {
-    QPrinter printer;
-    printer.setOrientation( QPrinter::Landscape );
-    printer.setOutputFileName( "/tmp/spectrogram.pdf" );
-    QPrintDialog dialog( &printer );
-    if ( dialog.exec() )
-        renderTo( printer );
+    QString fileName = "spectrogram.pdf";
+
+#ifndef QT_NO_FILEDIALOG
+    const QList<QByteArray> imageFormats =
+        QImageWriter::supportedImageFormats();
+
+    QStringList filter;
+    filter += "PDF Documents (*.pdf)";
+    filter += "SVG Documents (*.svg)";
+    filter += "Postscript Documents (*.ps)";
+
+    if ( imageFormats.size() > 0 )
+    {
+        QString imageFilter("Images (");
+        for ( int i = 0; i < imageFormats.size(); i++ )
+        {
+            if ( i > 0 )
+                imageFilter += " ";
+            imageFilter += "*.";
+            imageFilter += imageFormats[i];
+        }
+        imageFilter += ")";
+
+        filter += imageFilter;
+    }
+
+    fileName = QFileDialog::getSaveFileName(
+        this, "Export File Name", fileName,
+        filter.join(";;"), NULL, QFileDialog::DontConfirmOverwrite);
+#endif
+    if ( !fileName.isEmpty() )
+    {
+        QwtPolarRenderer renderer;
+        renderer.renderDocument(this, fileName, QSizeF(300, 200), 85);
+    }
 }
 
 void Plot::showGrid( bool on )
