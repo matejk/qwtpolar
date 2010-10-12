@@ -6,14 +6,14 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
+#include "qwt_polar_canvas.h"
+#include "qwt_polar_plot.h"
 #include <qpainter.h>
 #include <qevent.h>
 #include <qpixmap.h>
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
 #endif
-#include "qwt_polar_canvas.h"
-#include "qwt_polar_plot.h"
 
 class QwtPolarCanvas::PrivateData
 {

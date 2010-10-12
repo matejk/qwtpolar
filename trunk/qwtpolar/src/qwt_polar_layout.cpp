@@ -6,13 +6,13 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include <qscrollbar.h>
-#include "qwt_text.h"
-#include "qwt_text_label.h"
-#include "qwt_legend.h"
+#include "qwt_polar_layout.h"
 #include "qwt_polar_plot.h"
 #include "qwt_polar_canvas.h"
-#include "qwt_polar_layout.h"
+#include <qwt_text.h>
+#include <qwt_text_label.h>
+#include <qwt_legend.h>
+#include <qscrollbar.h>
 
 class QwtPolarLayout::LayoutData
 {
@@ -306,31 +306,31 @@ QRectF QwtPolarLayout::layoutLegend( int options, QRectF &rect ) const
     switch( d_data->legendPos )
     {
         case QwtPolarPlot::LeftLegend:
-		{
+        {
             legendRect.setWidth( dim );
-			rect.setLeft( legendRect.right() );
+            rect.setLeft( legendRect.right() );
             break;
-		}
+        }
         case QwtPolarPlot::RightLegend:
-		{
+        {
             legendRect.setX( rect.right() - dim + 1 );
             legendRect.setWidth( dim );
-			rect.setRight( legendRect.left() );
+            rect.setRight( legendRect.left() );
             break;
-		}
+        }
         case QwtPolarPlot::TopLegend:
-		{
+        {
             legendRect.setHeight( dim );
-			rect.setTop( legendRect.bottom() );
+            rect.setTop( legendRect.bottom() );
             break;
-		}
+        }
         case QwtPolarPlot::BottomLegend:
-		{
+        {
             legendRect.setY( rect.bottom() - dim + 1 );
             legendRect.setHeight( dim );
-			rect.setBottom( legendRect.top() );
+            rect.setBottom( legendRect.top() );
             break;
-		}
+        }
         case QwtPolarPlot::ExternalLegend:
             break;
     }
@@ -353,7 +353,7 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
     invalidate();
 
     QRectF rect( boundingRect ); // undistributed rest of the plot rect
-	rect.adjust( d_data->margin, d_data->margin, 
+    rect.adjust( d_data->margin, d_data->margin, 
         -d_data->margin, -d_data->margin);
 
     // We extract all layout relevant data from the widgets
@@ -441,5 +441,5 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
                 d_data->legendRect.setHeight( d_data->canvasRect.height() );
             }
         }
-	}
+    }
 }
