@@ -218,9 +218,10 @@ protected:
         const QRectF &canvasRect) const;
 
     virtual void renderTitle(QPainter *, const QRect &) const;
-    virtual void renderLegend(QPainter *, const QRect &) const;
-    virtual void renderLegendItem(QPainter *,
-        const QWidget *, const QRect &) const;
+    virtual void renderLegend(QPainter *, const QRectF &) const;
+
+    virtual void renderLegendItem( QPainter *,
+        const QWidget *, const QRectF & ) const;
 
 private:
     void initPlot(const QwtText &);

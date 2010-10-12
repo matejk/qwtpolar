@@ -10,6 +10,7 @@
 #include "qwt_legend.h"
 #include "qwt_legend_item.h"
 #include "qwt_polar_item.h"
+#include <qpainter.h>
 
 class QwtPolarItem::PrivateData
 {
@@ -351,46 +352,60 @@ void QwtPolarItem::updateScaleDiv(const QwtScaleDiv & /* azimuthScaleDiv */,
 */
 void QwtPolarItem::updateLegend(QwtLegend *legend) const
 {
-    if ( !legend )
+    if ( legend == NULL )
         return;
 
-    QWidget *lgdItem = legend->find(this);
-    if ( testItemAttribute(QwtPolarItem::Legend) )
+    QWidget *lgdItem = legend->find( this );
+    if ( testItemAttribute( QwtPolarItem::Legend ) )
     {
         if ( lgdItem == NULL )
         {
             lgdItem = legendItem();
             if ( lgdItem )
-            {
-                if ( lgdItem->inherits("QwtLegendItem") )
-                {
-                    QwtLegendItem *label = (QwtLegendItem *)lgdItem;
-                    label->setItemMode(legend->itemMode());
-
-                    if ( d_data->plot )
-                    {
-                        QObject::connect(label, SIGNAL(clicked()),
-                            d_data->plot, SLOT(legendItemClicked()));
-                        QObject::connect(label, SIGNAL(checked(bool)),
-                            d_data->plot, SLOT(legendItemChecked(bool)));
-                    }
-                }
-                legend->insert(this, lgdItem);
-            }
+                legend->insert( this, lgdItem );
         }
-        if ( lgdItem && lgdItem->inherits("QwtLegendItem") )
+        if ( lgdItem && lgdItem->inherits( "QwtLegendItem" ) )
         {
-            QwtLegendItem* label = (QwtLegendItem*)lgdItem;
+            QwtLegendItem* label = ( QwtLegendItem* )lgdItem;
             if ( label )
-                label->setText(d_data->title);
+            {
+                // paint the identifier
+                const QSize sz = label->identifierSize();
+
+                QPixmap identifier( sz.width(), sz.height() );
+                identifier.fill( Qt::transparent );
+
+                QPainter painter( &identifier );
+                painter.setRenderHint( QPainter::Antialiasing,
+                    testRenderHint( QwtPolarItem::RenderAntialiased ) );
+                drawLegendIdentifier( &painter,
+                    QRect( 0, 0, sz.width(), sz.height() ) );
+                painter.end();
+
+                const bool doUpdate = label->updatesEnabled();
+                if ( doUpdate )
+                    label->setUpdatesEnabled( false );
+
+                label->setText( title() );
+                label->setIdentifier( identifier );
+                label->setItemMode( legend->itemMode() );
+
+                if ( doUpdate )
+                    label->setUpdatesEnabled( true );
+
+                label->update();
+            }
         }
     }
     else
     {
-        delete lgdItem;
+        if ( lgdItem )
+        {
+            lgdItem->hide();
+            lgdItem->deleteLater();
+        }
     }
 }
-
 /*!
    \brief Allocate the widget that represents the item on the legend
 

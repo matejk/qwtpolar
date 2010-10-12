@@ -49,6 +49,29 @@ public:
         UserCurve = 100
     };
 
+    /*!
+        Attributes how to represent the curve on the legend
+
+        - LegendShowLine
+          If the curveStyle() is not NoCurve a line is painted with the
+          curvePen().
+        - LegendShowSymbol
+          If the curve has a valid symbol it is painted.
+
+        If none of the flags is activated QwtPlotCurve tries to find
+        a color representing the curve and paints a rectangle with it.
+        In the default setting all attributes are off.
+
+        \sa setLegendAttribute(), testLegendAttribute(),
+            drawLegendIdentifier()
+     */
+
+    enum LegendAttribute
+    {
+        LegendShowLine = 1,
+        LegendShowSymbol = 2
+    };
+
     explicit QwtPolarCurve();
     explicit QwtPolarCurve(const QwtText &title);
     explicit QwtPolarCurve(const QString &title);
@@ -56,6 +79,9 @@ public:
     virtual ~QwtPolarCurve();
 
     virtual int rtti() const;
+
+    void setLegendAttribute( LegendAttribute, bool on = true );
+    bool testLegendAttribute( LegendAttribute ) const;
 
     void setData(QwtSeriesData<QPointF> *data);
     QwtSeriesData<QPointF> *data();
@@ -90,6 +116,8 @@ public:
 
     virtual void updateLegend(QwtLegend *) const;
     virtual QwtInterval boundingInterval(int scaleId) const;
+
+    virtual void drawLegendIdentifier( QPainter *, const QRectF & ) const;
 
 protected:
 

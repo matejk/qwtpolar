@@ -38,7 +38,8 @@ class QwtPolarCurve::PrivateData
 public:
     PrivateData():
         style(QwtPolarCurve::Lines),
-        curveFitter(NULL)
+        curveFitter(NULL),
+		legendAttributes( 0 )
     {
         symbol = new QwtSymbol();
         pen = QPen(Qt::black);
@@ -54,6 +55,8 @@ public:
     const QwtSymbol *symbol;
     QPen pen;
     QwtCurveFitter *curveFitter;
+
+    int legendAttributes;
 };
 
 //! Constructor
@@ -107,6 +110,30 @@ void QwtPolarCurve::init()
 int QwtPolarCurve::rtti() const
 {
     return QwtPolarItem::Rtti_PolarCurve;
+}
+
+/*!
+  Specify an attribute how to draw the legend identifier
+
+  \param attribute Attribute
+  \param on On/Off
+  /sa LegendAttribute, testLegendAttribute()
+*/
+void QwtPolarCurve::setLegendAttribute( LegendAttribute attribute, bool on )
+{
+    if ( on )
+        d_data->legendAttributes |= attribute;
+    else
+        d_data->legendAttributes &= ~attribute;
+}
+
+/*!
+    \brief Return the current paint attributes
+    \sa LegendAttribute, setLegendAttribute()
+*/
+bool QwtPolarCurve::testLegendAttribute( LegendAttribute attribute ) const
+{
+    return ( d_data->legendAttributes & attribute );
 }
 
 /*!
@@ -418,68 +445,91 @@ int QwtPolarCurve::dataSize() const
 //!  Update the widget that represents the curve on the legend
 void QwtPolarCurve::updateLegend(QwtLegend *legend) const
 {
-    if ( !legend )
-        return;
-        
-    QwtPolarItem::updateLegend(legend);
-    
-    QWidget *widget = legend->find(this);
-    if ( !widget || !widget->inherits("QwtLegendItem") )
-        return;
-        
-    QwtLegendItem *legendItem = (QwtLegendItem *)widget;
-    
-    const bool doUpdate = legendItem->updatesEnabled();
-    legendItem->setUpdatesEnabled(false);
-    
-#if 0
-    const int policy = legend->displayPolicy();
-    if (policy == QwtLegend::FixedIdentifier)
+    if ( legend && testItemAttribute( QwtPolarCurve::Legend )
+        && ( d_data->legendAttributes & QwtPolarCurve::LegendShowSymbol )
+        && d_data->symbol
+        && d_data->symbol->style() != QwtSymbol::NoSymbol )
     {
-        int mode = legend->identifierMode();
-
-        if (mode & QwtLegendItem::ShowLine)
-            legendItem->setCurvePen(pen());
-
-        if (mode & QwtLegendItem::ShowSymbol)
-            legendItem->setSymbol(symbol());
-
-        if (mode & QwtLegendItem::ShowText)
-            legendItem->setText(title());
-        else
-            legendItem->setText(QwtText());
-
-        legendItem->setIdentifierMode(mode);
+        QWidget *lgdItem = legend->find( this );
+        if ( lgdItem == NULL )
+        {
+            lgdItem = legendItem();
+            if ( lgdItem )
+                legend->insert( this, lgdItem );
+        }
+        if ( lgdItem && lgdItem->inherits( "QwtLegendItem" ) )
+        {
+            QwtLegendItem *l = ( QwtLegendItem * )lgdItem;
+            l->setIdentifierSize( d_data->symbol->boundingSize() );
+        }
     }
-    else if (policy == QwtLegend::AutoIdentifier)
+
+    QwtPolarItem::updateLegend( legend );
+}
+
+void QwtPolarCurve::drawLegendIdentifier(
+    QPainter *painter, const QRectF &rect ) const
+{
+    if ( rect.isEmpty() )
+        return;
+
+    const int dim = qMin( rect.width(), rect.height() );
+
+    QSize size( dim, dim );
+    size = size;
+
+    QRectF r( 0, 0, size.width(), size.height() );
+    r.moveCenter( rect.center() );
+
+    if ( d_data->legendAttributes == 0 )
     {
-        int mode = 0;
-
-        if (QwtPolarCurve::NoCurve != style())
-        {
-            legendItem->setCurvePen(pen());
-            mode |= QwtLegendItem::ShowLine;
-        }
-        if (QwtSymbol::NoSymbol != symbol().style())
-        {
-            legendItem->setSymbol(symbol());
-            mode |= QwtLegendItem::ShowSymbol;
-        }
-        if ( !title().isEmpty() )
-        {
-            legendItem->setText(title());
-            mode |= QwtLegendItem::ShowText;
-        }
-        else
-        {
-            legendItem->setText(QwtText());
-        }
-        legendItem->setIdentifierMode(mode);
+        QBrush brush;
+		if ( style() != QwtPolarCurve::NoCurve )
+			brush = QBrush( pen().color() );
+		else if ( d_data->symbol &&
+			( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
+		{
+			brush = QBrush( d_data->symbol->pen().color() );
+		}
+        if ( brush.style() != Qt::NoBrush )
+            painter->fillRect( r, brush );
     }
-#endif
+    if ( d_data->legendAttributes & QwtPolarCurve::LegendShowLine )
+    {
+        if ( pen() != Qt::NoPen )
+        {
+            painter->setPen( pen() );
+            QwtPainter::drawLine( painter, rect.left(), rect.center().y(),
+                                  rect.right() - 1.0, rect.center().y() );
+        }
+    }
+    if ( d_data->legendAttributes & QwtPolarCurve::LegendShowSymbol )
+    {
+        if ( d_data->symbol &&
+            ( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
+        {
+            QSize symbolSize = d_data->symbol->boundingSize();
+            symbolSize -= QSize( 2, 2 );
 
-    legendItem->setUpdatesEnabled(doUpdate);
-    legendItem->update();
+            // scale the symbol size down if it doesn't fit into rect.
+
+            double xRatio = 1.0;
+            if ( rect.width() < symbolSize.width() )
+                xRatio = rect.width() / symbolSize.width();
+            double yRatio = 1.0;
+            if ( rect.height() < symbolSize.height() )
+                yRatio = rect.height() / symbolSize.height();
+
+            const double ratio = qMin( xRatio, yRatio );
+
+            painter->save();
+            painter->scale( ratio, ratio );
+
+            d_data->symbol->drawSymbol( painter, rect.center() / ratio );
+
+            painter->restore();
+        }
+    }
 }
 
 /*!
