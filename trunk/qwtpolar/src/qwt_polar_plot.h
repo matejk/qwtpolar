@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -35,19 +35,19 @@ class QwtPolarLayout;
   The coordinate system is defined by a radial and a azimuth scale.
   The scales at the axes can be explicitely set (QwtScaleDiv), or
   are calculated from the plot items, using algorithms (QwtScaleEngine) which
-  can be configured separately for each axis. Autoscaling is supported 
+  can be configured separately for each axis. Autoscaling is supported
   for the radial scale.
 
   In opposite to QwtPlot the scales might be different from the
-  view, that is displayed on the canvas. The view can be changed by 
+  view, that is displayed on the canvas. The view can be changed by
   zooming - f.e. by using QwtPolarPanner or QwtPolarMaginfier.
 */
 class QWT_POLAR_EXPORT QwtPolarPlot: public QFrame, public QwtPolarItemDict
 {
     Q_OBJECT
 
-    Q_PROPERTY(QBrush plotBackground READ plotBackground WRITE setPlotBackground)
-    Q_PROPERTY(double azimuthOrigin READ azimuthOrigin WRITE setAzimuthOrigin)
+    Q_PROPERTY( QBrush plotBackground READ plotBackground WRITE setPlotBackground )
+    Q_PROPERTY( double azimuthOrigin READ azimuthOrigin WRITE setAzimuthOrigin )
 
 
 public:
@@ -83,49 +83,49 @@ public:
         ExternalLegend
     };
 
-    explicit QwtPolarPlot( QWidget *parent = NULL);
-    QwtPolarPlot(const QwtText &title, QWidget *parent = NULL);
+    explicit QwtPolarPlot( QWidget *parent = NULL );
+    QwtPolarPlot( const QwtText &title, QWidget *parent = NULL );
 
     virtual ~QwtPolarPlot();
 
-    void setTitle(const QString &);
-    void setTitle(const QwtText &);
+    void setTitle( const QString & );
+    void setTitle( const QwtText & );
 
     QwtText title() const;
 
     QwtTextLabel *titleLabel();
     const QwtTextLabel *titleLabel() const;
 
-    void setAutoReplot(bool tf = true); 
+    void setAutoReplot( bool tf = true );
     bool autoReplot() const;
 
-    void setAutoScale(int scaleId);
-    bool hasAutoScale(int scaleId) const;
+    void setAutoScale( int scaleId );
+    bool hasAutoScale( int scaleId ) const;
 
-    void setScaleMaxMinor(int scaleId, int maxMinor);
-    int scaleMaxMinor(int scaleId) const;
+    void setScaleMaxMinor( int scaleId, int maxMinor );
+    int scaleMaxMinor( int scaleId ) const;
 
-    int scaleMaxMajor(int scaleId) const;
-    void setScaleMaxMajor(int scaleId, int maxMajor);
+    int scaleMaxMajor( int scaleId ) const;
+    void setScaleMaxMajor( int scaleId, int maxMajor );
 
-    QwtScaleEngine *scaleEngine(int scaleId);
-    const QwtScaleEngine *scaleEngine(int scaleId) const;
-    void setScaleEngine(int scaleId, QwtScaleEngine *);
+    QwtScaleEngine *scaleEngine( int scaleId );
+    const QwtScaleEngine *scaleEngine( int scaleId ) const;
+    void setScaleEngine( int scaleId, QwtScaleEngine * );
 
-    void setScale(int scaleId, double min, double max, double step = 0);
+    void setScale( int scaleId, double min, double max, double step = 0 );
 
-    void setScaleDiv(int scaleId, const QwtScaleDiv &);
-    const QwtScaleDiv *scaleDiv(int scaleId) const;
-    QwtScaleDiv *scaleDiv(int scaleId);
+    void setScaleDiv( int scaleId, const QwtScaleDiv & );
+    const QwtScaleDiv *scaleDiv( int scaleId ) const;
+    QwtScaleDiv *scaleDiv( int scaleId );
 
-    QwtScaleMap scaleMap(int scaleId, double radius) const;
-    QwtScaleMap scaleMap(int scaleId) const;
+    QwtScaleMap scaleMap( int scaleId, double radius ) const;
+    QwtScaleMap scaleMap( int scaleId ) const;
 
-    void updateScale(int scaleId);
+    void updateScale( int scaleId );
 
     double azimuthOrigin() const;
 
-    void zoom(const QwtPolarPoint&, double factor);
+    void zoom( const QwtPolarPoint&, double factor );
     void unzoom();
 
     QwtPolarPoint zoomPos() const;
@@ -138,16 +138,16 @@ public:
     QwtPolarCanvas *canvas();
     const QwtPolarCanvas *canvas() const;
 
-    void setPlotBackground (const QBrush &c);
+    void setPlotBackground ( const QBrush &c );
     const QBrush& plotBackground() const;
 
-    virtual void drawCanvas(QPainter *, const QRectF &) const;
+    virtual void drawCanvas( QPainter *, const QRectF & ) const;
 
 
     // Legend
 
-    void insertLegend(QwtLegend *, LegendPosition = QwtPolarPlot::RightLegend,
-        double ratio = -1.0);
+    void insertLegend( QwtLegend *, LegendPosition = QwtPolarPlot::RightLegend,
+                       double ratio = -1.0 );
 
     QwtLegend *legend();
     const QwtLegend *legend() const;
@@ -158,12 +158,12 @@ public:
 
     QwtInterval visibleInterval() const;
     QRectF plotRect() const;
-    QRectF plotRect(const QRect &) const;
+    QRectF plotRect( const QRect & ) const;
 
     int plotMarginHint() const;
 
-    void renderTo(QPaintDevice &) const;
-    virtual void renderTo(QPainter *, const QRect &) const;
+    void renderTo( QPaintDevice & ) const;
+    virtual void renderTo( QPainter *, const QRect & ) const;
 
 Q_SIGNALS:
     /*!
@@ -176,7 +176,7 @@ Q_SIGNALS:
       \note clicks are disabled as default
       \sa QwtLegend::setItemMode, QwtLegend::itemMode
      */
-    void legendClicked(QwtPolarItem *plotItem);
+    void legendClicked( QwtPolarItem *plotItem );
 
     /*!
       A signal which is emitted when the user has clicked on
@@ -189,7 +189,7 @@ Q_SIGNALS:
       \note clicks are disabled as default
       \sa QwtLegend::setItemMode, QwtLegend::itemMode
      */
-    void legendChecked(QwtPolarItem *plotItem, bool on);
+    void legendChecked( QwtPolarItem *plotItem, bool on );
 
     /*!
       A signal that is emitted, whenever the layout of the plot
@@ -200,31 +200,31 @@ Q_SIGNALS:
 public Q_SLOTS:
     virtual void replot();
     void autoRefresh();
-    void setAzimuthOrigin(double);
+    void setAzimuthOrigin( double );
 
 protected Q_SLOTS:
     virtual void legendItemClicked();
-    virtual void legendItemChecked(bool);
+    virtual void legendItemChecked( bool );
 
 protected:
-    virtual bool event(QEvent *);
-    virtual void resizeEvent(QResizeEvent *);
+    virtual bool event( QEvent * );
+    virtual void resizeEvent( QResizeEvent * );
 
     virtual void updateLayout();
 
-    virtual void drawItems(QPainter *painter, 
+    virtual void drawItems( QPainter *painter,
         const QwtScaleMap &radialMap, const QwtScaleMap &azimuthMap,
         const QPointF &pole, double radius,
-        const QRectF &canvasRect) const;
+        const QRectF &canvasRect ) const;
 
-    virtual void renderTitle(QPainter *, const QRect &) const;
-    virtual void renderLegend(QPainter *, const QRectF &) const;
+    virtual void renderTitle( QPainter *, const QRect & ) const;
+    virtual void renderLegend( QPainter *, const QRectF & ) const;
 
     virtual void renderLegendItem( QPainter *,
         const QWidget *, const QRectF & ) const;
 
 private:
-    void initPlot(const QwtText &);
+    void initPlot( const QwtText & );
 
     class ScaleData;
     class PrivateData;

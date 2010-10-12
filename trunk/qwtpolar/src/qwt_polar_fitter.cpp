@@ -13,20 +13,20 @@ class QwtPolarFitter::PrivateData
 {
 public:
     PrivateData():
-        stepCount(5)
+        stepCount( 5 )
     {
     }
 
     int stepCount;
 };
 
-/*! 
+/*!
    Constructor
 
    \param stepCount Number of points, that will be inserted between 2 points
    \sa setStepCount()
 */
-QwtPolarFitter::QwtPolarFitter(int stepCount)
+QwtPolarFitter::QwtPolarFitter( int stepCount )
 {
     d_data = new PrivateData;
     d_data->stepCount = stepCount;
@@ -46,12 +46,12 @@ QwtPolarFitter::~QwtPolarFitter()
 
    \sa stepCount()
 */
-void QwtPolarFitter::setStepCount(int stepCount)
+void QwtPolarFitter::setStepCount( int stepCount )
 {
-    d_data->stepCount = qMax(stepCount, 0);
+    d_data->stepCount = qMax( stepCount, 0 );
 }
 
-/*! 
+/*!
    \return Number of points, that will be inserted between 2 points
    \sa setStepCount()
 */
@@ -67,35 +67,35 @@ int QwtPolarFitter::stepCount() const
    \param points Array of points
    \return Array of points including the additional points
 */
-QPolygonF QwtPolarFitter::fitCurve( const QPolygonF &points) const
+QPolygonF QwtPolarFitter::fitCurve( const QPolygonF &points ) const
 {
     if ( d_data->stepCount <= 0 || points.size() <= 1 )
         return points;
 
     QPolygonF fittedPoints;
 
-    int numPoints = points.size() + (points.size() - 1) * d_data->stepCount;
+    int numPoints = points.size() + ( points.size() - 1 ) * d_data->stepCount;
 
-    fittedPoints.resize(numPoints);
+    fittedPoints.resize( numPoints );
 
     int index = 0;
     fittedPoints[index++] = points[0];
-    for ( int i = 1; i < (int)points.size(); i++ )
+    for ( int i = 1; i < ( int )points.size(); i++ )
     {
         const QPointF &p1 = points[i-1];
         const QPointF &p2 = points[i];
 
-        const double dx = (p2.x() - p1.x()) / d_data->stepCount;
-        const double dy = (p2.y() - p1.y()) / d_data->stepCount;
+        const double dx = ( p2.x() - p1.x() ) / d_data->stepCount;
+        const double dy = ( p2.y() - p1.y() ) / d_data->stepCount;
         for ( int j = 1; j <= d_data->stepCount; j++ )
         {
             const double x = p1.x() + j * dx;
             const double y = p1.y() + j * dy;
 
-            fittedPoints[index++] = QPointF(x, y);
+            fittedPoints[index++] = QPointF( x, y );
         }
     }
-    fittedPoints.resize(index);
+    fittedPoints.resize( index );
 
     return fittedPoints;
 }

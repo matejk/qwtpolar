@@ -43,24 +43,24 @@ public:
 
     virtual int rtti() const;
 
-    void setPosition(const QwtPolarPoint &);
+    void setPosition( const QwtPolarPoint & );
     QwtPolarPoint position() const;
 
-    void setSymbol(const QwtSymbol *s);
+    void setSymbol( const QwtSymbol *s );
     const QwtSymbol *symbol() const;
 
-    void setLabel(const QwtText&);
+    void setLabel( const QwtText& );
     QwtText label() const;
 
-    void setLabelAlignment(Qt::Alignment);
+    void setLabelAlignment( Qt::Alignment );
     Qt::Alignment labelAlignment() const;
 
-    virtual void draw(QPainter *painter,
+    virtual void draw( QPainter *painter,
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QPointF &pole, double radius,
-        const QRectF &canvasRect) const;
+        const QRectF &canvasRect ) const;
 
-    virtual QwtInterval boundingInterval(int scaleId) const;
+    virtual QwtInterval boundingInterval( int scaleId ) const;
 
 private:
     class PrivateData;

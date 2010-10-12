@@ -10,42 +10,42 @@
 class ColorMap: public QwtLinearColorMap
 {
 public:
-	ColorMap():
-    	QwtLinearColorMap(Qt::darkBlue, Qt::yellow)
-	{
-    	addColorStop(0.05, Qt::blue);
-    	addColorStop(0.3, Qt::cyan);
-    	addColorStop(0.6, Qt::green);
-    	addColorStop(0.98, Qt::red);
-	}
+    ColorMap():
+        QwtLinearColorMap( Qt::darkBlue, Qt::yellow )
+    {
+        addColorStop( 0.05, Qt::blue );
+        addColorStop( 0.3, Qt::cyan );
+        addColorStop( 0.6, Qt::green );
+        addColorStop( 0.98, Qt::red );
+    }
 };
 
-PlotWindow::PlotWindow(QWidget *parent):
-    QWidget(parent)
+PlotWindow::PlotWindow( QWidget *parent ):
+    QWidget( parent )
 {
-    d_plot = new Plot(this);
+    d_plot = new Plot( this );
 
-    d_colorScale = new QwtScaleWidget(this);
-    d_colorScale->setAlignment(QwtScaleDraw::RightScale);
-    d_colorScale->setColorBarEnabled(true);
-    
-    QwtText title("Intensity");
+    d_colorScale = new QwtScaleWidget( this );
+    d_colorScale->setAlignment( QwtScaleDraw::RightScale );
+    d_colorScale->setColorBarEnabled( true );
+
+    QwtText title( "Intensity" );
     QFont font = d_colorScale->font();
-    font.setBold(true);
-    title.setFont(font);
-    d_colorScale->setTitle(title);
-    
-    const QwtInterval interval = 
-		d_plot->spectrogram()->data()->interval(Qt::ZAxis);
+    font.setBold( true );
+    title.setFont( font );
+    d_colorScale->setTitle( title );
+
+    const QwtInterval interval =
+        d_plot->spectrogram()->data()->interval( Qt::ZAxis );
 
     d_colorScale->setColorMap( interval, new ColorMap() );
-	d_plot->spectrogram()->setColorMap( new ColorMap() );
-    
-    QwtLinearScaleEngine scaleEngine;
-    d_colorScale->setScaleDiv(scaleEngine.transformation(),
-        scaleEngine.divideScale(interval.minValue(), interval.maxValue(), 8, 5));
+    d_plot->spectrogram()->setColorMap( new ColorMap() );
 
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(d_plot, 10);
-    layout->addWidget(d_colorScale, 10);
+    QwtLinearScaleEngine scaleEngine;
+    d_colorScale->setScaleDiv( scaleEngine.transformation(),
+        scaleEngine.divideScale( interval.minValue(), interval.maxValue(), 8, 5 ) );
+
+    QHBoxLayout *layout = new QHBoxLayout( this );
+    layout->addWidget( d_plot, 10 );
+    layout->addWidget( d_colorScale, 10 );
 }

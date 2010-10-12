@@ -32,11 +32,11 @@ class QWT_POLAR_EXPORT QwtPolarMagnifier: public QwtMagnifier
     Q_OBJECT
 
 public:
-    explicit QwtPolarMagnifier(QwtPolarCanvas *);
+    explicit QwtPolarMagnifier( QwtPolarCanvas * );
     virtual ~QwtPolarMagnifier();
 
-    void setUnzoomKey(int key, int modifiers);
-    void getUnzoomKey(int &key, int &modifiers) const;
+    void setUnzoomKey( int key, int modifiers );
+    void getUnzoomKey( int &key, int &modifiers ) const;
 
     QwtPolarPlot *plot();
     const QwtPolarPlot *plot() const;
@@ -45,10 +45,10 @@ public:
     const QwtPolarCanvas *canvas() const;
 
 protected:
-    virtual void rescale(double factor);
+    virtual void rescale( double factor );
     void unzoom();
 
-    virtual void widgetKeyPressEvent(QKeyEvent *);
+    virtual void widgetKeyPressEvent( QKeyEvent * );
 
 private:
     class PrivateData;

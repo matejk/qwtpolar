@@ -31,25 +31,25 @@ public:
     explicit QwtPolarSpectrogram();
     virtual ~QwtPolarSpectrogram();
 
-    void setData(QwtRasterData *data);
+    void setData( QwtRasterData *data );
     const QwtRasterData *data() const;
 
-    void setColorMap(QwtColorMap *);
+    void setColorMap( QwtColorMap * );
     const QwtColorMap *colorMap() const;
 
     virtual int rtti() const;
 
-    virtual void draw(QPainter *painter,
+    virtual void draw( QPainter *painter,
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QPointF &pole, double radius,
-        const QRectF &canvasRect) const;
+        const QRectF &canvasRect ) const;
 
-    virtual QwtInterval boundingInterval(int scaleId) const;
+    virtual QwtInterval boundingInterval( int scaleId ) const;
 
 protected:
     virtual QImage renderImage(
-        const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap, 
-        const QPointF &pole, const QRect &rect) const;
+        const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
+        const QPointF &pole, const QRect &rect ) const;
 
 private:
     class PrivateData;

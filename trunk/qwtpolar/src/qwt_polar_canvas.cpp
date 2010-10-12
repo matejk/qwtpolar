@@ -1,7 +1,7 @@
 /* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
  * QwtPolar Widget Library
  * Copyright (C) 2008   Uwe Rathmann
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
@@ -19,8 +19,8 @@ class QwtPolarCanvas::PrivateData
 {
 public:
     PrivateData():
-        paintAttributes(0),
-        cache(NULL)
+        paintAttributes( 0 ),
+        cache( NULL )
     {
     }
 
@@ -34,20 +34,20 @@ public:
 };
 
 //! Constructor
-QwtPolarCanvas::QwtPolarCanvas(QwtPolarPlot *plot):
-    QFrame(plot)
+QwtPolarCanvas::QwtPolarCanvas( QwtPolarPlot *plot ):
+    QFrame( plot )
 {
     d_data = new PrivateData;
 
-    setAutoFillBackground(false);
+    setAutoFillBackground( false );
 
-    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute( Qt::WA_NoSystemBackground, true );
 #ifndef QT_NO_CURSOR
-    setCursor(Qt::CrossCursor);
+    setCursor( Qt::CrossCursor );
 #endif
-    setFocusPolicy(Qt::WheelFocus);
+    setFocusPolicy( Qt::WheelFocus );
 
-    setPaintAttribute(PaintCached, true);
+    setPaintAttribute( PaintCached, true );
 }
 
 //! Destructor
@@ -60,8 +60,8 @@ QwtPolarCanvas::~QwtPolarCanvas()
 QwtPolarPlot *QwtPolarCanvas::plot()
 {
     QWidget *w = parentWidget();
-    if ( w && w->inherits("QwtPolarPlot") )
-        return (QwtPolarPlot *)w;
+    if ( w && w->inherits( "QwtPolarPlot" ) )
+        return ( QwtPolarPlot * )w;
 
     return NULL;
 }
@@ -70,8 +70,8 @@ QwtPolarPlot *QwtPolarCanvas::plot()
 const QwtPolarPlot *QwtPolarCanvas::plot() const
 {
     const QWidget *w = parentWidget();
-    if ( w && w->inherits("QwtPolarPlot") )
-        return (QwtPolarPlot *)w;
+    if ( w && w->inherits( "QwtPolarPlot" ) )
+        return ( QwtPolarPlot * )w;
 
     return NULL;
 }
@@ -81,14 +81,14 @@ const QwtPolarPlot *QwtPolarCanvas::plot() const
 
   \param attribute Paint attribute
   \param on On/Off
-    
+
   The default setting enables PaintCached
 
   \sa testPaintAttribute(), drawCanvas(), drawContents(), paintCache()
-*/  
-void QwtPolarCanvas::setPaintAttribute(PaintAttribute attribute, bool on)
+*/
+void QwtPolarCanvas::setPaintAttribute( PaintAttribute attribute, bool on )
 {
-    if ( bool(d_data->paintAttributes & attribute) == on )
+    if ( bool( d_data->paintAttributes & attribute ) == on )
         return;
 
     if ( on )
@@ -96,7 +96,7 @@ void QwtPolarCanvas::setPaintAttribute(PaintAttribute attribute, bool on)
     else
         d_data->paintAttributes &= ~attribute;
 
-    switch(attribute)
+    switch( attribute )
     {
         case PaintCached:
         {
@@ -108,8 +108,8 @@ void QwtPolarCanvas::setPaintAttribute(PaintAttribute attribute, bool on)
                 if ( isVisible() )
                 {
                     const QRect cr = contentsRect();
-                    *d_data->cache = QPixmap::grabWidget(this,
-                        cr.x(), cr.y(), cr.width(), cr.height() );
+                    *d_data->cache = QPixmap::grabWidget( this,
+                                                          cr.x(), cr.y(), cr.width(), cr.height() );
                 }
             }
             else
@@ -129,9 +129,9 @@ void QwtPolarCanvas::setPaintAttribute(PaintAttribute attribute, bool on)
   \return true if the attribute is enabled
   \sa setPaintAttribute()
 */
-bool QwtPolarCanvas::testPaintAttribute(PaintAttribute attribute) const
+bool QwtPolarCanvas::testPaintAttribute( PaintAttribute attribute ) const
 {
-    return (d_data->paintAttributes & attribute) != 0;
+    return ( d_data->paintAttributes & attribute ) != 0;
 }
 
 //! Return the paint cache, might be null
@@ -154,9 +154,9 @@ void QwtPolarCanvas::invalidatePaintCache()
 }
 
 //! Paint event
-void QwtPolarCanvas::paintEvent(QPaintEvent *event)
+void QwtPolarCanvas::paintEvent( QPaintEvent *event )
 {
-    QPainter painter(this);
+    QPainter painter( this );
 
     if ( !contentsRect().contains( event->rect() ) )
     {
@@ -166,27 +166,27 @@ void QwtPolarCanvas::paintEvent(QPaintEvent *event)
         painter.restore();
     }
 
-    painter.setClipRegion(event->region() & contentsRect());
+    painter.setClipRegion( event->region() & contentsRect() );
 
     drawContents( &painter );
 }
 
 //! Resize event
-void QwtPolarCanvas::resizeEvent(QResizeEvent *event)
+void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 {
-    QFrame::resizeEvent(event);
+    QFrame::resizeEvent( event );
 
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
-        plot()->updateScale(scaleId);
+        plot()->updateScale( scaleId );
 }
 
 //! Redraw the canvas
-void QwtPolarCanvas::drawContents(QPainter *painter)
+void QwtPolarCanvas::drawContents( QPainter *painter )
 {
     if ( d_data->paintAttributes & PaintCached && d_data->cache
-        && d_data->cache->size() == contentsRect().size() )
+            && d_data->cache->size() == contentsRect().size() )
     {
-        painter->drawPixmap(contentsRect().topLeft(), *d_data->cache);
+        painter->drawPixmap( contentsRect().topLeft(), *d_data->cache );
     }
     else
     {
@@ -194,9 +194,9 @@ void QwtPolarCanvas::drawContents(QPainter *painter)
         if ( plt )
         {
             const bool doAutoReplot = plt->autoReplot();
-            plt->setAutoReplot(false);
-            drawCanvas(painter, QRectF(contentsRect()) );
-            plt->setAutoReplot(doAutoReplot);
+            plt->setAutoReplot( false );
+            drawCanvas( painter, QRectF( contentsRect() ) );
+            plt->setAutoReplot( doAutoReplot );
         }
     }
 }
@@ -209,33 +209,33 @@ void QwtPolarCanvas::drawContents(QPainter *painter)
 
   \sa QwtPolarPlot::drawCanvas, setPaintAttributes(), testPaintAttributes()
 */
-void QwtPolarCanvas::drawCanvas(QPainter *painter, 
-    const QRectF& canvasRect)
+void QwtPolarCanvas::drawCanvas( QPainter *painter,
+                                 const QRectF& canvasRect )
 {
     if ( !canvasRect.isValid() )
         return;
 
-    if ( testPaintAttribute(PaintCached) && d_data->cache )
+    if ( testPaintAttribute( PaintCached ) && d_data->cache )
     {
-        *d_data->cache = QPixmap(contentsRect().size());
+        *d_data->cache = QPixmap( contentsRect().size() );
 
 #ifdef Q_WS_X11
         if ( d_data->cache->x11Info().screen() != x11Info().screen() )
-            d_data->cache->x11SetScreen(x11Info().screen());
+            d_data->cache->x11SetScreen( x11Info().screen() );
 #endif
 
-        d_data->cache->fill(this, d_data->cache->rect().topLeft());
+        d_data->cache->fill( this, d_data->cache->rect().topLeft() );
 
-        QPainter cachePainter(d_data->cache);
-        cachePainter.translate(-contentsRect().x(),
-            -contentsRect().y());
+        QPainter cachePainter( d_data->cache );
+        cachePainter.translate( -contentsRect().x(),
+                                -contentsRect().y() );
 
-        plot()->drawCanvas(&cachePainter, canvasRect);
+        plot()->drawCanvas( &cachePainter, canvasRect );
 
         cachePainter.end();
 
-        painter->drawPixmap(canvasRect.topLeft().toPoint(), *d_data->cache);
+        painter->drawPixmap( canvasRect.topLeft().toPoint(), *d_data->cache );
     }
     else
-        plot()->drawCanvas(painter, canvasRect);
+        plot()->drawCanvas( painter, canvasRect );
 }

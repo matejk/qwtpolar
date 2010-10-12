@@ -33,7 +33,7 @@ public:
 
         NumFlags = CurveBegin + NumCurves
     };
-        
+
     bool flags[NumFlags];
 };
 
@@ -42,14 +42,14 @@ class Plot: public QwtPolarPlot
     Q_OBJECT
 
 public:
-    Plot(QWidget * = NULL);
+    Plot( QWidget * = NULL );
     PlotSettings settings() const;
 
 public Q_SLOTS:
-    void applySettings(const PlotSettings &);
+    void applySettings( const PlotSettings & );
 
 private:
-    QwtPolarCurve *createCurve(int id) const;
+    QwtPolarCurve *createCurve( int id ) const;
 
     QwtPolarGrid *d_grid;
     QwtPolarCurve *d_curve[PlotSettings::NumCurves];

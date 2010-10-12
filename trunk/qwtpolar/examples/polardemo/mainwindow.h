@@ -10,10 +10,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = NULL);
+    MainWindow( QWidget *parent = NULL );
 
 private Q_SLOTS:
-    void enableZoomMode(bool on);
+    void enableZoomMode( bool on );
     void print();
     void exportSVG();
 

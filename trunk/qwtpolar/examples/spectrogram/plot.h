@@ -8,12 +8,12 @@ class Plot: public QwtPolarPlot
     Q_OBJECT
 
 public:
-    Plot(QWidget * = NULL);
+    Plot( QWidget * = NULL );
     QwtPolarSpectrogram *spectrogram();
 
 public Q_SLOTS:
     void printPlot();
-    void showGrid(bool);
+    void showGrid( bool );
 
 private:
     QwtPolarGrid *d_grid;

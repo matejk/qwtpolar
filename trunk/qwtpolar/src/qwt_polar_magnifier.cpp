@@ -17,8 +17,8 @@ class QwtPolarMagnifier::PrivateData
 {
 public:
     PrivateData():
-        unzoomKey(Qt::Key_Home),
-        unzoomKeyModifiers(Qt::NoModifier)
+        unzoomKey( Qt::Key_Home ),
+        unzoomKeyModifiers( Qt::NoModifier )
     {
     }
 
@@ -30,8 +30,8 @@ public:
    Constructor
    \param canvas Plot canvas to be magnified
 */
-QwtPolarMagnifier::QwtPolarMagnifier(QwtPolarCanvas *canvas):
-    QwtMagnifier(canvas)
+QwtPolarMagnifier::QwtPolarMagnifier( QwtPolarCanvas *canvas ):
+    QwtMagnifier( canvas )
 {
     d_data = new PrivateData();
 }
@@ -50,7 +50,7 @@ QwtPolarMagnifier::~QwtPolarMagnifier()
    \param modifiers Modifiers
    \sa getUnzoomKey(), QwtPolarPlot::unzoom()
 */
-void QwtPolarMagnifier::setUnzoomKey(int key, int modifiers)
+void QwtPolarMagnifier::setUnzoomKey( int key, int modifiers )
 {
     d_data->unzoomKey = key;
     d_data->unzoomKeyModifiers = modifiers;
@@ -63,7 +63,7 @@ void QwtPolarMagnifier::setUnzoomKey(int key, int modifiers)
    \param modifiers Modifiers
    \sa setUnzoomKey(), QwtPolarPlot::unzoom()
 */
-void QwtPolarMagnifier::getUnzoomKey(int &key, int &modifiers) const
+void QwtPolarMagnifier::getUnzoomKey( int &key, int &modifiers ) const
 {
     key = d_data->unzoomKey;
     modifiers = d_data->unzoomKeyModifiers;
@@ -73,8 +73,8 @@ void QwtPolarMagnifier::getUnzoomKey(int &key, int &modifiers) const
 QwtPolarCanvas *QwtPolarMagnifier::canvas()
 {
     QWidget *w = parentWidget();
-    if ( w && w->inherits("QwtPolarCanvas") )
-        return (QwtPolarCanvas *)w;
+    if ( w && w->inherits( "QwtPolarCanvas" ) )
+        return ( QwtPolarCanvas * )w;
 
     return NULL;
 }
@@ -82,7 +82,7 @@ QwtPolarCanvas *QwtPolarMagnifier::canvas()
 //! \return observed plot canvas
 const QwtPolarCanvas *QwtPolarMagnifier::canvas() const
 {
-    return ((QwtPolarMagnifier *)this)->canvas();
+    return ( ( QwtPolarMagnifier * )this )->canvas();
 }
 
 //! Return observed plot
@@ -98,7 +98,7 @@ QwtPolarPlot *QwtPolarMagnifier::plot()
 //! Return observed plot
 const QwtPolarPlot *QwtPolarMagnifier::plot() const
 {
-    return ((QwtPolarMagnifier *)this)->plot();
+    return ( ( QwtPolarMagnifier * )this )->plot();
 }
 
 /*!
@@ -106,28 +106,28 @@ const QwtPolarPlot *QwtPolarMagnifier::plot() const
 
   \param ke Key event
 */
-void QwtPolarMagnifier::widgetKeyPressEvent(QKeyEvent *ke)
+void QwtPolarMagnifier::widgetKeyPressEvent( QKeyEvent *ke )
 {
     const int key = ke->key();
     const int state = ke->modifiers();
 
     if ( key == d_data->unzoomKey &&
-        state == d_data->unzoomKeyModifiers )
+            state == d_data->unzoomKeyModifiers )
     {
         unzoom();
         return;
     }
 
-    QwtMagnifier::widgetKeyPressEvent(ke);
+    QwtMagnifier::widgetKeyPressEvent( ke );
 }
 
-/*! 
+/*!
    Zoom in/out the zoomed area
    \param factor A value < 1.0 zooms in, a value > 1.0 zooms out.
 */
-void QwtPolarMagnifier::rescale(double factor)
+void QwtPolarMagnifier::rescale( double factor )
 {
-    factor = qAbs(factor);
+    factor = qAbs( factor );
     if ( factor == 1.0 || factor == 0.0 )
         return;
 
@@ -135,20 +135,20 @@ void QwtPolarMagnifier::rescale(double factor)
     if ( plt == NULL )
         return;
 
-    QwtPolarPoint zoomPos; 
+    QwtPolarPoint zoomPos;
     double newZoomFactor = plt->zoomFactor() * factor;
 
     if ( newZoomFactor >= 1.0 )
         newZoomFactor = 1.0;
     else
         zoomPos = plt->zoomPos();
-    
+
     const bool autoReplot = plt->autoReplot();
-    plt->setAutoReplot(false);
+    plt->setAutoReplot( false );
 
-    plt->zoom(zoomPos, newZoomFactor);
+    plt->zoom( zoomPos, newZoomFactor );
 
-    plt->setAutoReplot(autoReplot);
+    plt->setAutoReplot( autoReplot );
     plt->replot();
 }
 
@@ -158,10 +158,10 @@ void QwtPolarMagnifier::unzoom()
     QwtPolarPlot* plt = plot();
 
     const bool autoReplot = plt->autoReplot();
-    plt->setAutoReplot(false);
+    plt->setAutoReplot( false );
 
     plt->unzoom();
 
-    plt->setAutoReplot(autoReplot);
+    plt->setAutoReplot( autoReplot );
     plt->replot();
 }
