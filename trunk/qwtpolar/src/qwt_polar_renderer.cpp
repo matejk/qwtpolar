@@ -256,6 +256,19 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     }
 
 	d_data->plot = plot;
+
+    /*
+      The layout engine uses the same methods as they are used
+      by the Qt layout system. Therefore we need to calculate the
+      layout in screen coordinates and paint with a scaled painter.
+     */
+    QTransform transform;
+    transform.scale(
+        double( painter->device()->logicalDpiX() ) / plot->logicalDpiX(),
+        double( painter->device()->logicalDpiY() ) / plot->logicalDpiY() );
+
+    const QRectF layoutRect = transform.inverted().mapRect( plotRect );
+
 	QwtPolarLayout *layout = plot->plotLayout();
 
     // All paint operations need to be scaled according to
@@ -264,7 +277,10 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     int layoutOptions = QwtPolarLayout::IgnoreScrollbars
                         | QwtPolarLayout::IgnoreFrames;
 
-    layout->activate( plot, plotRect, layoutOptions );
+    layout->activate( plot, layoutRect, layoutOptions );
+
+	painter->save();
+    painter->setWorldTransform( transform, true );
 
     painter->save();
     renderTitle( painter, layout->titleRect() );
@@ -280,6 +296,8 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     painter->setClipRect( canvasRect );
     plot->drawCanvas( painter, canvasRect );
     painter->restore();
+
+	painter->restore();
 
     layout->invalidate();
 
