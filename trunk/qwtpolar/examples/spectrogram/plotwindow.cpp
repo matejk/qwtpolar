@@ -45,6 +45,11 @@ PlotWindow::PlotWindow( QWidget *parent ):
     d_colorScale->setScaleDiv( scaleEngine.transformation(),
         scaleEngine.divideScale( interval.minValue(), interval.maxValue(), 8, 5 ) );
 
+    int startDist, endDist;
+    d_colorScale->getBorderDistHint( startDist, endDist );
+    d_colorScale->setBorderDist( startDist, endDist );
+
+
     QHBoxLayout *layout = new QHBoxLayout( this );
     layout->addWidget( d_plot, 10 );
     layout->addWidget( d_colorScale, 10 );
