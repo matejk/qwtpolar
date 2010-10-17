@@ -43,6 +43,12 @@ QWT_POLAR_INSTALL_PLUGINS   = $${QWT_POLAR_INSTALL_PREFIX}/plugins/designer
 QWT_POLAR_CONFIG           += QwtPolarDll
 
 ######################################################################
+# If you want to export a plot to a SVG document
+######################################################################
+
+QWT_POLAR_CONFIG     += QwtPolarSvg
+
+######################################################################
 # Features
 # When building a QwtPolar application with qmake you might want to load
 # the compiler/linker flags, that are required to build a Qwt application

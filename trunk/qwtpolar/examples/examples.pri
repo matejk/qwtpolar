@@ -7,7 +7,6 @@
 #################################################################
 
 QWT_POLAR_ROOT = ../..
-
 include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 
@@ -17,8 +16,27 @@ INCLUDEPATH += $${QWT_POLAR_ROOT}/src
 DEPENDPATH  += $${QWT_POLAR_ROOT}/src
 DESTDIR      = $${QWT_POLAR_ROOT}/examples/bin$${SUFFIX_STR}
 
-LIBS      += -L$${QWT_POLAR_ROOT}/lib
+contains(QWT_CONFIG, QwtFramework) {
+
+    LIBS      += -F$${QWT_POLAR_ROOT}/lib
+}
+else {
+
+    LIBS      += -L$${QWT_POLAR_ROOT}/lib
+}
+
+IPATH       = $${INCLUDEPATH}
 qtAddLibrary(qwtpolar)
+INCLUDEPATH = $${IPATH}
+
+contains(QWT_CONFIG, QwtPolarSvg) {
+
+    QT += svg
+}
+else {
+
+    DEFINES += QWT_POLAR_NO_SVG
+}
 
 win32 {
     contains(QWT_CONFIG, QwtPolarDll) {

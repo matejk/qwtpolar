@@ -95,7 +95,9 @@ void Plot::exportDocument()
 
     QStringList filter;
     filter += "PDF Documents (*.pdf)";
+#ifndef QWT_NO_POLAR_SVG
     filter += "SVG Documents (*.svg)";
+#endif
     filter += "Postscript Documents (*.ps)";
 
     if ( imageFormats.size() > 0 )
