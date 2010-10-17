@@ -401,10 +401,25 @@ void QwtPolarCurve::drawLines( QPainter *painter,
         }
     }
 
-   	const QRectF clipRect = painter->window().adjusted( -1, -1, 1, 1);
-   	polyline = QwtClipper::clipPolygonF( clipRect, polyline );
+    QRectF clipRect;
+    if ( painter->hasClipping() )
+        clipRect = painter->clipRegion().boundingRect();
+    else
+    {
+        clipRect = painter->window();
+        if ( !clipRect.isEmpty() )
+            clipRect = painter->transform().inverted().mapRect( clipRect );
+    }
+
+    if ( !clipRect.isEmpty() )
+    {
+        double off = qCeil( qMax( 1.0, painter->pen().widthF() ) );
+        clipRect = clipRect.toRect().adjusted( -off, -off, off, off );
+        polyline = QwtClipper::clipPolygonF( clipRect, polyline );
+    }
 
     QwtPainter::drawPolyline( painter, polyline );
+    painter->drawPolyline( polyline );
 }
 
 /*!
