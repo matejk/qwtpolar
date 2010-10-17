@@ -401,8 +401,8 @@ void QwtPolarCurve::drawLines( QPainter *painter,
         }
     }
 
-    const QRectF clipRect = painter->window();
-    polyline = QwtClipper::clipPolygonF( clipRect, polyline );
+   	const QRectF clipRect = painter->window().adjusted( -1, -1, 1, 1);
+   	polyline = QwtClipper::clipPolygonF( clipRect, polyline );
 
     QwtPainter::drawPolyline( painter, polyline );
 }
