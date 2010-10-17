@@ -158,7 +158,7 @@ public:
 
     QwtInterval visibleInterval() const;
     QRectF plotRect() const;
-    QRectF plotRect( const QRect & ) const;
+    QRectF plotRect( const QRectF & ) const;
 
     int plotMarginHint() const;
 
