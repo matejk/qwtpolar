@@ -19,6 +19,12 @@
 #include <qimagewriter.h>
 #include <qfileinfo.h>
 #include <qmath.h>
+#ifndef QWT_NO_POLAR_POLAR_SVG
+#ifdef QT_SVG_LIB
+#include <qsvggenerator.h>
+#endif
+#endif
+
 
 static inline double qwtDistance(
     const QPointF &p1, const QPointF &p2 )
@@ -122,10 +128,11 @@ void QwtPolarRenderer::renderDocument( QwtPolarPlot *plot,
         QPainter painter( &printer );
         render( plot, &painter, documentRect );
     }
-    else if ( format == "svg" )
-    {
+#ifndef QWT_NO_POLAR_SVG
 #ifdef QT_SVG_LIB
 #if QT_VERSION >= 0x040500
+    else if ( format == "svg" )
+    {
         QSvgGenerator generator;
         generator.setTitle( title );
         generator.setFileName( fileName );
@@ -134,9 +141,10 @@ void QwtPolarRenderer::renderDocument( QwtPolarPlot *plot,
 
         QPainter painter( &generator );
         render( plot, &painter, documentRect );
-#endif
-#endif
     }
+#endif
+#endif
+#endif
     else
     {
         if ( QImageWriter::supportedImageFormats().indexOf(
@@ -211,6 +219,7 @@ void QwtPolarRenderer::renderTo(
     render( plot, &p, rect );
 }
 
+#ifndef QWT_NO_POLAR_SVG
 #ifdef QT_SVG_LIB
 #if QT_VERSION >= 0x040500
 
@@ -238,6 +247,7 @@ void QwtPolarRenderer::renderTo(
     QPainter p( &generator );
     render( plot, &p, rect );
 }
+#endif
 #endif
 #endif
 

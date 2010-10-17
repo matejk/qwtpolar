@@ -9,7 +9,6 @@
 # qmake project file for building the qwtpolar libraries
 
 QWT_POLAR_ROOT = ..
-
 include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 
@@ -25,6 +24,11 @@ contains(QWT_POLAR_CONFIG, QwtPolarDll ) {
 }
 else {
     CONFIG += staticlib
+}
+
+contains(QWT_CONFIG, QwtFramework) {
+
+    CONFIG += lib_bundle
 }
 
 HEADERS += \
@@ -59,16 +63,35 @@ SOURCES += \
     qwt_polar_renderer.cpp \
     qwt_polar_plot.cpp
 
-# Install directives
+contains(QWT_CONFIG, QwtPolarSvg) {
 
-headers.files  = $$HEADERS
-doc.files      = $${QWT_POLAR_ROOT}/doc/html
-unix {
-    doc.files      += $${QWT_POLAR_ROOT}/doc/man 
+    QT += svg
+}
+else {
+
+    DEFINES += QWT_POLAR_NO_SVG
 }
 
+# Install directives
+
 target.path    = $${QWT_POLAR_INSTALL_LIBS}
-headers.path   = $${QWT_POLAR_INSTALL_HEADERS}
+
+doc.files      = $${QWT_POLAR_ROOT}/doc/html
+unix:doc.files      += $${QWT_POLAR_ROOT}/doc/man 
 doc.path       = $${QWT_POLAR_INSTALL_DOCS}
 
-INSTALLS       = target headers doc
+INSTALLS       = target doc
+
+CONFIG(lib_bundle) {
+
+    FRAMEWORK_HEADERS.version = Versions
+    FRAMEWORK_HEADERS.files = $${HEADERS}
+    FRAMEWORK_HEADERS.path = Headers
+    QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+}
+else {
+
+    headers.files  = $${HEADERS}
+    headers.path   = $${QWT_POLAR_INSTALL_HEADERS}
+    INSTALLS += headers
+}

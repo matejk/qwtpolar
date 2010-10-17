@@ -8,7 +8,8 @@
 
 QWT_POLAR_ROOT = ..
 
-include ( $${QWT_POLAR_ROOT}/qwtpolar.pri )
+include ( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
+include ( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 
 contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 
