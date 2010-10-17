@@ -724,14 +724,14 @@ void QwtPolarGrid::drawRays(
                 with coordinates far outside the visible area.
              */
 
-            QPolygon pa( 2 );
-            pa.setPoint( 0, pole.toPoint() );
-            pa.setPoint( 1, pos.toPoint() );
+            QPolygonF polygon( 2 );
+            polygon[0] = pole.toPoint();
+            polygon[1] = pos.toPoint();
 
             if ( testDisplayFlag( ClipGridLines ) )
-                pa = QwtClipper::clipPolygon( canvasRect.toRect(), pa );
+                polygon = QwtClipper::clipPolygonF( canvasRect, polygon );
 
-            QwtPainter::drawPolyline( painter, pa );
+            QwtPainter::drawPolyline( painter, polygon );
         }
     }
 }
@@ -794,7 +794,7 @@ void QwtPolarGrid::drawCircles(
                 {
                     const QwtInterval intv = angles[i];
                     if ( intv.minValue() == 0 && intv.maxValue() == 2 * M_PI )
-                        QwtPainter::drawEllipse( painter, outerRect.toRect() );
+                        QwtPainter::drawEllipse( painter, outerRect );
                     else
                     {
                         const double from = intv.minValue() / M_PI * 180;
@@ -803,17 +803,14 @@ void QwtPolarGrid::drawCircles(
                         if ( span < 0.0 )
                             span += 360.0;
 
-                        const QRect r = outerRect.toRect();
-
-                        painter->drawArc( r,
-                                          qRound( from * 16 ), qRound( span * 16 ) );
+                        painter->drawArc( outerRect,
+                        	qRound( from * 16 ), qRound( span * 16 ) );
                     }
-
                 }
             }
             else
             {
-                QwtPainter::drawEllipse( painter, outerRect.toRect() );
+                QwtPainter::drawEllipse( painter, outerRect );
             }
         }
     }

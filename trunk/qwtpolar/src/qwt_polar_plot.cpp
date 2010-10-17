@@ -902,7 +902,7 @@ void QwtPolarPlot::drawCanvas( QPainter *painter,
     const QRectF &canvasRect ) const
 {
     const QRectF cr = canvasRect;
-    const QRectF pr = plotRect( cr.toRect() );
+    const QRectF pr = plotRect( cr );
 
     const double radius = pr.width() / 2.0;
 
@@ -917,12 +917,12 @@ void QwtPolarPlot::drawCanvas( QPainter *painter,
                 qwtDistance( pr.center(), cr.bottomRight() ) < radius &&
                 qwtDistance( pr.center(), cr.bottomLeft() ) < radius )
         {
-            QwtPainter::drawRect( painter, cr.toRect() );
+            QwtPainter::drawRect( painter, cr );
         }
         else
         {
             painter->setRenderHint( QPainter::Antialiasing, true );
-            QwtPainter::drawEllipse( painter, pr.toRect() );
+            QwtPainter::drawEllipse( painter, pr );
         }
         painter->restore();
     }
@@ -948,7 +948,7 @@ void QwtPolarPlot::drawItems( QPainter *painter,
     const QPointF &pole, double radius,
     const QRectF &canvasRect ) const
 {
-    const QRectF pr = plotRect( canvasRect.toRect() );
+    const QRectF pr = plotRect( canvasRect );
 
     const QwtPolarItemList& itmList = itemList();
     for ( QwtPolarItemIterator it = itmList.begin();
@@ -1107,13 +1107,13 @@ QRectF QwtPolarPlot::plotRect() const
    \param canvasRect Rectangle of the canvas
    \return Rectangle for displaying 100% of the plot
 */
-QRectF QwtPolarPlot::plotRect( const QRect &canvasRect ) const
+QRectF QwtPolarPlot::plotRect( const QRectF &canvasRect ) const
 {
     const QwtScaleDiv *sd = scaleDiv( QwtPolar::Radius );
     const QwtScaleEngine *se = scaleEngine( QwtPolar::Radius );
 
     const int margin = plotMarginHint();
-    const QRect cr = canvasRect;
+    const QRectF cr = canvasRect;
     const int radius = qMin( cr.width(), cr.height() ) / 2 - margin;
 
     QwtScaleMap map;
@@ -1149,8 +1149,8 @@ QwtInterval QwtPolarPlot::visibleInterval() const
     const QwtScaleDiv *sd = scaleDiv( QwtPolar::Radius );
 
     const QRectF cRect = canvas()->contentsRect();
-    const QRectF pRect = plotRect( cRect.toRect() );
-    if ( cRect.contains( pRect.toRect() ) || !cRect.intersects( pRect ) )
+    const QRectF pRect = plotRect( cRect );
+    if ( cRect.contains( pRect ) || !cRect.intersects( pRect ) )
     {
         return QwtInterval( sd->lowerBound(), sd->upperBound() );
     }

@@ -356,7 +356,7 @@ void QwtPolarRenderer::renderLegend(
     QwtDynGridLayout *legendLayout = ( QwtDynGridLayout * )l;
 
     uint numCols = legendLayout->columnsForWidth( rect.width() );
-    QList<QRect> itemRects =
+    const QList<QRect> itemRects =
         legendLayout->layoutItems( rect.toRect(), numCols );
 
     int index = 0;
