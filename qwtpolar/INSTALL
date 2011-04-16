@@ -13,8 +13,14 @@ qwtpolar.pri is read by all project files of the QwtPolar package.
 So the first step is to read and edit qwtpolar.pri to adjust it to your
 needs. 
 
-QwtPolar 0.1.x needs Qwt 5.2.x. In qwtpolar.pri you need to
-insert the paths to your Qwt installation.
+QwtPolar 1.x needs a proper installation of Qwt 6.x. For building 
+QwtPolar you need to configure qmake to find the installed Qwt features
+file qwt.prf. Read http://doc.qt.nokia.com/4.7/qmake-advanced-usage.html#adding-new-configuration-features.
+
+The subdirs template of qmake is known to be buggy when using spaces
+in path names. So better don't build Qwt below a path name with spaces.
+( Otherwise you might have to run qmake in all subdirs manually ).
+
 
 Documentation
 ==========================
@@ -24,5 +30,23 @@ Qwt includes a class documentation, that is available in various formats:
 - Html files
 - Qt Compressed Help (*.qch ) for the Qt assistant.
 - Man pages ( UNIX only )
+
+Building QwtPolar
+==========================
+
+The easiest way to build QwtPolar is from the command line - but you insist on
+using an IDE don't forget the "make install" step.
+
+qmake
+make 
+make install
+
+Using Qwt
+===========
+
+For building a Qwt application with qmake use the Qwt configuration features
+file, that has been installed by "make install". When qmake is able to find
+it ( http://doc.qt.nokia.com/4.7/qmake-advanced-usage.html#adding-new-configuration-features )
+you can simply add "CONFIG += qwt qwtpolar" to your application project file.
 
 Good luck !
