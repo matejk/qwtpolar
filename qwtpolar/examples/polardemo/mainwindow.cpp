@@ -34,8 +34,8 @@ MainWindow::MainWindow( QWidget *parent ):
     d_settingsEditor = new SettingsEditor( w );
 
     d_settingsEditor->showSettings( d_plot->settings() );
-    connect( d_settingsEditor, SIGNAL( edited( const PlotSettings& ) ),
-             d_plot, SLOT( applySettings( const PlotSettings& ) ) );
+    connect( d_settingsEditor, SIGNAL( edited( const PlotSettings & ) ),
+        d_plot, SLOT( applySettings( const PlotSettings & ) ) );
 
     QHBoxLayout *layout = new QHBoxLayout( w );
     layout->addWidget( d_settingsEditor, 0 );

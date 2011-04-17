@@ -31,19 +31,23 @@ public:
     /*!
       \brief Paint attributes
 
-      - PaintCached\n
-        Paint double buffered and reuse the content of the pixmap buffer
-        for some spontaneous repaints that happen when a plot gets unhidden,
-        deiconified or changes the focus.
-
       The default setting enables PaintCached
+
       \sa setPaintAttribute(), testPaintAttribute(), paintCache()
      */
 
     enum PaintAttribute
     {
-        PaintCached = 1
+        /*!
+          Paint double buffered and reuse the content of the pixmap buffer
+          for some spontaneous repaints that happen when a plot gets unhidden,
+          deiconified or changes the focus.
+         */
+        BackingStore = 0x01
     };
+
+    //! Paint attributes
+    typedef QFlags<PaintAttribute> PaintAttributes;
 
     explicit QwtPolarCanvas( QwtPolarPlot * );
     virtual ~QwtPolarCanvas();
@@ -69,5 +73,7 @@ protected:
     class PrivateData;
     PrivateData *d_data;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarCanvas::PaintAttributes );
 
 #endif

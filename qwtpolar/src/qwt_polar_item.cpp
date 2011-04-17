@@ -27,8 +27,8 @@ public:
     mutable QwtPolarPlot *plot;
 
     bool isVisible;
-    int attributes;
-    int renderHints;
+    QwtPolarItem::ItemAttributes attributes;
+    QwtPolarItem::RenderHints renderHints;
     double z;
 
     QwtText title;
@@ -312,8 +312,10 @@ void QwtPolarItem::itemChanged()
 
    \param scaleId Scale id ( QwtPolar::Scale )
 */
-QwtInterval QwtPolarItem::boundingInterval( int /*scaleId*/ ) const
+QwtInterval QwtPolarItem::boundingInterval( int scaleId ) const
 {
+    Q_UNUSED( scaleId );
+
     return QwtInterval(); // invalid
 }
 
@@ -332,10 +334,12 @@ QwtInterval QwtPolarItem::boundingInterval( int /*scaleId*/ ) const
 
    \sa QwtPolarPlot::updateAxes()
 */
-void QwtPolarItem::updateScaleDiv( const QwtScaleDiv & /* azimuthScaleDiv */,
-                                   const QwtScaleDiv & /* radialScaleDiv */,
-                                   const QwtInterval & /*interval */ )
+void QwtPolarItem::updateScaleDiv( const QwtScaleDiv &azimuthScaleDiv,
+    const QwtScaleDiv &radialScaleDiv, const QwtInterval &interval )
 {
+    Q_UNUSED( azimuthScaleDiv );
+    Q_UNUSED( radialScaleDiv );
+    Q_UNUSED( interval );
 }
 
 /*!
@@ -377,9 +381,11 @@ void QwtPolarItem::updateLegend( QwtLegend *legend ) const
 
                 QPainter painter( &identifier );
                 painter.setRenderHint( QPainter::Antialiasing,
-                                       testRenderHint( QwtPolarItem::RenderAntialiased ) );
+                    testRenderHint( QwtPolarItem::RenderAntialiased ) );
+
                 drawLegendIdentifier( &painter,
-                                      QRect( 0, 0, sz.width(), sz.height() ) );
+                    QRect( 0, 0, sz.width(), sz.height() ) );
+
                 painter.end();
 
                 const bool doUpdate = label->updatesEnabled();

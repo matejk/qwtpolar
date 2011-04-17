@@ -37,7 +37,7 @@ class SpiralData: public Data
 {
 public:
     SpiralData( const QwtInterval &radialInterval,
-                const QwtInterval &azimuthInterval, size_t size ):
+            const QwtInterval &azimuthInterval, size_t size ):
         Data( radialInterval, azimuthInterval, size )
     {
     }
@@ -66,7 +66,7 @@ class RoseData: public Data
 {
 public:
     RoseData( const QwtInterval &radialInterval,
-              const QwtInterval &azimuthInterval, size_t size ):
+            const QwtInterval &azimuthInterval, size_t size ):
         Data( radialInterval, azimuthInterval, size )
     {
     }
@@ -100,12 +100,12 @@ Plot::Plot( QWidget *parent ):
 
     // scales
     setScale( QwtPolar::Azimuth,
-              azimuthInterval.minValue(), azimuthInterval.maxValue(),
-              azimuthInterval.width() / 12 );
+        azimuthInterval.minValue(), azimuthInterval.maxValue(),
+        azimuthInterval.width() / 12 );
 
     setScaleMaxMinor( QwtPolar::Azimuth, 2 );
     setScale( QwtPolar::Radius,
-              radialInterval.minValue(), radialInterval.maxValue() );
+        radialInterval.minValue(), radialInterval.maxValue() );
 
     // grids, axes
 
@@ -189,8 +189,8 @@ PlotSettings Plot::settings() const
     const QwtScaleDiv *sd = scaleDiv( QwtPolar::Radius );
     s.flags[PlotSettings::Inverted] = sd->lowerBound() > sd->upperBound();
 
-    s.flags[PlotSettings::Antialiasing] = d_grid->testRenderHint(
-            QwtPolarItem::RenderAntialiased );
+    s.flags[PlotSettings::Antialiasing] = 
+        d_grid->testRenderHint( QwtPolarItem::RenderAntialiased );
 
     for ( int curveId = 0; curveId < PlotSettings::NumCurves; curveId++ )
     {
@@ -206,31 +206,31 @@ void Plot::applySettings( const PlotSettings& s )
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
     {
         d_grid->showGrid( scaleId,
-                          s.flags[PlotSettings::MajorGridBegin + scaleId] );
+            s.flags[PlotSettings::MajorGridBegin + scaleId] );
         d_grid->showMinorGrid( scaleId,
-                               s.flags[PlotSettings::MinorGridBegin + scaleId] );
+            s.flags[PlotSettings::MinorGridBegin + scaleId] );
     }
 
     for ( int axisId = 0; axisId < QwtPolar::AxesCount; axisId++ )
     {
         d_grid->showAxis( axisId,
-                          s.flags[PlotSettings::AxisBegin + axisId] );
+            s.flags[PlotSettings::AxisBegin + axisId] );
     }
 
     d_grid->setGridAttribute( QwtPolarGrid::AutoScaling,
-                              s.flags[PlotSettings::AutoScaling] );
+        s.flags[PlotSettings::AutoScaling] );
 
     const QwtInterval interval =
         scaleDiv( QwtPolar::Radius )->interval().normalized();
     if ( s.flags[PlotSettings::Inverted] )
     {
         setScale( QwtPolar::Radius,
-                  interval.maxValue(), interval.minValue() );
+            interval.maxValue(), interval.minValue() );
     }
     else
     {
         setScale( QwtPolar::Radius,
-                  interval.minValue(), interval.maxValue() );
+            interval.minValue(), interval.maxValue() );
     }
 
     const QwtScaleTransformation *transform =
@@ -248,7 +248,7 @@ void Plot::applySettings( const PlotSettings& s )
     delete transform;
 
     d_grid->setRenderHint( QwtPolarItem::RenderAntialiased,
-                           s.flags[PlotSettings::Antialiasing] );
+        s.flags[PlotSettings::Antialiasing] );
 
     for ( int curveId = 0; curveId < PlotSettings::NumCurves; curveId++ )
     {

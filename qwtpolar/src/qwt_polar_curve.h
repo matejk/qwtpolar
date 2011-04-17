@@ -32,31 +32,26 @@ class QWT_POLAR_EXPORT QwtPolarCurve: public QwtPolarItem
 public:
     /*!
         Curve styles.
-
-         - NoCurve\n
-           Don't draw a curve. Note: This doesn't affect the symbols.
-         - Lines\n
-           Connect the points with straight lines. The lines might
-           be interpolated depending on the 'Fitted' attribute. Curve
-           fitting can be configured using setCurveFitter().
-
-        \sa setStyle()
+        \sa setStyle(), style()
     */
     enum CurveStyle
     {
+        //! Don't draw a curve. Note: This doesn't affect the symbols.
         NoCurve,
+
+        /*!
+          Connect the points with straight lines. The lines might
+          be interpolated depending on the 'Fitted' attribute. Curve
+          fitting can be configured using setCurveFitter().
+         */
         Lines,
+
+        //! Values > 100 are reserved for user specific curve styles
         UserCurve = 100
     };
 
     /*!
-        Attributes how to represent the curve on the legend
-
-        - LegendShowLine
-          If the curveStyle() is not NoCurve a line is painted with the
-          curvePen().
-        - LegendShowSymbol
-          If the curve has a valid symbol it is painted.
+        \brief Attributes how to represent the curve on the legend
 
         If none of the flags is activated QwtPlotCurve tries to find
         a color representing the curve and paints a rectangle with it.
@@ -68,9 +63,19 @@ public:
 
     enum LegendAttribute
     {
-        LegendShowLine = 1,
-        LegendShowSymbol = 2
+        /*!
+          If the curveStyle() is not NoCurve a line is painted with the
+          curvePen().
+         */
+        LegendShowLine = 0x01,
+
+        //! If the curve has a valid symbol it is painted.
+        LegendShowSymbol = 0x02
     };
+
+    //! Legend attributes
+    typedef QFlags<LegendAttribute> LegendAttributes;
+
 
     explicit QwtPolarCurve();
     explicit QwtPolarCurve( const QwtText &title );
@@ -152,5 +157,7 @@ inline QwtPointPolar QwtPolarCurve::sample( int i ) const
 {
     return d_series->sample( i );
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarCurve::LegendAttributes );
 
 #endif

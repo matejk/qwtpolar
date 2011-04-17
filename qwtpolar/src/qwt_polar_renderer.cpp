@@ -285,8 +285,8 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     // All paint operations need to be scaled according to
     // the paint device metrics.
 
-    int layoutOptions = QwtPolarLayout::IgnoreScrollbars
-                        | QwtPolarLayout::IgnoreFrames;
+    QwtPolarLayout::Options layoutOptions = 
+        QwtPolarLayout::IgnoreScrollbars | QwtPolarLayout::IgnoreFrames;
 
     layout->activate( plot, layoutRect, layoutOptions );
 

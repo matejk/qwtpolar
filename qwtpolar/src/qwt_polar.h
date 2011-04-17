@@ -13,58 +13,56 @@
 
 namespace QwtPolar
 {
-    /*!
-      An enum, that identifies the type of a coordinate
-
-      - Azimuth\n
-      - Radius\n
-     */
+    //!  An enum, that identifies the type of a coordinate
     enum Coordinate
     {
+        //! Azimuth
         Azimuth,
+
+        //! Radius
         Radius
     };
 
     /*!
       Indices used to identify an axis.
-
-      - AxisAzimuth\n
-      - AxisLeft\n
-      - AxisRight\n
-      - AxisTop\n
-      - AxisBottom\n
-      - AxesCount\n
-
       \sa Scale
      */
     enum Axis
     {
+        //! Azimuth axis
         AxisAzimuth,
 
+        //! Left axis
         AxisLeft,
+
+        //! Right axis
         AxisRight,
+
+        //! Top axis
         AxisTop,
+
+        //! Bottom axis
         AxisBottom,
 
+        //! Number of available axis
         AxesCount
     };
 
     /*!
       Indices used to identify a scale.
-
-      - ScaleAzimuth\n
-      - ScaleRadius\n
-
       \sa Axis
      */
     enum Scale
     {
+        //! Azimuth scale
         ScaleAzimuth = Azimuth,
+
+        //! Radial scale
         ScaleRadius = Radius,
 
+        //! Number of scales
         ScaleCount
     };
-
 };
 
 #endif

@@ -154,13 +154,15 @@ void QwtPolarItemDict::detachItems( int rtti, bool autoDelete )
     }
 }
 
-//! \brief A QwtPolarItemList of all attached plot items.
-///
-/// Use caution when iterating these lists, as removing/detaching an item will
-/// invalidate the iterator. Instead you can place pointers to objects to be
-/// removed in a removal list, and traverse that list later.
-//! \return List of all attached plot items.
+/*! 
+  \brief A QwtPolarItemList of all attached plot items.
 
+  \return List of all attached plot items.
+  \note Use caution when iterating these lists, as removing/detaching 
+        an item will invalidate the iterator. 
+        Instead you can place pointers to objects to be
+        removed in a removal list, and traverse that list later.
+*/
 const QwtPolarItemList &QwtPolarItemDict::itemList() const
 {
     return d_data->itemList;
