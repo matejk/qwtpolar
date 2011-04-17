@@ -128,8 +128,6 @@ public:
     QwtPointPolar zoomPos() const;
     double zoomFactor() const;
 
-    virtual void polish();
-
     // Canvas
 
     QwtPolarCanvas *canvas();
@@ -140,11 +138,10 @@ public:
 
     virtual void drawCanvas( QPainter *, const QRectF & ) const;
 
-
     // Legend
 
-    void insertLegend( QwtLegend *, LegendPosition = QwtPolarPlot::RightLegend,
-                       double ratio = -1.0 );
+    void insertLegend( QwtLegend *, 
+        LegendPosition = RightLegend, double ratio = -1.0 );
 
     QwtLegend *legend();
     const QwtLegend *legend() const;

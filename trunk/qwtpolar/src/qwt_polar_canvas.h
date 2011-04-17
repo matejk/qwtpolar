@@ -70,6 +70,7 @@ protected:
 
     void drawCanvas( QPainter *, const QRectF & );
 
+private:
     class PrivateData;
     PrivateData *d_data;
 };

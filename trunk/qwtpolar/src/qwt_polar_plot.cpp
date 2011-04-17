@@ -739,19 +739,23 @@ QwtScaleMap QwtPolarPlot::scaleMap( int scaleId, const double radius ) const
     return map;
 }
 
-//!  Adds handling of polish requests
+//! Adds handling of QEvent::LayoutRequest and QEvent::PolishRequest
 bool QwtPolarPlot::event( QEvent *e )
 {
     bool ok = QWidget::event( e );
     switch( e->type() )
     {
         case QEvent::LayoutRequest:
+        {
             updateLayout();
             break;
-
+        }
         case QEvent::PolishRequest:
-            polish();
+        {
+            updateLayout();
+            replot();
             break;
+        }
         default:;
     }
     return ok;
@@ -1059,13 +1063,6 @@ void QwtPolarPlot::updateScale( int scaleId )
         item->updateScaleDiv( *scaleDiv( QwtPolar::Azimuth ),
             *scaleDiv( QwtPolar::Radius ), interval );
     }
-}
-
-//! Polish
-void QwtPolarPlot::polish()
-{
-    updateLayout();
-    replot();
 }
 
 /*!
