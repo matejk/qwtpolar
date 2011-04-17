@@ -252,8 +252,9 @@ void QwtPolarRenderer::renderTo(
 #endif
 
 /*!
-   \brief Render the plot to a given rectangle ( f.e on a QPrinter, QSvgRenderer )
+   \brief Render the plot to a given rectangle ( f.e QPrinter, QSvgRenderer )
 
+   \param plot Plot widget to be rendered
    \param painter Painter
    \param plotRect Bounding rectangle for the plot
 */
