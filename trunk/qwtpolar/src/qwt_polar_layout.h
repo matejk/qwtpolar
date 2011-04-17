@@ -17,35 +17,32 @@
 
   Organizes the geometry for the different QwtPolarPlot components.
   It is used by the QwtPolar widget to organize its internal widgets
-  or by QwtPolarPlot::renderTo() to render its content to a QPaintDevice like
+  or by QwtPolarRnderer to render its content to a QPaintDevice like
   a QPrinter, QPixmap/QImage or QSvgRenderer.
 */
 
 class QWT_POLAR_EXPORT QwtPolarLayout
 {
 public:
-    /*!
-      Options to configure the plot layout engine
 
-      - IgnoreScrollbars\n
-        Ignore the dimension of the scrollbars. There are no
-        scrollbars, when the plot is rendered to a paint device
-        (QwtPolarPlot::renderTo() ).
-      - IgnoreFrames\n
-        Ignore all frames. QwtPolarPlot::renderTo() doesn't paint them.
-      - IgnoreTitle\n
-        Ignore the title.
-      - IgnoreLegend\n
-        Ignore the legend.
-     */
-
-    enum Options
+    //! \brief Options to configure the plot layout engine
+    enum Option
     {
-        IgnoreScrollbars = 1,
-        IgnoreFrames = 2,
-        IgnoreTitle = 4,
-        IgnoreLegend = 8
+        //! Ignore the dimension of the scrollbars. 
+        IgnoreScrollbars = 0x01,
+
+        //! Ignore all frames. 
+        IgnoreFrames     = 0x02,
+
+        //! Ignore the title.
+        IgnoreTitle      = 0x04,
+
+        //! Ignore the legend.
+        IgnoreLegend     = 0x08
     };
+
+    //! Options to configure the plot layout engine
+    typedef QFlags<Option> Options;
 
     explicit QwtPolarLayout();
     virtual ~QwtPolarLayout();
@@ -60,7 +57,7 @@ public:
     virtual QSize minimumSizeHint( const QwtPolarPlot * ) const;
 
     virtual void activate( const QwtPolarPlot *,
-        const QRectF &rect, int options = 0 );
+        const QRectF &rect, Options options = 0 );
 
     virtual void invalidate();
 
@@ -71,11 +68,13 @@ public:
     class LayoutData;
 
 protected:
-    QRectF layoutLegend( int options, QRectF & ) const;
+    QRectF layoutLegend( Options options, QRectF & ) const;
 
 private:
     class PrivateData;
     PrivateData *d_data;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarLayout::Options );
 
 #endif

@@ -216,10 +216,12 @@ void QwtPolarPlot::insertLegend( QwtLegend *legend,
                     case RightLegend:
                         tl->setMaxCols( 1 ); // 1 column: align vertical
                         break;
+
                     case TopLegend:
                     case BottomLegend:
                         tl->setMaxCols( 0 ); // unlimited
                         break;
+
                     case ExternalLegend:
                         break;
                 }
@@ -256,7 +258,8 @@ void QwtPolarPlot::legendItemClicked()
 {
     if ( d_data->legend && sender()->isWidgetType() )
     {
-        QwtPolarItem *plotItem = ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
+        QwtPolarItem *plotItem = 
+            ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
         if ( plotItem )
             Q_EMIT legendClicked( plotItem );
     }
@@ -270,7 +273,8 @@ void QwtPolarPlot::legendItemChecked( bool on )
 {
     if ( d_data->legend && sender()->isWidgetType() )
     {
-        QwtPolarItem *plotItem = ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
+        QwtPolarItem *plotItem = 
+            ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
         if ( plotItem )
             Q_EMIT legendChecked( plotItem, on );
     }
@@ -725,7 +729,7 @@ QwtScaleMap QwtPolarPlot::scaleMap( int scaleId, const double radius ) const
     if ( scaleId == QwtPolar::Azimuth )
     {
         map.setPaintInterval( d_data->azimuthOrigin,
-                              d_data->azimuthOrigin + M_2PI );
+            d_data->azimuthOrigin + M_2PI );
     }
     else
     {
@@ -744,6 +748,7 @@ bool QwtPolarPlot::event( QEvent *e )
         case QEvent::LayoutRequest:
             updateLayout();
             break;
+
         case QEvent::PolishRequest:
             polish();
             break;
@@ -765,9 +770,7 @@ void QwtPolarPlot::initPlot( const QwtText &title )
     d_data->layout = new QwtPolarLayout;
 
     QwtText text( title );
-    int flags = Qt::AlignCenter;
-    flags |= Qt::TextWordWrap;
-    text.setRenderFlags( flags );
+    text.setRenderFlags( Qt::AlignCenter | Qt::TextWordWrap );
 
     d_data->titleLabel = new QwtTextLabel( text, this );
     d_data->titleLabel->setFont( QFont( fontInfo().family(), 14, QFont::Bold ) );
@@ -842,7 +845,7 @@ void QwtPolarPlot::updateLayout()
     }
 
     if ( d_data->legend &&
-            d_data->layout->legendPosition() != ExternalLegend )
+        d_data->layout->legendPosition() != ExternalLegend )
     {
         if ( d_data->legend->itemCount() > 0 )
         {
@@ -913,9 +916,9 @@ void QwtPolarPlot::drawCanvas( QPainter *painter,
         painter->setBrush( d_data->canvasBrush );
 
         if ( qwtDistance( pr.center(), cr.topLeft() ) < radius &&
-                qwtDistance( pr.center(), cr.topRight() ) < radius &&
-                qwtDistance( pr.center(), cr.bottomRight() ) < radius &&
-                qwtDistance( pr.center(), cr.bottomLeft() ) < radius )
+            qwtDistance( pr.center(), cr.topRight() ) < radius &&
+            qwtDistance( pr.center(), cr.bottomRight() ) < radius &&
+            qwtDistance( pr.center(), cr.bottomLeft() ) < radius )
         {
             QwtPainter::drawRect( painter, cr );
         }
@@ -928,9 +931,9 @@ void QwtPolarPlot::drawCanvas( QPainter *painter,
     }
 
     drawItems( painter,
-               scaleMap( QwtPolar::Azimuth, radius ),
-               scaleMap( QwtPolar::Radius, radius ),
-               pr.center(), radius, canvasRect );
+        scaleMap( QwtPolar::Azimuth, radius ),
+        scaleMap( QwtPolar::Radius, radius ),
+        pr.center(), radius, canvasRect );
 }
 
 /*!
@@ -982,9 +985,9 @@ void QwtPolarPlot::drawItems( QPainter *painter,
             if ( doClipping )
             {
                 const int margin = item->marginHint();
-                const QRectF clipRect( pr.x() - margin, pr.y() - margin,
-                    pr.width() + 2 * margin, pr.height() + 2 * margin );
 
+                const QRectF clipRect = pr.adjusted(
+                    -margin, -margin, margin, margin );
                 if ( !clipRect.contains( canvasRect ) )
                 {
                     QRegion clipRegion( clipRect.toRect(), QRegion::Ellipse );
@@ -996,11 +999,11 @@ void QwtPolarPlot::drawItems( QPainter *painter,
                 item->testRenderHint( QwtPolarItem::RenderAntialiased ) );
 
             item->draw( painter, azimuthMap, radialMap,
-                        pole, radius, canvasRect );
+                pole, radius, canvasRect );
+
             painter->restore();
         }
     }
-
 }
 
 /*!
@@ -1043,8 +1046,7 @@ void QwtPolarPlot::updateScale( int scaleId )
     if ( !d.scaleDiv.isValid() )
     {
         d.scaleDiv = d.scaleEngine->divideScale(
-                         minValue, maxValue,
-                         d.maxMajor, d.maxMinor, stepSize );
+            minValue, maxValue, d.maxMajor, d.maxMinor, stepSize );
     }
 
     const QwtInterval interval = visibleInterval();
@@ -1055,7 +1057,7 @@ void QwtPolarPlot::updateScale( int scaleId )
     {
         QwtPolarItem *item = *it;
         item->updateScaleDiv( *scaleDiv( QwtPolar::Azimuth ),
-                              *scaleDiv( QwtPolar::Radius ), interval );
+            *scaleDiv( QwtPolar::Radius ), interval );
     }
 }
 
@@ -1198,7 +1200,7 @@ QwtInterval QwtPolarPlot::visibleInterval() const
             {
                 dmin = scaleRect.left() - pole.x();
                 dmax = qMax( qwtDistance( pole, scaleRect.bottomRight() ),
-                             qwtDistance( pole, scaleRect.topRight() ) );
+                    qwtDistance( pole, scaleRect.topRight() ) );
             }
         }
         else if ( pole.x() > scaleRect.right() )
@@ -1217,20 +1219,20 @@ QwtInterval QwtPolarPlot::visibleInterval() const
             {
                 dmin = pole.x() - scaleRect.right();
                 dmax = qMax( qwtDistance( pole, scaleRect.bottomLeft() ),
-                             qwtDistance( pole, scaleRect.topLeft() ) );
+                    qwtDistance( pole, scaleRect.topLeft() ) );
             }
         }
         else if ( pole.y() < scaleRect.top() )
         {
             dmin = scaleRect.top() - pole.y();
             dmax = qMax( qwtDistance( pole, scaleRect.bottomLeft() ),
-                         qwtDistance( pole, scaleRect.bottomRight() ) );
+                qwtDistance( pole, scaleRect.bottomRight() ) );
         }
         else if ( pole.y() > scaleRect.bottom() )
         {
             dmin = pole.y() - scaleRect.bottom();
             dmax = qMax( qwtDistance( pole, scaleRect.topLeft() ),
-                         qwtDistance( pole, scaleRect.topRight() ) );
+                qwtDistance( pole, scaleRect.topRight() ) );
         }
     }
 

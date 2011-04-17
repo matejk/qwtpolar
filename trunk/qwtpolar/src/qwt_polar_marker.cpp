@@ -87,9 +87,12 @@ void QwtPolarMarker::setPosition( const QwtPointPolar &pos )
 */
 void QwtPolarMarker::draw( QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QPointF &pole, double /* radius */,
-    const QRectF & /* canvasRect */ ) const
+    const QPointF &pole, double radius,
+    const QRectF &canvasRect ) const
 {
+    Q_UNUSED( radius );
+    Q_UNUSED( canvasRect );
+
     const double r = radialMap.transform( d_data->pos.radius() );
     const double a = azimuthMap.transform( d_data->pos.azimuth() );
 
@@ -224,7 +227,7 @@ Qt::Alignment QwtPolarMarker::labelAlignment() const
 QwtInterval QwtPolarMarker::boundingInterval( int scaleId ) const
 {
     const double v = ( scaleId == QwtPolar::ScaleRadius )
-                     ? d_data->pos.radius() : d_data-> pos.azimuth();
+        ? d_data->pos.radius() : d_data->pos.azimuth();
 
     return QwtInterval( v, v );
 }

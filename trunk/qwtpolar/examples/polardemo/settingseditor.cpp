@@ -12,7 +12,7 @@ SettingsEditor::SettingsEditor( QWidget *parent ):
 
 
     for ( int i = PlotSettings::AxisBegin;
-            i <= PlotSettings::Logarithmic; i++ )
+        i <= PlotSettings::Logarithmic; i++ )
     {
         d_checkBox[i] = new QCheckBox( axesBox );
         axesBoxLayout->addWidget( d_checkBox[i] );
@@ -39,7 +39,7 @@ SettingsEditor::SettingsEditor( QWidget *parent ):
     otherBoxLayout->setMargin( 20 );
 
     for ( int i = PlotSettings::Logarithmic + 1;
-            i < PlotSettings::NumFlags; i++ )
+        i < PlotSettings::NumFlags; i++ )
     {
         d_checkBox[i] = new QCheckBox( otherBox );
         otherBoxLayout->addWidget( d_checkBox[i] );

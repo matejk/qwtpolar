@@ -29,7 +29,7 @@ public:
         delete cache;
     }
 
-    int paintAttributes;
+    QwtPolarCanvas::PaintAttributes paintAttributes;
     QPixmap *cache;
 };
 
@@ -47,7 +47,7 @@ QwtPolarCanvas::QwtPolarCanvas( QwtPolarPlot *plot ):
 #endif
     setFocusPolicy( Qt::WheelFocus );
 
-    setPaintAttribute( PaintCached, true );
+    setPaintAttribute( BackingStore, true );
 }
 
 //! Destructor
@@ -98,7 +98,7 @@ void QwtPolarCanvas::setPaintAttribute( PaintAttribute attribute, bool on )
 
     switch( attribute )
     {
-        case PaintCached:
+        case BackingStore:
         {
             if ( on )
             {
@@ -108,8 +108,7 @@ void QwtPolarCanvas::setPaintAttribute( PaintAttribute attribute, bool on )
                 if ( isVisible() )
                 {
                     const QRect cr = contentsRect();
-                    *d_data->cache = QPixmap::grabWidget( this,
-                                                          cr.x(), cr.y(), cr.width(), cr.height() );
+                    *d_data->cache = QPixmap::grabWidget( this, cr );
                 }
             }
             else
@@ -183,7 +182,7 @@ void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 //! Redraw the canvas
 void QwtPolarCanvas::drawContents( QPainter *painter )
 {
-    if ( d_data->paintAttributes & PaintCached && d_data->cache
+    if ( ( d_data->paintAttributes & BackingStore ) && d_data->cache
             && d_data->cache->size() == contentsRect().size() )
     {
         painter->drawPixmap( contentsRect().topLeft(), *d_data->cache );
@@ -215,7 +214,7 @@ void QwtPolarCanvas::drawCanvas( QPainter *painter,
     if ( !canvasRect.isValid() )
         return;
 
-    if ( testPaintAttribute( PaintCached ) && d_data->cache )
+    if ( testPaintAttribute( BackingStore ) && d_data->cache )
     {
         *d_data->cache = QPixmap( contentsRect().size() );
 

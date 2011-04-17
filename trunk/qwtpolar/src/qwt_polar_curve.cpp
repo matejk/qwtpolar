@@ -55,7 +55,7 @@ public:
     QPen pen;
     QwtCurveFitter *curveFitter;
 
-    int legendAttributes;
+    QwtPolarCurve::LegendAttributes legendAttributes;
 };
 
 //! Constructor
@@ -300,14 +300,15 @@ void QwtPolarCurve::draw( QPainter *painter,
         painter->setPen( d_data->pen );
 
         drawCurve( painter, d_data->style,
-                   azimuthMap, radialMap, pole, from, to );
+            azimuthMap, radialMap, pole, from, to );
+
         painter->restore();
 
         if ( d_data->symbol->style() != QwtSymbol::NoSymbol )
         {
             painter->save();
             drawSymbols( painter, *d_data->symbol,
-                         azimuthMap, radialMap, pole, from, to );
+                azimuthMap, radialMap, pole, from, to );
             painter->restore();
         }
     }
@@ -514,7 +515,7 @@ void QwtPolarCurve::drawLegendIdentifier(
         if ( style() != QwtPolarCurve::NoCurve )
             brush = QBrush( pen().color() );
         else if ( d_data->symbol &&
-                  ( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
+            ( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
         {
             brush = QBrush( d_data->symbol->pen().color() );
         }
@@ -527,13 +528,13 @@ void QwtPolarCurve::drawLegendIdentifier(
         {
             painter->setPen( pen() );
             QwtPainter::drawLine( painter, rect.left(), rect.center().y(),
-                                  rect.right() - 1.0, rect.center().y() );
+                rect.right() - 1.0, rect.center().y() );
         }
     }
     if ( d_data->legendAttributes & QwtPolarCurve::LegendShowSymbol )
     {
         if ( d_data->symbol &&
-                ( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
+            ( d_data->symbol->style() != QwtSymbol::NoSymbol ) )
         {
             QSize symbolSize = d_data->symbol->boundingSize();
             symbolSize -= QSize( 2, 2 );
@@ -571,9 +572,11 @@ void QwtPolarCurve::drawLegendIdentifier(
 QwtInterval QwtPolarCurve::boundingInterval( int scaleId ) const
 {
     const QRectF boundingRect = d_series->boundingRect();
+
     if ( scaleId == QwtPolar::ScaleAzimuth )
         return QwtInterval( boundingRect.left(), boundingRect.right() );
-    else  if ( scaleId == QwtPolar::ScaleRadius )
+
+    if ( scaleId == QwtPolar::ScaleRadius )
         return QwtInterval( boundingRect.top(), boundingRect.bottom() );
 
     return QwtInterval();

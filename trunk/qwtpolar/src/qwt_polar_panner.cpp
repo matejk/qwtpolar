@@ -17,7 +17,7 @@ QwtPolarPanner::QwtPolarPanner( QwtPolarCanvas *canvas ):
     QwtPanner( canvas )
 {
     connect( this, SIGNAL( panned( int, int ) ),
-             SLOT( movePlot( int, int ) ) );
+        SLOT( movePlot( int, int ) ) );
 }
 
 //! Destructor

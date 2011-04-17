@@ -45,47 +45,64 @@ public:
        Mysterious flags trying to avoid conflicts, when painting the
        scales and grid lines.
 
-      - SmartOriginLabel\n
-        Try to avoid situations, where the label of the origin is
-        painted over another axis.
-      - HideMaxRadiusLabel\n
+      The default setting enables all flags.
+
+      \sa setDisplayFlag(), testDisplayFlag()
+     */
+    enum DisplayFlag
+    {
+        /*!
+          Try to avoid situations, where the label of the origin is
+          painted over another axis.
+         */
+        SmartOriginLabel = 1,
+
+        /*!
         Often the outermost tick of the radial scale is close to the
         canvas border. With HideMaxRadiusLabel enabled it is not painted.
-      - ClipAxisBackground\n
+         */
+        HideMaxRadiusLabel = 2,
+
+        /*!
         The tick labels of the radial scales might be hard to read, when
         they are painted on top of the radial grid lines ( or on top
         of a curve/spectrogram ). When ClipAxisBackground the bounding rect
         of each label is added to the clip region.
-      - SmartScaleDraw\n
+         */
+        ClipAxisBackground = 4,
+
+        /*!
         Don't paint the backbone of the radial axes, when they are very close
         to a line of the azimuth grid.
-      - ClipGridLines\n
+         */
+        SmartScaleDraw = 8,
+
+        /*!
         All grid lines are clipped against the plot area before being painted.
         When the plot is zoomed in this will have an significant impact
         on the performance of the painting cde.
-
-      The default setting enables all flags.
-     */
-    enum DisplayFlag
-    {
-        SmartOriginLabel = 1,
-        HideMaxRadiusLabel = 2,
-        ClipAxisBackground = 4,
-        SmartScaleDraw = 8,
+         */
         ClipGridLines = 16
     };
 
+    //! Display flags
+    typedef QFlags<DisplayFlag> DisplayFlags;
+
     /*!
       \brief Grid attributes
-
-      - AutoScaling\n
-        When AutoScaling is enabled, the radial axes will be adjusted
-        to the interval, that is currently visible on the canvas plot.
+      \sa setGridAttributes(), testGridAttributes()
      */
     enum GridAttribute
     {
-        AutoScaling = 1
+        /*!
+          When AutoScaling is enabled, the radial axes will be adjusted
+          to the interval, that is currently visible on the canvas plot.
+         */
+        AutoScaling = 0x01
     };
+
+    //! Grid attributes
+    typedef QFlags<GridAttribute> GridAttributes;
 
     explicit QwtPolarGrid();
     virtual ~QwtPolarGrid();
@@ -163,5 +180,8 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::DisplayFlags );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::GridAttributes );
 
 #endif

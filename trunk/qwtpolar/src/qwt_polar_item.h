@@ -57,26 +57,35 @@ public:
 
     /*!
        \brief Plot Item Attributes
-
-       - Legend\n
-         The item is represented on the legend.
-       - AutoScale \n
-         The boundingRect() of the item is included in the
-         autoscaling calculation.
-
        \sa setItemAttribute(), testItemAttribute()
      */
     enum ItemAttribute
     {
-        Legend = 1,
-        AutoScale = 2
+        //! The item is represented on the legend.
+        Legend    = 0x01,
+
+        /*!
+          The boundingRect() of the item is included in the
+          autoscaling calculation.
+         */
+        AutoScale = 0x02
     };
 
-    //! Render hints
+    //! Item attributes
+    typedef QFlags<ItemAttribute> ItemAttributes;
+
+    /*! 
+       \brief Render hints
+       \sa setRenderHint(), testRenderHint()
+     */
     enum RenderHint
     {
-        RenderAntialiased = 1
+        //! Enable antialiasing
+        RenderAntialiased = 0x01
     };
+
+    //! Item attributes
+    typedef QFlags<RenderHint> RenderHints;
 
     explicit QwtPolarItem( const QwtText &title = QwtText() );
     virtual ~QwtPolarItem();
@@ -149,5 +158,8 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::ItemAttributes );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::RenderHints );
 
 #endif

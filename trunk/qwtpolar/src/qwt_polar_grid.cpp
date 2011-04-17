@@ -65,8 +65,8 @@ class QwtPolarGrid::PrivateData
 public:
     GridData gridData[QwtPolar::ScaleCount];
     AxisData axisData[QwtPolar::AxesCount];
-    int displayFlags;
-    int attributes;
+    QwtPolarGrid::DisplayFlags displayFlags;
+    QwtPolarGrid::GridAttributes attributes;
 };
 
 /*!
@@ -594,12 +594,7 @@ void QwtPolarGrid::draw( QPainter *painter,
                             scaleDraw->boundingLabelRect( axis.font, ticks[i] );
 
                         const int margin = 2;
-                        labelRect.setRect(
-                            labelRect.x() - margin,
-                            labelRect.y() - margin,
-                            labelRect.width() + 2 * margin,
-                            labelRect.height() + 2 * margin
-                        );
+                        labelRect.adjust( -margin, -margin, margin, margin );
 
                         if ( labelRect.isValid() )
                             clipRegion -= QRegion( labelRect );
@@ -618,16 +613,16 @@ void QwtPolarGrid::draw( QPainter *painter,
         painter->setPen( radialGrid.minorPen );
 
         drawCircles( painter, canvasRect, pole, radialMap,
-                     radialGrid.scaleDiv.ticks( QwtScaleDiv::MinorTick ) );
+            radialGrid.scaleDiv.ticks( QwtScaleDiv::MinorTick ) );
         drawCircles( painter, canvasRect, pole, radialMap,
-                     radialGrid.scaleDiv.ticks( QwtScaleDiv::MediumTick ) );
+            radialGrid.scaleDiv.ticks( QwtScaleDiv::MediumTick ) );
     }
     if ( radialGrid.isVisible )
     {
         painter->setPen( radialGrid.majorPen );
 
         drawCircles( painter, canvasRect, pole, radialMap,
-                     radialGrid.scaleDiv.ticks( QwtScaleDiv::MajorTick ) );
+            radialGrid.scaleDiv.ticks( QwtScaleDiv::MajorTick ) );
     }
 
     // draw azimuth grid
@@ -640,16 +635,16 @@ void QwtPolarGrid::draw( QPainter *painter,
         painter->setPen( azimuthGrid.minorPen );
 
         drawRays( painter, canvasRect, pole, radius, azimuthMap,
-                  azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MinorTick ) );
+            azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MinorTick ) );
         drawRays( painter, canvasRect, pole, radius, azimuthMap,
-                  azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MediumTick ) );
+            azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MediumTick ) );
     }
     if ( azimuthGrid.isVisible )
     {
         painter->setPen( azimuthGrid.majorPen );
 
         drawRays( painter, canvasRect, pole, radius, azimuthMap,
-                  azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MajorTick ) );
+            azimuthGrid.scaleDiv.ticks( QwtScaleDiv::MajorTick ) );
     }
     painter->restore();
 
@@ -762,7 +757,7 @@ void QwtPolarGrid::drawCircles(
         {
             const AxisData &axis = d_data->axisData[QwtPolar::AxisAzimuth];
             if ( axis.isVisible &&
-                    axis.scaleDraw->hasComponent( QwtAbstractScaleDraw::Backbone ) )
+                axis.scaleDraw->hasComponent( QwtAbstractScaleDraw::Backbone ) )
             {
                 if ( isClose( val, gridData.scaleDiv.upperBound() ) )
                     skipLine = true;
@@ -781,7 +776,6 @@ void QwtPolarGrid::drawCircles(
 
             if ( testDisplayFlag( ClipGridLines ) )
             {
-
                 /*
                     Qt4 is horrible slow, when painting primitives,
                     with coordinates far outside the visible area.
@@ -804,7 +798,7 @@ void QwtPolarGrid::drawCircles(
                             span += 360.0;
 
                         painter->drawArc( outerRect,
-                        	qRound( from * 16 ), qRound( span * 16 ) );
+                            qRound( from * 16 ), qRound( span * 16 ) );
                     }
                 }
             }
@@ -940,9 +934,9 @@ void QwtPolarGrid::updateScaleDiv( const QwtScaleDiv &azimuthScaleDiv,
     {
         const QwtScaleEngine *se = plt->scaleEngine( QwtPolar::Radius );
         radialGrid.scaleDiv = se->divideScale(
-                                  interval.minValue(), interval.maxValue(),
-                                  plt->scaleMaxMajor( QwtPolar::Radius ),
-                                  plt->scaleMaxMinor( QwtPolar::Radius ), 0 );
+            interval.minValue(), interval.maxValue(),
+            plt->scaleMaxMajor( QwtPolar::Radius ),
+            plt->scaleMaxMinor( QwtPolar::Radius ), 0 );
     }
     else
     {
@@ -984,7 +978,7 @@ void QwtPolarGrid::updateScaleDiv( const QwtScaleDiv &azimuthScaleDiv,
                     if ( !skipOrigin )
                     {
                         if ( axisId == QwtPolar::AxisLeft
-                                || axisId == QwtPolar::AxisRight )
+                            || axisId == QwtPolar::AxisRight )
                         {
                             if ( d_data->axisData[QwtPolar::AxisBottom].isVisible )
                                 skipOrigin = true;

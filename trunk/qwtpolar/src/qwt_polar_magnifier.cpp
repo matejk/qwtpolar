@@ -112,7 +112,7 @@ void QwtPolarMagnifier::widgetKeyPressEvent( QKeyEvent *ke )
     const int state = ke->modifiers();
 
     if ( key == d_data->unzoomKey &&
-            state == d_data->unzoomKeyModifiers )
+        state == d_data->unzoomKeyModifiers )
     {
         unzoom();
         return;

@@ -38,9 +38,9 @@ MainWindow::MainWindow( QWidget *parent ):
     addToolBar( toolBar );
 
     connect( btnExport, SIGNAL( clicked() ),
-             d_plotWindow->plot(), SLOT( exportDocument() ) );
+        d_plotWindow->plot(), SLOT( exportDocument() ) );
     connect( btnGrid, SIGNAL( toggled( bool ) ),
-             d_plotWindow->plot(), SLOT( showGrid( bool ) ) );
+        d_plotWindow->plot(), SLOT( showGrid( bool ) ) );
 }
 
 int main( int argc, char **argv )
