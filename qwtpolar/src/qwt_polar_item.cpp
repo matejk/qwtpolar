@@ -76,6 +76,9 @@ void QwtPolarItem::attach( QwtPolarPlot *plot )
 
     if ( d_data->plot )
     {
+        if ( d_data->plot->legend() )
+            d_data->plot->legend()->remove( this );
+
         d_data->plot->attachItem( this, false );
 
         if ( d_data->plot->autoReplot() )
@@ -138,13 +141,14 @@ void QwtPolarItem::setZ( double z )
 {
     if ( d_data->z != z )
     {
-        d_data->z = z;
         if ( d_data->plot )
-        {
-            // update the z order
             d_data->plot->attachItem( this, false );
+
+        d_data->z = z;
+
+        if ( d_data->plot )
             d_data->plot->attachItem( this, true );
-        }
+
         itemChanged();
     }
 }
