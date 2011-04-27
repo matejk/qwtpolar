@@ -158,6 +158,6 @@ inline QwtPointPolar QwtPolarCurve::sample( int i ) const
     return d_series->sample( i );
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarCurve::LegendAttributes );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarCurve::LegendAttributes )
 
 #endif
