@@ -10,7 +10,7 @@
 ##########################
 
 function usage() {
-    echo "Usage: $0 [-b|--branch <svn-branch>] [packagename]"
+    echo "Usage: $0 [-b|--branch <svn-branch>] [-s|--suffix <suffix>] [-html] [-pdf] [-qch] [packagename]"
     exit 1
 }
 
@@ -57,8 +57,16 @@ function cleanQwtPolar {
 
     find . -name .svn -print | xargs rm -r
 
-    rm TODO
-    rm admin/svn2package.sh
+    rm -f TODO
+    rm -rf admin
+    rm -rf doc/tex
+
+    PROFILES="qwtpolarbuild.pri"
+    for PROFILE in $PROFILES
+    do
+        sed -i -e 's/= debug/= release/' $PROFILE 
+        sed -i -e 's/= release_and_release/= debug_and_release/' $PROFILE 
+    done
 
     HEADERS=`find . -type f -name '*.h' -print`
     SOURCES=`find . -type f -name '*.cpp' -print`
@@ -73,10 +81,15 @@ function cleanQwtPolar {
 
     for SRCFILE in $SOURCES $PROFILES $PRIFILES
     do
-    	sed -i -e '/#warning/d' $SRCFILE 
+        sed -i -e '/#warning/d' $SRCFILE 
     done 
 
-	sed -i -e "s/\$\$VERSION-svn/$VERSION/" qwtpolar.pri
+    if [ "$SUFFIX" != "" ]
+    then
+        sed -i -e "s/\$\$QWT_POLAR_VERSION-svn/\$\$QWT_POLAR_VERSION-$SUFFIX/" qwtpolarconfig.pri 
+    else
+        sed -i -e "s/\$\$QWT_POLAR_VERSION-svn/\$\$QWT_POLAR_VERSION/" qwtpolarconfig.pri 
+    fi
 
     cd - > /dev/null
 }
@@ -95,48 +108,44 @@ function createDocs {
         exit $?
     fi
 
-	cp Doxyfile Doxyfile.doc
-
-    sed -i '/PROJECT_NUMBER/d' Doxyfile.doc
-    echo "PROJECT_NUMBER = $VERSION" >> Doxyfile.doc
+    if [ "$SUFFIX" != "" ]
+    then
+        sed -i -e "s/svn/$VERSION-$SUFFIX/" Doxyfile
+    else
+        sed -i -e "s/svn/$VERSION/" Doxyfile
+    fi
+    cp Doxyfile Doxyfile.doc
 
     if [ $GENERATE_MAN -ne 0 ]
     then
-        sed -i -e '/GENERATE_MAN/d' -e '/PROJECT_NUMBER/d' Doxyfile.doc
+        sed -i -e '/GENERATE_MAN/d' Doxyfile.doc
         echo 'GENERATE_MAN = YES' >> Doxyfile.doc
     fi
 
     if [ $GENERATE_PDF -ne 0 ]
     then
-        # We need LateX for the PDF
+        # We need LateX for PDF
 
-        sed -i -e '/GENERATE_LATEX/d' -e '/GENERATE_MAN/d' -e '/PROJECT_NUMBER/d' Doxyfile.doc
+        sed -i -e '/GENERATE_LATEX/d' -e '/GENERATE_MAN/d' Doxyfile.doc
         echo 'GENERATE_LATEX = YES' >> Doxyfile.doc
         echo 'GENERATE_MAN = YES' >> Doxyfile.doc
-        echo "PROJECT_NUMBER = $VERSION" >> Doxyfile.doc
     fi
 
     if [ $GENERATE_QCH -ne 0 ]
     then
-        sed -i -e '/GENERATE_HTMLHELP/d' Doxyfile.doc
-        echo "GENERATE_HTMLHELP = YES" >> Doxyfile.doc
+        sed -i -e '/GENERATE_QHP/d' Doxyfile.doc
+        echo "GENERATE_QHP = YES" >> Doxyfile.doc
     fi
 
     cp ../INSTALL ../COPYING ./
 
-    doxygen Doxyfile.doc > /dev/null
+    doxygen Doxyfile.doc > /dev/null 2>&1
     if [ $? -ne 0 ]
     then
         exit $?
     fi
 
-    if [ $GENERATE_QCH -ne 0 ]
-    then
-        doxygen2qthelp --namespace=net.sourceforge.qwtpolar-$VERSION --folder=qwtpolar-$VERSION html/index.hhp qwtpolar-$VERSION.qch
-        rm html/index.hh*
-    fi
-
-    rm Doxyfile.doc Doxygen.log INSTALL COPYING
+    rm Doxyfile.doc Doxygen.log INSTALL COPYING 
     rm -r images
 
     if [ $GENERATE_PDF -ne 0 ]
@@ -144,17 +153,17 @@ function createDocs {
         cd latex
         make > /dev/null 2>&1
         if [ $? -ne 0 ]
-        then
+        then 
             exit $?
         fi
 
         cd ..
         mkdir pdf
-        mv latex/refman.pdf pdf/qwtpolardoc.pdf
+        mv latex/refman.pdf pdf/qwtpolardoc-$VERSION.pdf
 
-        rm -r latex
+        rm -r latex 
     fi
-
+    
     cd $ODIR
 }
 
@@ -181,6 +190,8 @@ function prepare4Win {
         exit $?
     fi
 
+    rm -rf doc/man 2> /dev/null
+
     # win files, but not uptodate
 
     BATCHES=`find . -type f -name '*.bat' -print`
@@ -188,8 +199,9 @@ function prepare4Win {
     SOURCES=`find . -type f -name '*.cpp' -print`
     PROFILES=`find . -type f -name '*.pro' -print`
     PRIFILES=`find . -type f -name '*.pri' -print`
+    PRFFILES=`find . -type f -name '*.prf' -print`
 
-    for FILE in $BATCHES $HEADERS $SOURCES $PROFILES $PRIFILES
+    for FILE in $BATCHES $HEADERS $SOURCES $PROFILES $PRIFILES $PRFFILES
     do
         posix2dos $FILE
     done
@@ -209,8 +221,6 @@ function prepare4Unix {
         exit $?
     fi
 
-    rm -rf admin
-
     cd - > /dev/null
 }
 
@@ -221,10 +231,12 @@ function prepare4Unix {
 QWTPOLARDIR=
 SVNDIR=trunk
 BRANCH=qwtpolar
+SUFFIX=
 VERSION=
+GENERATE_DOC=0
 GENERATE_PDF=0
 GENERATE_QCH=0
-GENERATE_MAN=1
+GENERATE_MAN=0
 
 while [ $# -gt 0 ] ; do
     case "$1" in
@@ -232,10 +244,14 @@ while [ $# -gt 0 ] ; do
             usage; exit 1 ;;
         -b|--branch)
             shift; SVNDIR=branches; BRANCH=$1; shift;;
+        -s|--suffix)
+            shift; SUFFIX=$1; shift;;
+        -html)
+            GENERATE_DOC=1; shift;;
         -pdf)
-            GENERATE_PDF=1; shift;;
+            GENERATE_DOC=1; GENERATE_PDF=1; shift;;
         -qch)
-            GENERATE_QCH=1; shift;;
+            GENERATE_DOC=1; GENERATE_QCH=1; shift;;
         *) 
             QWTPOLARDIR=qwtpolar-$1 ; VERSION=$1; shift;;
     esac
@@ -243,8 +259,14 @@ done
 
 if [ "$QWTPOLARDIR" == "" ] 
 then 
-	usage 
-	exit 2 
+    usage 
+    exit 2 
+fi
+
+QWTPOLARNAME=$QWTPOLARDIR
+if [ "$SUFFIX" != "" ]
+then
+    QWTPOLARDIR=$QWTPOLARDIR-$SUFFIX
 fi
 
 TMPDIR=/tmp/$QWTPOLARDIR-tmp
@@ -254,13 +276,21 @@ checkoutQwtPolar $SVNDIR $BRANCH $TMPDIR
 cleanQwtPolar $TMPDIR
 echo done
 
-echo -n "generate documentation ... "
-createDocs $TMPDIR/doc
-
-if [ $GENERATE_PDF -ne 0 ]
+if [ $GENERATE_DOC -ne 0 ]
 then
-    mv $TMPDIR/doc/pdf/qwtpolardoc.pdf $QWTPOLARDIR.pdf
-    rmdir $TMPDIR/doc/pdf
+    echo -n "generate documentation ... "
+    createDocs $TMPDIR/doc
+
+    if [ $GENERATE_PDF -ne 0 ]
+    then
+        mv $TMPDIR/doc/pdf/qwtpolardoc-$VERSION.pdf $QWTPOLARDIR.pdf
+        rmdir $TMPDIR/doc/pdf
+    fi
+
+    if [ $GENERATE_QCH -ne 0 ]
+    then
+        mv $TMPDIR/doc/html/qwtpolardoc.qch $QWTPOLARDIR.qch
+    fi
 fi
 
 echo done
@@ -274,7 +304,6 @@ cd /tmp
 rm -rf $QWTPOLARDIR
 cp -a $TMPDIR $QWTPOLARDIR
 prepare4Unix $QWTPOLARDIR
-tar cfz $QWTPOLARDIR.tgz $QWTPOLARDIR
 tar cfj $QWTPOLARDIR.tar.bz2 $QWTPOLARDIR
 
 rm -rf $QWTPOLARDIR
@@ -284,7 +313,7 @@ zip -r $QWTPOLARDIR.zip $QWTPOLARDIR > /dev/null
 
 rm -rf $TMPDIR $QWTPOLARDIR
 
-mv $QWTPOLARDIR.tgz $QWTPOLARDIR.tar.bz2 $QWTPOLARDIR.zip $DIR/
+mv $QWTPOLARDIR.tar.bz2 $QWTPOLARDIR.zip $DIR/
 echo done
 
 exit 0

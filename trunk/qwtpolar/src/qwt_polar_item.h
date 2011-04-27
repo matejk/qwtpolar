@@ -159,7 +159,7 @@ private:
     PrivateData *d_data;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::ItemAttributes );
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::RenderHints );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::ItemAttributes )
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarItem::RenderHints )
 
 #endif

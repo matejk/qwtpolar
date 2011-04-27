@@ -181,7 +181,7 @@ private:
     PrivateData *d_data;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::DisplayFlags );
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::GridAttributes );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::DisplayFlags )
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarGrid::GridAttributes )
 
 #endif

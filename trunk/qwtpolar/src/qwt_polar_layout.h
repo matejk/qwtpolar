@@ -75,6 +75,6 @@ private:
     PrivateData *d_data;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarLayout::Options );
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarLayout::Options )
 
 #endif
