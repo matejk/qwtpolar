@@ -14,7 +14,7 @@
 #include <qwt_raster_data.h>
 #include <qpainter.h>
 
-static bool needsClipping( const QRectF &plotRect, const QRectF &rect )
+static bool qwtNeedsClipping( const QRectF &plotRect, const QRectF &rect )
 {
     QPointF points[4];
     points[0] = rect.topLeft();
@@ -157,7 +157,7 @@ void QwtPolarSpectrogram::draw( QPainter *painter,
     const QRectF plotRect = plot()->plotRect( canvasRect.toRect() );
 
     QRegion clipRegion( canvasRect.toRect() );
-    if ( needsClipping( plotRect, canvasRect ) )
+    if ( qwtNeedsClipping( plotRect, canvasRect ) )
     {
         // For large plotRects the ellipse becomes a huge polygon.
         // So we better clip only, when we really need to.
