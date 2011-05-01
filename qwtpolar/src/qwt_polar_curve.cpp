@@ -18,7 +18,12 @@
 #include <qwt_clipper.h>
 #include <qpainter.h>
 
-static int verifyRange( int size, int &i1, int &i2 )
+static inline bool qwtInsidePole( const QwtScaleMap &map, double radius )
+{
+    return map.isInverting() ? ( radius > map.s1() ) : ( radius < map.s1() );
+}
+
+static int qwtVerifyRange( int size, int &i1, int &i2 )
 {
     if ( size < 1 )
         return 0;
@@ -294,7 +299,7 @@ void QwtPolarCurve::draw( QPainter *painter,
     if ( to < 0 )
         to = dataSize() - 1;
 
-    if ( verifyRange( dataSize(), from, to ) > 0 )
+    if ( qwtVerifyRange( dataSize(), from, to ) > 0 )
     {
         painter->save();
         painter->setPen( d_data->pen );
@@ -394,11 +399,17 @@ void QwtPolarCurve::drawLines( QPainter *painter,
 
         for ( int i = from; i <= to; i++ )
         {
-            const QwtPointPolar point = sample( i );
-
-            double r = radialMap.transform( point.radius() );
-            const double a = azimuthMap.transform( point.azimuth() );
-            polylineData[i - from] = qwtPolar2Pos( pole, r, a );
+            QwtPointPolar point = sample( i );
+            if ( !qwtInsidePole( radialMap, point.radius() ) )
+            {
+                double r = radialMap.transform( point.radius() );
+                const double a = azimuthMap.transform( point.azimuth() );
+                polylineData[i - from] = qwtPolar2Pos( pole, r, a );
+            }
+            else
+            {
+                polylineData[i - from] = pole;
+            }
         }
     }
 
@@ -433,6 +444,7 @@ void QwtPolarCurve::drawLines( QPainter *painter,
   \param pole Position of the pole in painter coordinates
   \param from index of the first point to be painted
   \param to index of the last point to be painted.
+
   \sa setSymbol(), draw(), drawCurve()
 */
 void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
@@ -445,12 +457,19 @@ void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
     for ( int i = from; i <= to; i++ )
     {
         const QwtPointPolar point = sample( i );
-        const double r = radialMap.transform( point.radius() );
-        const double a = azimuthMap.transform( point.azimuth() );
 
-        const QPointF pos = qwtPolar2Pos( pole, r, a );
+        if ( !qwtInsidePole( radialMap, point.radius() ) )
+        {
+            const double r = radialMap.transform( point.radius() );
+            const double a = azimuthMap.transform( point.azimuth() );
 
-        symbol.drawSymbol( painter, pos );
+            const QPointF pos = qwtPolar2Pos( pole, r, a );
+            symbol.drawSymbol( painter, pos );
+        }
+        else
+        {
+            symbol.drawSymbol( painter, pole );
+        }
     }
 }
 

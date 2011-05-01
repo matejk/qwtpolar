@@ -590,6 +590,9 @@ void QwtPolarGrid::draw( QPainter *painter,
                         scaleDraw->scaleDiv().ticks( QwtScaleDiv::MajorTick );
                     for ( int i = 0; i < int( ticks.size() ); i++ )
                     {
+                        if ( !scaleDraw->scaleDiv().contains( ticks[i] ) )
+                            continue;
+
                         QRect labelRect =
                             scaleDraw->boundingLabelRect( axis.font, ticks[i] );
 
