@@ -132,7 +132,11 @@ void QwtPolarCurve::setLegendAttribute( LegendAttribute attribute, bool on )
 }
 
 /*!
-    \brief Return the current paint attributes
+    \brief Test if a lefend attribute is enables
+
+    \param attribute Legend attribute
+
+    \return True if attribute is enabled
     \sa LegendAttribute, setLegendAttribute()
 */
 bool QwtPolarCurve::testLegendAttribute( LegendAttribute attribute ) const
@@ -156,7 +160,7 @@ void QwtPolarCurve::setStyle( CurveStyle style )
 }
 
 /*!
-    \brief Return the current style
+    \return Current style
     \sa CurveStyle, setStyle()
 */
 QwtPolarCurve::CurveStyle QwtPolarCurve::style() const
@@ -180,7 +184,7 @@ void QwtPolarCurve::setSymbol( const QwtSymbol *symbol )
 }
 
 /*!
-    \brief Return the current symbol
+    \return The current symbol
     \sa setSymbol()
 */
 const QwtSymbol *QwtPolarCurve::symbol() const
@@ -203,7 +207,7 @@ void QwtPolarCurve::setPen( const QPen &pen )
 }
 
 /*!
-    \brief Return the pen used to draw the lines
+    \return Pen used to draw the lines
     \sa setPen()
 */
 const QPen& QwtPolarCurve::pen() const
@@ -218,7 +222,6 @@ const QPen& QwtPolarCurve::pen() const
   the y-value respresent the radius.
 
   \param data Data
-  \sa QwtData::copy()
 */
 void QwtPolarCurve::setData( QwtSeriesData<QwtPointPolar> *data )
 {
@@ -232,6 +235,8 @@ void QwtPolarCurve::setData( QwtSeriesData<QwtPointPolar> *data )
 
 /*!
   \brief Insert a curve fitter
+
+  \param curveFitter Curve fitter
 
   A curve fitter interpolates the curve points. F.e QwtPolarFitter
   adds equidistant points so that the connection gets rounded instead
@@ -251,7 +256,7 @@ void QwtPolarCurve::setCurveFitter( QwtCurveFitter *curveFitter )
 }
 
 /*!
-  \brief Return the curve fitter
+  \return The curve fitter
   \sa setCurveFitter()
 */
 QwtCurveFitter *QwtPolarCurve::curveFitter() const
@@ -454,27 +459,37 @@ void QwtPolarCurve::drawSymbols( QPainter *painter, const QwtSymbol &symbol,
     painter->setBrush( symbol.brush() );
     painter->setPen( symbol.pen() );
 
-    for ( int i = from; i <= to; i++ )
+    const int chunkSize = 500;
+
+    for ( int i = from; i <= to; i += chunkSize )
     {
-        const QwtPointPolar point = sample( i );
+        const int n = qMin( chunkSize, to - i + 1 );
 
-        if ( !qwtInsidePole( radialMap, point.radius() ) )
+        QPolygonF points;
+        for ( int j = 0; j < n; j++ )
         {
-            const double r = radialMap.transform( point.radius() );
-            const double a = azimuthMap.transform( point.azimuth() );
+            const QwtPointPolar point = sample( i + j );
 
-            const QPointF pos = qwtPolar2Pos( pole, r, a );
-            symbol.drawSymbol( painter, pos );
+            if ( !qwtInsidePole( radialMap, point.radius() ) )
+            {
+                const double r = radialMap.transform( point.radius() );
+                const double a = azimuthMap.transform( point.azimuth() );
+
+                points += qwtPolar2Pos( pole, r, a );
+            }
+            else
+            {
+                points += pole;
+            }
         }
-        else
-        {
-            symbol.drawSymbol( painter, pole );
-        }
+
+        if ( points.size() > 0 )
+            symbol.drawSymbols( painter, points );
     }
 }
 
 /*!
-  Return the size of the data arrays
+  \return Number of points
   \sa setData()
 */
 size_t QwtPolarCurve::dataSize() const

@@ -54,8 +54,6 @@ public:
     void setLegendRatio( double ratio );
     double legendRatio() const;
 
-    virtual QSize minimumSizeHint( const QwtPolarPlot * ) const;
-
     virtual void activate( const QwtPolarPlot *,
         const QRectF &rect, Options options = 0 );
 
