@@ -58,9 +58,8 @@ public:
     void setPaintAttribute( PaintAttribute, bool on = true );
     bool testPaintAttribute( PaintAttribute ) const;
 
-    QPixmap *paintCache();
-    const QPixmap *paintCache() const;
-    void invalidatePaintCache();
+    const QPixmap *backingStore() const;
+    void invalidateBackingStore();
 
 protected:
     virtual void paintEvent( QPaintEvent * );

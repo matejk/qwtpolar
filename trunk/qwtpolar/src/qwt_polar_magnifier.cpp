@@ -69,7 +69,7 @@ void QwtPolarMagnifier::getUnzoomKey( int &key, int &modifiers ) const
     modifiers = d_data->unzoomKeyModifiers;
 }
 
-//! Return observed plot canvas
+//! \return Observed plot canvas
 QwtPolarCanvas *QwtPolarMagnifier::canvas()
 {
     QWidget *w = parentWidget();
@@ -79,13 +79,13 @@ QwtPolarCanvas *QwtPolarMagnifier::canvas()
     return NULL;
 }
 
-//! \return observed plot canvas
+//! \return Observed plot canvas
 const QwtPolarCanvas *QwtPolarMagnifier::canvas() const
 {
     return ( ( QwtPolarMagnifier * )this )->canvas();
 }
 
-//! Return observed plot
+//! \return Observed plot
 QwtPolarPlot *QwtPolarMagnifier::plot()
 {
     QwtPolarCanvas *c = canvas();
@@ -95,7 +95,7 @@ QwtPolarPlot *QwtPolarMagnifier::plot()
     return NULL;
 }
 
-//! Return observed plot
+//! \return observed plot
 const QwtPolarPlot *QwtPolarMagnifier::plot() const
 {
     return ( ( QwtPolarMagnifier * )this )->plot();
@@ -104,12 +104,12 @@ const QwtPolarPlot *QwtPolarMagnifier::plot() const
 /*!
   Handle a key press event for the observed widget.
 
-  \param ke Key event
+  \param event Key event
 */
-void QwtPolarMagnifier::widgetKeyPressEvent( QKeyEvent *ke )
+void QwtPolarMagnifier::widgetKeyPressEvent( QKeyEvent *event )
 {
-    const int key = ke->key();
-    const int state = ke->modifiers();
+    const int key = event->key();
+    const int state = event->modifiers();
 
     if ( key == d_data->unzoomKey &&
         state == d_data->unzoomKeyModifiers )
@@ -118,7 +118,7 @@ void QwtPolarMagnifier::widgetKeyPressEvent( QKeyEvent *ke )
         return;
     }
 
-    QwtMagnifier::widgetKeyPressEvent( ke );
+    QwtMagnifier::widgetKeyPressEvent( event );
 }
 
 /*!

@@ -20,17 +20,17 @@ class QwtPolarCanvas::PrivateData
 public:
     PrivateData():
         paintAttributes( 0 ),
-        cache( NULL )
+        backingStore( NULL )
     {
     }
 
     ~PrivateData()
     {
-        delete cache;
+        delete backingStore;
     }
 
     QwtPolarCanvas::PaintAttributes paintAttributes;
-    QPixmap *cache;
+    QPixmap *backingStore;
 };
 
 //! Constructor
@@ -56,7 +56,7 @@ QwtPolarCanvas::~QwtPolarCanvas()
     delete d_data;
 }
 
-//! Return parent plot widget
+//! \return Parent plot widget
 QwtPolarPlot *QwtPolarCanvas::plot()
 {
     QWidget *w = parentWidget();
@@ -66,7 +66,7 @@ QwtPolarPlot *QwtPolarCanvas::plot()
     return NULL;
 }
 
-//! Return parent plot widget
+//! \return Parent plot widget
 const QwtPolarPlot *QwtPolarCanvas::plot() const
 {
     const QWidget *w = parentWidget();
@@ -102,19 +102,19 @@ void QwtPolarCanvas::setPaintAttribute( PaintAttribute attribute, bool on )
         {
             if ( on )
             {
-                if ( d_data->cache == NULL )
-                    d_data->cache = new QPixmap();
+                if ( d_data->backingStore == NULL )
+                    d_data->backingStore = new QPixmap();
 
                 if ( isVisible() )
                 {
                     const QRect cr = contentsRect();
-                    *d_data->cache = QPixmap::grabWidget( this, cr );
+                    *d_data->backingStore = QPixmap::grabWidget( this, cr );
                 }
             }
             else
             {
-                delete d_data->cache;
-                d_data->cache = NULL;
+                delete d_data->backingStore;
+                d_data->backingStore = NULL;
             }
             break;
         }
@@ -133,26 +133,23 @@ bool QwtPolarCanvas::testPaintAttribute( PaintAttribute attribute ) const
     return ( d_data->paintAttributes & attribute ) != 0;
 }
 
-//! Return the paint cache, might be null
-QPixmap *QwtPolarCanvas::paintCache()
+//! \return Backing store, might be null
+const QPixmap *QwtPolarCanvas::backingStore() const
 {
-    return d_data->cache;
+    return d_data->backingStore;
 }
 
-//! Return the paint cache, might be null
-const QPixmap *QwtPolarCanvas::paintCache() const
+//! Invalidate the internal backing store
+void QwtPolarCanvas::invalidateBackingStore()
 {
-    return d_data->cache;
+    if ( d_data->backingStore )
+        *d_data->backingStore = QPixmap();
 }
 
-//! Invalidate the internal paint cache
-void QwtPolarCanvas::invalidatePaintCache()
-{
-    if ( d_data->cache )
-        *d_data->cache = QPixmap();
-}
-
-//! Paint event
+/*!
+  Paint event
+  \param event Paint event
+*/
 void QwtPolarCanvas::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
@@ -170,7 +167,10 @@ void QwtPolarCanvas::paintEvent( QPaintEvent *event )
     drawContents( &painter );
 }
 
-//! Resize event
+/*!
+  Resize event
+  \param event Resize event
+*/
 void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 {
     QFrame::resizeEvent( event );
@@ -182,10 +182,10 @@ void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 //! Redraw the canvas
 void QwtPolarCanvas::drawContents( QPainter *painter )
 {
-    if ( ( d_data->paintAttributes & BackingStore ) && d_data->cache
-            && d_data->cache->size() == contentsRect().size() )
+    if ( ( d_data->paintAttributes & BackingStore ) && d_data->backingStore
+            && d_data->backingStore->size() == contentsRect().size() )
     {
-        painter->drawPixmap( contentsRect().topLeft(), *d_data->cache );
+        painter->drawPixmap( contentsRect().topLeft(), *d_data->backingStore );
     }
     else
     {
@@ -204,7 +204,7 @@ void QwtPolarCanvas::drawContents( QPainter *painter )
   Draw the the canvas
 
   Paints all plot items to the canvasRect, using QwtPolarPlot::drawCanvas
-  and updates the paint cache.
+  and updates the backing store.
 
   \sa QwtPolarPlot::drawCanvas, setPaintAttributes(), testPaintAttributes()
 */
@@ -214,26 +214,26 @@ void QwtPolarCanvas::drawCanvas( QPainter *painter,
     if ( !canvasRect.isValid() )
         return;
 
-    if ( testPaintAttribute( BackingStore ) && d_data->cache )
+    if ( testPaintAttribute( BackingStore ) && d_data->backingStore )
     {
-        *d_data->cache = QPixmap( contentsRect().size() );
+        *d_data->backingStore = QPixmap( contentsRect().size() );
 
 #ifdef Q_WS_X11
-        if ( d_data->cache->x11Info().screen() != x11Info().screen() )
-            d_data->cache->x11SetScreen( x11Info().screen() );
+        if ( d_data->backingStore->x11Info().screen() != x11Info().screen() )
+            d_data->backingStore->x11SetScreen( x11Info().screen() );
 #endif
 
-        d_data->cache->fill( this, d_data->cache->rect().topLeft() );
+        d_data->backingStore->fill( this, d_data->backingStore->rect().topLeft() );
 
-        QPainter cachePainter( d_data->cache );
-        cachePainter.translate( -contentsRect().x(),
-                                -contentsRect().y() );
+        QPainter bsPainter( d_data->backingStore );
+        bsPainter.translate( -contentsRect().x(), -contentsRect().y() );
 
-        plot()->drawCanvas( &cachePainter, canvasRect );
+        plot()->drawCanvas( &bsPainter, canvasRect );
 
-        cachePainter.end();
+        bsPainter.end();
 
-        painter->drawPixmap( canvasRect.topLeft().toPoint(), *d_data->cache );
+        painter->drawPixmap( canvasRect.topLeft().toPoint(), 
+            *d_data->backingStore );
     }
     else
         plot()->drawCanvas( painter, canvasRect );

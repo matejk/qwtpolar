@@ -882,7 +882,7 @@ void QwtPolarPlot::replot()
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
         updateScale( scaleId );
 
-    d_data->canvas->invalidatePaintCache();
+    d_data->canvas->invalidateBackingStore();
     d_data->canvas->repaint();
 
     setAutoReplot( doAutoReplot );
@@ -1067,7 +1067,7 @@ void QwtPolarPlot::updateScale( int scaleId )
 
 /*!
    \return Maximum of all item margin hints.
-   \sa QwtPolarItem::marhinHint()
+   \sa QwtPolarItem::marginHint()
 */
 int QwtPolarPlot::plotMarginHint() const
 {
@@ -1088,10 +1088,11 @@ int QwtPolarPlot::plotMarginHint() const
 }
 
 /*!
-   \brief Calculate the bounding rect of the plot area
-
    The plot area depends on the size of the canvas
    and the zoom parameters.
+
+   \return Bounding rect of the plot area
+
 */
 QRectF QwtPolarPlot::plotRect() const
 {
@@ -1140,8 +1141,8 @@ QRectF QwtPolarPlot::plotRect( const QRectF &canvasRect ) const
 }
 
 /*!
-   Calculate the bounding interval of the radial scale that is
-   visible on the canvas.
+   \return Bounding interval of the radial scale that is
+           visible on the canvas.
 */
 QwtInterval QwtPolarPlot::visibleInterval() const
 {

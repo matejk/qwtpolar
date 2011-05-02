@@ -261,15 +261,6 @@ void QwtPolarLayout::invalidate()
 }
 
 /*!
-  \brief Return a minimum size hint
-  \sa QwtPolarPlot::minimumSizeHint()
-*/
-QSize QwtPolarLayout::minimumSizeHint( const QwtPolarPlot * ) const
-{
-    return QSize();
-}
-
-/*!
   Find the geometry for the legend
   \param options Options how to layout the legend
   \param rect Rectangle where to place the legend
