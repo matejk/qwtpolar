@@ -14,6 +14,8 @@ public:
 public Q_SLOTS:
     void exportDocument();
     void showGrid( bool );
+    void rotate();
+    void mirror();
 
 private:
     QwtPolarGrid *d_grid;
