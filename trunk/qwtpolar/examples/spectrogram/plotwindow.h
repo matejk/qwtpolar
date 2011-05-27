@@ -12,6 +12,6 @@ public:
 
 private:
     Plot *d_plot;
-    QwtScaleWidget *d_colorScale;;
+    QwtScaleWidget *d_colorScale;
 };
 

@@ -250,6 +250,8 @@ QImage QwtPolarSpectrogram::renderImage(
                 double a = qAtan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
+                if ( a < azimuthMap.p1() )
+                    a += 2 * M_PI;
 
                 const double r = qSqrt( qwtSqr( dx ) + dy2 );
 

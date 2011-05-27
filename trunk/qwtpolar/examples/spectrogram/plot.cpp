@@ -7,6 +7,8 @@
 #include <qwt_polar_grid.h>
 #include <qwt_polar_spectrogram.h>
 #include <qwt_polar_renderer.h>
+#include <qwt_scale_div.h>
+#include <qwt_round_scale_draw.h>
 #include "plot.h"
 
 // Pointless synthetic data, showing something nice
@@ -33,11 +35,24 @@ public:
     }
 };
 
+class AzimuthScaleDraw: public QwtRoundScaleDraw
+{
+public:
+    virtual QwtText label( double value ) const
+    {
+        if ( qFuzzyCompare( value, 360.0 ) )
+            value = 0.0;
+            
+        return QLocale().toString( value );
+    }
+};
+
 Plot::Plot( QWidget *parent ):
     QwtPolarPlot( parent )
 {
     setAutoReplot( false );
     setPlotBackground( Qt::darkBlue );
+
 
     // scales
     setScale( QwtPolar::Azimuth, 0.0, 360.0, 45.0 );
@@ -58,6 +73,7 @@ Plot::Plot( QWidget *parent ):
         d_grid->setMinorGridPen( scaleId, minorPen );
     }
     d_grid->setAxisPen( QwtPolar::AxisAzimuth, QPen( Qt::black ) );
+    d_grid->setAzimuthScaleDraw( new AzimuthScaleDraw() );
     d_grid->showAxis( QwtPolar::AxisAzimuth, true );
     d_grid->showAxis( QwtPolar::AxisLeft, false );
     d_grid->showAxis( QwtPolar::AxisRight, true );
@@ -83,6 +99,27 @@ Plot::Plot( QWidget *parent ):
 QwtPolarSpectrogram *Plot::spectrogram()
 {
     return d_spectrogram;
+}
+
+void Plot::rotate()
+{
+    const double interval = 15.0; // degrees
+
+    double origin = azimuthOrigin() / M_PI * 180.0;
+    origin = qRound( origin / interval ) * interval + interval;
+
+    setAzimuthOrigin( origin / 180.0 * M_PI );
+    replot();
+}
+
+void Plot::mirror()
+{
+    setScale( QwtPolar::Azimuth,
+        scaleDiv( QwtPolar::Azimuth )->upperBound(),
+        scaleDiv( QwtPolar::Azimuth )->lowerBound(),
+        45.0
+    );
+    replot();
 }
 
 void Plot::exportDocument()
