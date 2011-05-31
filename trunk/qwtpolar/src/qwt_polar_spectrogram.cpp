@@ -14,6 +14,11 @@
 #include <qwt_raster_data.h>
 #include <qwt_math.h>
 #include <qpainter.h>
+#if QT_VERSION >= 0x040400
+#include <qthread.h>
+#include <qfuture.h>
+#include <qtconcurrentrun.h>
+#endif
 
 #if QWT_VERSION < 0x060100
 
@@ -78,7 +83,8 @@ class QwtPolarSpectrogram::PrivateData
 {
 public:
     PrivateData():
-        data( NULL )
+        data( NULL ),
+        renderThreadCount( 1 )
     {
         colorMap = new QwtLinearColorMap();
     }
@@ -90,6 +96,8 @@ public:
     QwtRasterData *data;
     QwtColorMap *colorMap;
 
+    uint renderThreadCount;
+    
     QwtPolarSpectrogram::PaintAttributes paintAttributes;
 };
 
@@ -203,6 +211,37 @@ bool QwtPolarSpectrogram::testPaintAttribute( PaintAttribute attribute ) const
 }
 
 /*!
+   Rendering an image from the raster data can often be done
+   parallel on a multicore system.
+
+   \param numThreads Number of threads to be used for rendering.
+                     If numThreads is set to 0, the system specific
+                     ideal thread count is used.
+
+   The default thread count is 1 ( = no additional threads )
+
+   \warning Rendering in multiple threads is only supported for Qt >= 4.4
+   \sa renderThreadCount(), renderImage(), renderTile()
+*/
+void QwtPolarSpectrogram::setRenderThreadCount( uint numThreads )
+{
+    d_data->renderThreadCount = numThreads;
+}
+
+/*!
+   \return Number of threads to be used for rendering.
+           If numThreads is set to 0, the system specific
+           ideal thread count is used.
+
+   \warning Rendering in multiple threads is only supported for Qt >= 4.4
+   \sa setRenderThreadCount(), renderImage(), renderTile()
+*/
+uint QwtPolarSpectrogram::renderThreadCount() const
+{
+    return d_data->renderThreadCount;
+}
+
+/*!
   Draw the spectrogram
 
   \param painter Painter
@@ -287,6 +326,9 @@ QImage QwtPolarSpectrogram::renderImage(
     if ( !intensityRange.isValid() )
         return image;
 
+    if ( d_data->colorMap->format() == QwtColorMap::Indexed )
+        image.setColorTable( d_data->colorMap->colorTable( intensityRange ) );
+
     /*
      For the moment we only announce the composition of the image by
      calling initRaster(), but we don't pass any useful parameters.
@@ -295,20 +337,73 @@ QImage QwtPolarSpectrogram::renderImage(
      */
     d_data->data->initRaster( QRectF(), QSize() );
 
-    // Now we can collect the values and calculate the colors
-    // using the color map.
+
+#if QT_VERSION >= 0x040400 && !defined(QT_NO_QFUTURE)
+    uint numThreads = d_data->renderThreadCount;
+
+    if ( numThreads <= 0 )
+        numThreads = QThread::idealThreadCount();
+
+    if ( numThreads <= 0 )
+        numThreads = 1;
+
+
+    const int numRows = rect.height() / numThreads;
+
+    QList< QFuture<void> > futures;
+    for ( uint i = 0; i < numThreads; i++ )
+    {
+        QRect tile( 0, i * numRows, rect.width(), numRows );
+        if ( i == numThreads - 1 )
+        {
+            tile.setHeight( rect.height() - i * numRows );
+            renderTile( azimuthMap, radialMap, pole, tile, &image );
+        }
+        else
+        {
+            futures += QtConcurrent::run(
+                this, &QwtPolarSpectrogram::renderTile,
+                azimuthMap, radialMap, pole, tile, &image );
+        }
+    }
+    for ( int i = 0; i < futures.size(); i++ )
+        futures[i].waitForFinished();
+
+    qDebug() << "done";
+
+#else // QT_VERSION < 0x040400
+    renderTile( azimuthMap, radialMap, pole, rect, &image );
+#endif
+
+    d_data->data->discardRaster();
+
+    return image;
+}
+
+void QwtPolarSpectrogram::renderTile(
+    const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
+    const QPointF &pole, const QRect &tile, QImage *image ) const
+{
+    const QwtInterval intensityRange = d_data->data->interval( Qt::ZAxis );
+    if ( !intensityRange.isValid() )
+        return;
 
     const bool doFastAtan = testPaintAttribute( ApproximatedAtan );
 
+    const int y1 = tile.top();
+    const int y2 = tile.bottom();
+    const int x1 = tile.left();
+    const int x2 = tile.right();
+
     if ( d_data->colorMap->format() == QwtColorMap::RGB )
     {
-        for ( int y = rect.top(); y <= rect.bottom(); y++ )
+        for ( int y = y1; y <= y2; y++ )
         {
             const double dy = pole.y() - y;
             const double dy2 = qwtSqr( dy );
 
-            QRgb *line = ( QRgb * )image.scanLine( y - rect.top() );
-            for ( int x = rect.left(); x <= rect.right(); x++ )
+            QRgb *line = ( QRgb * )image->scanLine( y );
+            for ( int x = x1; x <= x2; x++ )
             {
                 const double dx = x - pole.x();
 
@@ -330,15 +425,13 @@ QImage QwtPolarSpectrogram::renderImage(
     }
     else if ( d_data->colorMap->format() == QwtColorMap::Indexed )
     {
-        image.setColorTable( d_data->colorMap->colorTable( intensityRange ) );
-
-        for ( int y = rect.top(); y <= rect.bottom(); y++ )
+        for ( int y = y1; y <= y2; y++ )
         {
             const double dy = pole.y() - y;
             const double dy2 = qwtSqr( dy );
 
-            unsigned char *line = image.scanLine( y - rect.top() );
-            for ( int x = rect.left(); x <= rect.right(); x++ )
+            unsigned char *line = image->scanLine( y );
+            for ( int x = x1; x <= x2; x++ )
             {
                 const double dx = x - pole.x();
 
@@ -358,10 +451,6 @@ QImage QwtPolarSpectrogram::renderImage(
             }
         }
     }
-
-    d_data->data->discardRaster();
-
-    return image;
 }
 
 /*!
