@@ -47,7 +47,6 @@ public:
     //! Paint attributes
     typedef QFlags<PaintAttribute> PaintAttributes;
 
-
     explicit QwtPolarSpectrogram();
     virtual ~QwtPolarSpectrogram();
 
@@ -59,6 +58,9 @@ public:
 
     void setPaintAttribute( PaintAttribute, bool on = true );
     bool testPaintAttribute( PaintAttribute ) const;
+
+    void setRenderThreadCount( uint numThreads );
+    uint renderThreadCount() const;
 
     virtual int rtti() const;
 
@@ -73,6 +75,10 @@ protected:
     virtual QImage renderImage(
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QPointF &pole, const QRect &rect ) const;
+
+    void renderTile(
+        const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
+        const QPointF &pole, const QRect &tile, QImage *image ) const;
 
 private:
     class PrivateData;
