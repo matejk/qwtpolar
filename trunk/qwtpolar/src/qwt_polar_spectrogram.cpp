@@ -12,7 +12,44 @@
 #include <qwt_color_map.h>
 #include <qwt_scale_map.h>
 #include <qwt_raster_data.h>
+#include <qwt_math.h>
 #include <qpainter.h>
+
+#if QWT_VERSION < 0x060100
+
+static inline double qwtFastAtan( double x )
+{
+    if ( x < -1.0 )
+        return -M_PI_2 - x / ( x * x + 0.28 );
+
+    if ( x > 1.0 )
+        return M_PI_2 - x / ( x * x + 0.28 );
+
+    return x / ( 1.0 + x * x * 0.28 );
+}
+
+static inline double qwtFastAtan2( double y, double x )
+{
+    if ( x > 0 )
+        return qwtFastAtan( y / x );
+
+    if ( x < 0 )
+    {
+        const double d = qwtFastAtan( y / x );
+        return ( y >= 0 ) ? d + M_PI : d - M_PI;
+    }
+
+    if ( y < 0.0 )
+        return -M_PI_2;
+
+    if ( y > 0.0 )
+        return M_PI_2;
+
+    return 0.0;
+}
+
+#endif // QWT_VERSION < 0x060100
+
 
 static bool qwtNeedsClipping( const QRectF &plotRect, const QRectF &rect )
 {
@@ -52,6 +89,8 @@ public:
 
     QwtRasterData *data;
     QwtColorMap *colorMap;
+
+    QwtPolarSpectrogram::PaintAttributes paintAttributes;
 };
 
 //!  Constructor
@@ -137,6 +176,30 @@ void QwtPolarSpectrogram::setColorMap( QwtColorMap *colorMap )
 const QwtColorMap *QwtPolarSpectrogram::colorMap() const
 {
     return d_data->colorMap;
+}
+
+/*!
+  Specify an attribute how to draw the curve
+
+  \param attribute Paint attribute
+  \param on On/Off
+  \sa testPaintAttribute()
+*/
+void QwtPolarSpectrogram::setPaintAttribute( PaintAttribute attribute, bool on )
+{
+    if ( on )
+        d_data->paintAttributes |= attribute;
+    else
+        d_data->paintAttributes &= ~attribute;
+}
+
+/*!
+    \brief Return the current paint attributes
+    \sa setPaintAttribute()
+*/
+bool QwtPolarSpectrogram::testPaintAttribute( PaintAttribute attribute ) const
+{
+    return ( d_data->paintAttributes & attribute );
 }
 
 /*!
@@ -235,6 +298,8 @@ QImage QwtPolarSpectrogram::renderImage(
     // Now we can collect the values and calculate the colors
     // using the color map.
 
+    const bool doFastAtan = testPaintAttribute( ApproximatedAtan );
+
     if ( d_data->colorMap->format() == QwtColorMap::RGB )
     {
         for ( int y = rect.top(); y <= rect.bottom(); y++ )
@@ -247,7 +312,7 @@ QImage QwtPolarSpectrogram::renderImage(
             {
                 const double dx = x - pole.x();
 
-                double a = qAtan2( dy, dx );
+                double a =  doFastAtan ? qwtFastAtan2( dy, dx ) : qAtan2( dy, dx );
                 if ( a < 0.0 )
                     a += 2 * M_PI;
                 if ( a < azimuthMap.p1() )
@@ -277,8 +342,10 @@ QImage QwtPolarSpectrogram::renderImage(
             {
                 const double dx = x - pole.x();
 
-                double a = qAtan2( dy, dx );
+                double a =  doFastAtan ? qwtFastAtan2( dy, dx ) : qAtan2( dy, dx );
                 if ( a < 0.0 )
+                    a += 2 * M_PI;
+                if ( a < azimuthMap.p1() )
                     a += 2 * M_PI;
 
                 const double r = qSqrt( qwtSqr( dx ) + dy2 );

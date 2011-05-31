@@ -86,6 +86,8 @@ Plot::Plot( QWidget *parent ):
     // spectrogram
 
     d_spectrogram = new QwtPolarSpectrogram();
+    d_spectrogram->setPaintAttribute( 
+        QwtPolarSpectrogram::ApproximatedAtan, true );
     d_spectrogram->setData( new SpectrogramData() );
     d_spectrogram->attach( this );
 

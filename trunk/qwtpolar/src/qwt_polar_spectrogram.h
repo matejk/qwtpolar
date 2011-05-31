@@ -28,6 +28,26 @@ class QwtColorMap;
 class QWT_POLAR_EXPORT QwtPolarSpectrogram: public QwtPolarItem
 {
 public:
+    /*!
+        Attributes to modify the drawing algorithm.
+        The default setting disables ApproximatedAtan
+
+        \sa setPaintAttribute(), testPaintAttribute()
+    */
+    enum PaintAttribute
+    {
+        /*!
+           Use qwtFastAtan2 instead of atan2 for translating
+           widget into polar coordinates.
+         */
+
+         ApproximatedAtan = 0x01
+    };
+
+    //! Paint attributes
+    typedef QFlags<PaintAttribute> PaintAttributes;
+
+
     explicit QwtPolarSpectrogram();
     virtual ~QwtPolarSpectrogram();
 
@@ -36,6 +56,9 @@ public:
 
     void setColorMap( QwtColorMap * );
     const QwtColorMap *colorMap() const;
+
+    void setPaintAttribute( PaintAttribute, bool on = true );
+    bool testPaintAttribute( PaintAttribute ) const;
 
     virtual int rtti() const;
 
@@ -55,5 +78,7 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( QwtPolarSpectrogram::PaintAttributes )
 
 #endif
