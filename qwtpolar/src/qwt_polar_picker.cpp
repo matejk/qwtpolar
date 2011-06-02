@@ -16,12 +16,9 @@
 class QwtPolarPicker::PrivateData
 {
 public:
-    PrivateData():
-        angleUnit( QwtPolar::Degrees )
+    PrivateData()
     {
     }
-
-    QwtPolar::AngleUnit angleUnit;
 };
 
 /*!
@@ -93,16 +90,6 @@ const QwtPolarPlot *QwtPolarPicker::plot() const
     return NULL;
 }
 
-void QwtPolarPicker::setAngleUnit( QwtPolar::AngleUnit unit )
-{
-    d_data->angleUnit = unit;
-}
-
-QwtPolar::AngleUnit QwtPolarPicker::angleUnit() const
-{
-    return d_data->angleUnit;
-}
-
 /*!
   Translate a pixel position into a position string
 
@@ -129,33 +116,7 @@ QwtText QwtPolarPicker::trackerText( const QPoint &pos ) const
 QwtText QwtPolarPicker::trackerTextPolar( const QwtPointPolar &pos ) const
 {
     QString text;
-
-    double azimuth = pos.azimuth();
-    switch( d_data->angleUnit )
-    {
-        case QwtPolar::Radians:
-        {
-            azimuth *= M_PI / 180.0;
-            break;
-        }
-        case QwtPolar::Gradians:
-        {
-            azimuth *= 400.0 / 360.0;
-            break;
-        }
-        case QwtPolar::Turns:
-        {
-            azimuth /= 360.0;
-            break;
-        }
-        case QwtPolar::Degrees:
-        default:
-        {
-            break;
-        }
-    }
-
-    text.sprintf( "%.4f, %.4f", pos.radius(), azimuth );
+    text.sprintf( "%.4f, %.4f", pos.radius(), pos.azimuth() );
 
     return QwtText( text );
 }
@@ -242,41 +203,11 @@ bool QwtPolarPicker::end( bool ok )
     return true;
 }
 
-/*!
-    Translate a point from pixel into plot coordinates
-    \return Point in plot coordinates
-    \sa transform()
-*/
 QwtPointPolar QwtPolarPicker::invTransform( const QPoint &pos ) const
 {
-    const QwtPolarPlot *pl = plot();
+    QwtPointPolar polarPos;
+    if ( canvas() == NULL )
+        return QwtPointPolar();
 
-    const QwtScaleMap azimuthMap = pl->scaleMap( QwtPolar::Azimuth );
-    const QwtScaleMap radialMap = pl->scaleMap( QwtPolar::Radius );
-
-    double dx = pos.x() - pl->plotRect().center().x();
-    double dy = -( pos.y() - pl->plotRect().center().y() );
-
-    const QwtPointPolar polarPos = QwtPointPolar( QPoint( dx, dy ) ).normalized();
-
-    const double azimuth = azimuthMap.invTransform( polarPos.azimuth() );
-    const double radius = radialMap.invTransform( polarPos.radius() );
-
-    return QwtPointPolar(azimuth, radius );
-}
-
-QPoint QwtPolarPicker::transform( const QwtPointPolar &polarPos ) const
-{
-    const QwtPolarPlot *pl = plot();
-
-    const QwtScaleMap azimuthMap = pl->scaleMap( QwtPolar::Azimuth );
-    const QwtScaleMap radialMap = pl->scaleMap( QwtPolar::Radius );
-
-    const double radius = radialMap.transform( polarPos.radius() );
-    const double azimuth = azimuthMap.transform( polarPos.azimuth() );
-
-    const QPointF pos = qwtPolar2Pos( 
-        pl->plotRect().center(), radius, azimuth );
-
-    return pos.toPoint();
+    return canvas()->invTransform( pos );
 }
