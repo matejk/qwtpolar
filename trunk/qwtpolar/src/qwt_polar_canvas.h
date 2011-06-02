@@ -10,6 +10,7 @@
 #define QWT_POLAR_CANVAS_H 1
 
 #include "qwt_polar_global.h"
+#include <qwt_point_polar.h>
 #include <qframe.h>
 
 class QPainter;
@@ -60,6 +61,9 @@ public:
 
     const QPixmap *backingStore() const;
     void invalidateBackingStore();
+
+    QwtPointPolar invTransform( const QPoint & ) const;
+    QPoint transform( const QwtPointPolar & ) const;
 
 protected:
     virtual void paintEvent( QPaintEvent * );

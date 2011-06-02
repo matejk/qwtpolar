@@ -10,7 +10,6 @@
 #define QWT_POLAR_PICKER_H
 
 #include "qwt_polar_global.h"
-#include "qwt_polar.h"
 #include "qwt_picker.h"
 #include <qvector.h>
 
@@ -42,9 +41,6 @@ public:
 
     QwtPolarCanvas *canvas();
     const QwtPolarCanvas *canvas() const;
-
-    void setAngleUnit( QwtPolar::AngleUnit );
-    QwtPolar::AngleUnit angleUnit() const;
 
 Q_SIGNALS:
 
@@ -81,7 +77,6 @@ Q_SIGNALS:
 
 protected:
     QwtPointPolar invTransform( const QPoint & ) const;
-    QPoint transform( const QwtPointPolar & ) const;
 
     virtual QwtText trackerText( const QPoint & ) const;
     virtual QwtText trackerTextPolar( const QwtPointPolar & ) const;

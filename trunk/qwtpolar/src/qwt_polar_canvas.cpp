@@ -238,3 +238,49 @@ void QwtPolarCanvas::drawCanvas( QPainter *painter,
     else
         plot()->drawCanvas( painter, canvasRect );
 }
+
+/*!
+    Translate a point from plot into widget coordinates
+
+    \return Point in widget coordinates
+    \sa transform()
+*/
+QwtPointPolar QwtPolarCanvas::invTransform( const QPoint &pos ) const
+{
+    const QwtPolarPlot *pl = plot();
+
+    const QwtScaleMap azimuthMap = pl->scaleMap( QwtPolar::Azimuth );
+    const QwtScaleMap radialMap = pl->scaleMap( QwtPolar::Radius );
+
+    double dx = pos.x() - pl->plotRect().center().x();
+    double dy = -( pos.y() - pl->plotRect().center().y() );
+
+    const QwtPointPolar polarPos = QwtPointPolar( QPoint( dx, dy ) ).normalized();
+
+    const double azimuth = azimuthMap.invTransform( polarPos.azimuth() );
+    const double radius = radialMap.invTransform( polarPos.radius() );
+
+    return QwtPointPolar(azimuth, radius );
+}
+
+/*!
+    Translate a point from plot into widget coordinates
+
+    \return Point in widget coordinates
+    \sa transform()
+*/
+QPoint QwtPolarCanvas::transform( const QwtPointPolar &polarPos ) const
+{
+    const QwtPolarPlot *pl = plot();
+
+    const QwtScaleMap azimuthMap = pl->scaleMap( QwtPolar::Azimuth );
+    const QwtScaleMap radialMap = pl->scaleMap( QwtPolar::Radius );
+
+    const double radius = radialMap.transform( polarPos.radius() );
+    const double azimuth = azimuthMap.transform( polarPos.azimuth() );
+
+    const QPointF pos = qwtPolar2Pos(
+        pl->plotRect().center(), radius, azimuth );
+
+    return pos.toPoint();
+}

@@ -22,7 +22,6 @@ public:
         setStateMachine(new QwtPickerDragPointMachine());
         setRubberBand(QwtPicker::NoRubberBand);
         setTrackerMode(ActiveOnly);
-        setAngleUnit( QwtPolar::Gradians );
     }
 
     virtual QwtText trackerTextPolar(const QwtPointPolar &pos) const
@@ -50,12 +49,12 @@ public:
     {
         const double c = 0.842;
         const double x = radius / 10.0 * 3.0 - 1.5;
-        const double y = azimuth / 360.0 * 3.0 - 1.5;
+        const double y = azimuth / M_2PI * 3.0 - 1.5;
 
-        const double v1 = x * x + ( y - c ) * ( y + c );
+        const double v1 = qwtSqr(x) + ( y - c ) * ( y + c );
         const double v2 = 2 * x * ( y + c );
 
-        const double v = 1.0 / ( v1 * v1 + v2 * v2 );
+        const double v = 1.0 / ( qwtSqr(v1) + qwtSqr(v2) );
         return v;
     }
 };
@@ -65,10 +64,26 @@ class AzimuthScaleDraw: public QwtRoundScaleDraw
 public:
     virtual QwtText label( double value ) const
     {
-        if ( qFuzzyCompare( value, 360.0 ) )
-            value = 0.0;
-            
-        return QLocale().toString( value );
+		QwtText text;
+
+		if ( qFuzzyCompare( fmod(value, M_2PI), 0.0 ) )
+		{
+			return QString( "0" );
+		}
+
+		if ( qFuzzyCompare( fmod( value, M_PI_4 ), 0.0 ) )
+		{
+			QString text;
+			if ( !qFuzzyCompare( value, M_PI ) )
+			{
+				text += QLocale().toString( value / M_PI );
+				text += " ";
+			}
+ 			text += "<FONT face=Symbol size=4>p</FONT>";
+			return text;
+		}
+
+       	return QwtRoundScaleDraw::label( value );
     }
 };
 
@@ -82,7 +97,7 @@ Plot::Plot( QWidget *parent ):
 
 
     // scales
-    setScale( QwtPolar::Azimuth, 0.0, 360.0, 45.0 );
+    setScale( QwtPolar::Azimuth, 0.0, M_2PI, M_PI_4 );
     setScaleMaxMinor( QwtPolar::Azimuth, 2 );
 
     setScale( QwtPolar::Radius, 0.0, 10.0 );
@@ -144,11 +159,10 @@ void Plot::rotate()
 
 void Plot::mirror()
 {
-    setScale( QwtPolar::Azimuth,
-        scaleDiv( QwtPolar::Azimuth )->upperBound(),
-        scaleDiv( QwtPolar::Azimuth )->lowerBound(),
-        45.0
-    );
+	const double a1 = scaleDiv( QwtPolar::Azimuth )->upperBound();
+	const double a2 = scaleDiv( QwtPolar::Azimuth )->lowerBound();
+
+    setScale( QwtPolar::Azimuth, a1, a2, qAbs( a2 - a1 ) / 8.0 );
     replot();
 }
 
