@@ -7,9 +7,34 @@
 #include <qwt_polar_grid.h>
 #include <qwt_polar_spectrogram.h>
 #include <qwt_polar_renderer.h>
+#include <qwt_polar_picker.h>
+#include <qwt_picker_machine.h>
 #include <qwt_scale_div.h>
 #include <qwt_round_scale_draw.h>
 #include "plot.h"
+
+class MyPicker: public QwtPolarPicker
+{
+public:
+    MyPicker(QwtPolarCanvas *canvas):
+        QwtPolarPicker(canvas)
+    {
+        setStateMachine(new QwtPickerDragPointMachine());
+        setRubberBand(QwtPicker::NoRubberBand);
+        setTrackerMode(ActiveOnly);
+        setAngleUnit( QwtPolar::Gradians );
+    }
+
+    virtual QwtText trackerTextPolar(const QwtPointPolar &pos) const
+    {
+        QColor bg(Qt::white);
+        bg.setAlpha(200);
+
+        QwtText text = QwtPolarPicker::trackerTextPolar(pos);
+        text.setBackgroundBrush( QBrush( bg ));
+        return text;
+    }
+};
 
 // Pointless synthetic data, showing something nice
 
@@ -50,6 +75,8 @@ public:
 Plot::Plot( QWidget *parent ):
     QwtPolarPlot( parent )
 {
+    (void) new MyPicker( canvas() );
+
     setAutoReplot( false );
     setPlotBackground( Qt::darkBlue );
 
@@ -88,6 +115,7 @@ Plot::Plot( QWidget *parent ):
     d_spectrogram = new QwtPolarSpectrogram();
     d_spectrogram->setPaintAttribute( 
         QwtPolarSpectrogram::ApproximatedAtan, true );
+    d_spectrogram->setRenderThreadCount( 0 );
     d_spectrogram->setData( new SpectrogramData() );
     d_spectrogram->attach( this );
 

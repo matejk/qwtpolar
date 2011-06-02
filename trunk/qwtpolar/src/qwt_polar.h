@@ -13,7 +13,23 @@
 
 namespace QwtPolar
 {
-    //!  An enum, that identifies the type of a coordinate
+    //! Unit of an angle
+    enum AngleUnit
+    {
+        //! 0.0 -> 2_M_PI
+        Radians,
+
+        //! 0.0 -> 360.0
+        Degrees,
+
+        //! 0.0 - 400.0
+        Gradians,
+
+        //! 0.0 - 1.0
+        Turns
+    };
+
+    //! An enum, that identifies the type of a coordinate
     enum Coordinate
     {
         //! Azimuth

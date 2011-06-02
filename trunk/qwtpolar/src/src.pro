@@ -20,7 +20,7 @@ DESTDIR           = $${QWT_POLAR_ROOT}/lib
 contains(QWT_POLAR_CONFIG, QwtPolarDll ) {
 
     CONFIG += dll
-	win32|symbian: DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
+    win32|symbian: DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL QWT_POLAR_MAKEDLL
 }
 else {
     CONFIG += staticlib
@@ -36,6 +36,7 @@ HEADERS += \
     qwt_polar.h \
     qwt_polar_fitter.h \
     qwt_polar_item.h \
+    qwt_polar_picker.h \
     qwt_polar_panner.h \
     qwt_polar_magnifier.h \
     qwt_polar_grid.h \
@@ -51,6 +52,7 @@ HEADERS += \
 SOURCES += \
     qwt_polar_fitter.cpp \
     qwt_polar_item.cpp \
+    qwt_polar_picker.cpp \
     qwt_polar_panner.cpp \
     qwt_polar_magnifier.cpp \
     qwt_polar_grid.cpp \

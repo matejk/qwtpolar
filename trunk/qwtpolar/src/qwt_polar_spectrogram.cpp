@@ -369,8 +369,6 @@ QImage QwtPolarSpectrogram::renderImage(
     for ( int i = 0; i < futures.size(); i++ )
         futures[i].waitForFinished();
 
-    qDebug() << "done";
-
 #else // QT_VERSION < 0x040400
     renderTile( azimuthMap, radialMap, pole, rect, &image );
 #endif

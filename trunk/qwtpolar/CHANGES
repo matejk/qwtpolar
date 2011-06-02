@@ -5,6 +5,10 @@ Changes
 -------
 1. Adopted to Qwt 6.0
 2. QwtPolarRenderer introduced
+3. QwtPlotSpectrogram 
+   - paint attributes ( using qwtFastAtan2 )
+   - setRenderThreadCount introduced
+4. QwtPolarPicker added
 
 
 Release 0.1.0
