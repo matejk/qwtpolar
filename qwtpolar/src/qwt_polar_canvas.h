@@ -32,9 +32,9 @@ public:
     /*!
       \brief Paint attributes
 
-      The default setting enables PaintCached
+      The default setting enables BackingStore
 
-      \sa setPaintAttribute(), testPaintAttribute(), paintCache()
+      \sa setPaintAttribute(), testPaintAttribute(), backingStore()
      */
 
     enum PaintAttribute
@@ -68,10 +68,6 @@ public:
 protected:
     virtual void paintEvent( QPaintEvent * );
     virtual void resizeEvent( QResizeEvent * );
-
-    virtual void drawContents( QPainter * );
-
-    void drawCanvas( QPainter *, const QRectF & );
 
 private:
     class PrivateData;
