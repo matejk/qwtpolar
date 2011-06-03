@@ -347,13 +347,12 @@ QImage QwtPolarSpectrogram::renderImage(
     if ( numThreads <= 0 )
         numThreads = 1;
 
-
     const int numRows = rect.height() / numThreads;
 
     QList< QFuture<void> > futures;
     for ( uint i = 0; i < numThreads; i++ )
     {
-        QRect tile( 0, i * numRows, rect.width(), numRows );
+        QRect tile( rect.x(), rect.y() + i * numRows, rect.width(), numRows );
         if ( i == numThreads - 1 )
         {
             tile.setHeight( rect.height() - i * numRows );
