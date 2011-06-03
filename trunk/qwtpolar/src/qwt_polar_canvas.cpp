@@ -11,9 +11,48 @@
 #include <qpainter.h>
 #include <qevent.h>
 #include <qpixmap.h>
+#include <qstyle.h>
+#include <qstyleoption.h>
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
 #endif
+
+static inline void qwtDrawStyledBackground(
+    QWidget *w, QPainter *painter )
+{
+    QStyleOption opt;
+    opt.initFrom(w);
+    w->style()->drawPrimitive( QStyle::PE_Widget, &opt, painter, w);
+}
+
+static QWidget *qwtBackgroundWidget( QWidget *w )
+{
+    if ( w->parentWidget() == NULL )
+        return w;
+
+    if ( w->autoFillBackground() )
+    {
+        const QBrush brush = w->palette().brush( w->backgroundRole() );
+        if ( brush.color().alpha() > 0 )
+            return w;
+    }
+
+    if ( w->testAttribute( Qt::WA_StyledBackground ) )
+    {
+        QImage image( 1, 1, QImage::Format_ARGB32 );
+        image.fill( Qt::transparent );
+
+        QPainter painter( &image );
+        painter.translate( -w->rect().center() );
+        qwtDrawStyledBackground( w, &painter );
+        painter.end();
+
+        if ( qAlpha( image.pixel( 0, 0 ) ) != 0 )
+            return w;
+    }
+
+    return qwtBackgroundWidget( w->parentWidget() );
+}
 
 class QwtPolarCanvas::PrivateData
 {
@@ -39,9 +78,6 @@ QwtPolarCanvas::QwtPolarCanvas( QwtPolarPlot *plot ):
 {
     d_data = new PrivateData;
 
-    setAutoFillBackground( false );
-
-    setAttribute( Qt::WA_NoSystemBackground, true );
 #ifndef QT_NO_CURSOR
     setCursor( Qt::CrossCursor );
 #endif
@@ -82,9 +118,9 @@ const QwtPolarPlot *QwtPolarCanvas::plot() const
   \param attribute Paint attribute
   \param on On/Off
 
-  The default setting enables PaintCached
+  The default setting enables BackingStore
 
-  \sa testPaintAttribute(), drawCanvas(), drawContents(), paintCache()
+  \sa testPaintAttribute(), paintCache()
 */
 void QwtPolarCanvas::setPaintAttribute( PaintAttribute attribute, bool on )
 {
@@ -153,18 +189,59 @@ void QwtPolarCanvas::invalidateBackingStore()
 void QwtPolarCanvas::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
+    painter.setClipRegion( event->region() );
 
-    if ( !contentsRect().contains( event->rect() ) )
+    if ( ( d_data->paintAttributes & BackingStore ) 
+        && d_data->backingStore != NULL )
     {
-        painter.save();
-        painter.setClipRegion( event->region() & frameRect() );
-        drawFrame( &painter );
-        painter.restore();
+        QPixmap &bs = *d_data->backingStore;
+        if ( bs.size() != size() )
+        {
+            bs = QPixmap( size() );
+#ifdef Q_WS_X11
+            if ( bs.x11Info().screen() != x11Info().screen() )
+                bs.x11SetScreen( x11Info().screen() );
+#endif
+
+            QPainter p;
+
+            if ( testAttribute(Qt::WA_StyledBackground ) )
+            {
+                p.begin( &bs );
+                qwtDrawStyledBackground( this, &p );
+            }
+            else
+            {
+                if ( autoFillBackground() )
+                {
+                    p.begin( &bs );
+                    p.fillRect( rect(), palette().brush( backgroundRole() ) );
+                }
+                else
+                {
+                    QWidget *bgWidget = qwtBackgroundWidget( plot() );
+                    bs.fill( bgWidget, mapTo( bgWidget, rect().topLeft() ) );
+                    p.begin( &bs );
+                }
+            }
+
+            plot()->drawCanvas( &p, contentsRect() );
+
+            if ( frameWidth() > 0 )
+                drawFrame( &p );
+        }
+
+        painter.drawPixmap( 0, 0, *d_data->backingStore );
     }
+    else
+    {
+        qwtDrawStyledBackground( this, &painter );
 
-    painter.setClipRegion( event->region() & contentsRect() );
+        plot()->drawCanvas( &painter, contentsRect() );
 
-    drawContents( &painter );
+        if ( frameWidth() > 0 )
+            drawFrame( &painter );
+    }
 }
 
 /*!
@@ -177,66 +254,6 @@ void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 
     for ( int scaleId = 0; scaleId < QwtPolar::ScaleCount; scaleId++ )
         plot()->updateScale( scaleId );
-}
-
-//! Redraw the canvas
-void QwtPolarCanvas::drawContents( QPainter *painter )
-{
-    if ( ( d_data->paintAttributes & BackingStore ) && d_data->backingStore
-            && d_data->backingStore->size() == contentsRect().size() )
-    {
-        painter->drawPixmap( contentsRect().topLeft(), *d_data->backingStore );
-    }
-    else
-    {
-        QwtPolarPlot *plt = plot();
-        if ( plt )
-        {
-            const bool doAutoReplot = plt->autoReplot();
-            plt->setAutoReplot( false );
-            drawCanvas( painter, QRectF( contentsRect() ) );
-            plt->setAutoReplot( doAutoReplot );
-        }
-    }
-}
-
-/*!
-  Draw the the canvas
-
-  Paints all plot items to the canvasRect, using QwtPolarPlot::drawCanvas
-  and updates the backing store.
-
-  \sa QwtPolarPlot::drawCanvas, setPaintAttributes(), testPaintAttributes()
-*/
-void QwtPolarCanvas::drawCanvas( QPainter *painter,
-    const QRectF& canvasRect )
-{
-    if ( !canvasRect.isValid() )
-        return;
-
-    if ( testPaintAttribute( BackingStore ) && d_data->backingStore )
-    {
-        *d_data->backingStore = QPixmap( contentsRect().size() );
-
-#ifdef Q_WS_X11
-        if ( d_data->backingStore->x11Info().screen() != x11Info().screen() )
-            d_data->backingStore->x11SetScreen( x11Info().screen() );
-#endif
-
-        d_data->backingStore->fill( this, d_data->backingStore->rect().topLeft() );
-
-        QPainter bsPainter( d_data->backingStore );
-        bsPainter.translate( -contentsRect().x(), -contentsRect().y() );
-
-        plot()->drawCanvas( &bsPainter, canvasRect );
-
-        bsPainter.end();
-
-        painter->drawPixmap( canvasRect.topLeft().toPoint(), 
-            *d_data->backingStore );
-    }
-    else
-        plot()->drawCanvas( painter, canvasRect );
 }
 
 /*!
