@@ -360,32 +360,33 @@ QImage QwtPolarSpectrogram::renderImage(
 
     const int numRows = rect.height() / numThreads;
 
-    QVector< QFuture<void> > futures;
-    QVector<TileInfo> tileInfos;
 
+    QVector<TileInfo> tileInfos;
     for ( uint i = 0; i < numThreads; i++ )
     {
         QRect tile( rect.x(), rect.y() + i * numRows, rect.width(), numRows );
         if ( i == numThreads - 1 )
-        {
             tile.setHeight( rect.height() - i * numRows );
-            renderTile( azimuthMap, radialMap, pole, 
-                rect.topLeft(), tile, &image );
+
+        TileInfo tileInfo;
+        tileInfo.imagePos = rect.topLeft();
+        tileInfo.rect = tile;
+        tileInfo.image = &image;
+
+        tileInfos += tileInfo;
+    }
+
+    QVector< QFuture<void> > futures;
+    for ( int i = 0; i < tileInfos.size(); i++ )
+    {
+        if ( i == tileInfos.size() - 1 )
+        {
+            renderTile( azimuthMap, radialMap, pole, &tileInfos[i] );
         }
         else
         {
-            // QtConcurrent::run is limited to functions with less than
-            // 5 parameters. So we need copy the parameters into a TileInfo.
-
-            TileInfo tileInfo;
-            tileInfo.imagePos = rect.topLeft();
-            tileInfo.rect = tile;
-            tileInfo.image = &image;
-
-            tileInfos += tileInfo;
-
             futures += QtConcurrent::run( this, &QwtPolarSpectrogram::renderTile,
-                azimuthMap, radialMap, pole, &tileInfos.last() );
+                azimuthMap, radialMap, pole, &tileInfos[i] );
         }
     }
     for ( int i = 0; i < futures.size(); i++ )
