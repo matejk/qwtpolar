@@ -24,7 +24,7 @@ class QwtPointPolar;
   a polar plot canvas. 
 */
 
-class QWT_EXPORT QwtPolarPicker: public QwtPicker
+class QWT_POLAR_EXPORT QwtPolarPicker: public QwtPicker
 {
     Q_OBJECT
 
