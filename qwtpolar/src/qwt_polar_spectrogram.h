@@ -76,11 +76,16 @@ protected:
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
         const QPointF &pole, const QRect &rect ) const;
 
-    void renderTile(
+    virtual void renderTile(
         const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-        const QPointF &pole, const QRect &tile, QImage *image ) const;
+        const QPointF &pole, const QPoint &imagePos,
+        const QRect &tile, QImage *image ) const;
 
 private:
+    class TileInfo;
+    void renderTile( const QwtScaleMap &, const QwtScaleMap &,
+        const QPointF &pole, TileInfo * ) const;
+
     class PrivateData;
     PrivateData *d_data;
 };

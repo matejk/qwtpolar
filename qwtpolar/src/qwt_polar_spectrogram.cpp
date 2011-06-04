@@ -79,6 +79,14 @@ static bool qwtNeedsClipping( const QRectF &plotRect, const QRectF &rect )
     return false;
 }
 
+class QwtPolarSpectrogram::TileInfo
+{
+public:
+    QPoint imagePos;
+    QRect rect;
+    QImage *image;
+};
+
 class QwtPolarSpectrogram::PrivateData
 {
 public:
@@ -269,6 +277,9 @@ void QwtPolarSpectrogram::draw( QPainter *painter,
 
     QRect imageRect = canvasRect.toRect();
 
+    if ( painter->hasClipping() )
+        imageRect &= painter->clipRegion().boundingRect();
+
     const QwtInterval radialInterval =
         boundingInterval( QwtPolar::ScaleRadius );
     if ( radialInterval.isValid() )
@@ -349,27 +360,39 @@ QImage QwtPolarSpectrogram::renderImage(
 
     const int numRows = rect.height() / numThreads;
 
-    QList< QFuture<void> > futures;
+    QVector< QFuture<void> > futures;
+    QVector<TileInfo> tileInfos;
+
     for ( uint i = 0; i < numThreads; i++ )
     {
         QRect tile( rect.x(), rect.y() + i * numRows, rect.width(), numRows );
         if ( i == numThreads - 1 )
         {
             tile.setHeight( rect.height() - i * numRows );
-            renderTile( azimuthMap, radialMap, pole, tile, &image );
+            renderTile( azimuthMap, radialMap, pole, 
+                rect.topLeft(), tile, &image );
         }
         else
         {
-            futures += QtConcurrent::run(
-                this, &QwtPolarSpectrogram::renderTile,
-                azimuthMap, radialMap, pole, tile, &image );
+            // QtConcurrent::run is limited to functions with less than
+            // 5 parameters. So we need copy the parameters into a TileInfo.
+
+            TileInfo tileInfo;
+            tileInfo.imagePos = rect.topLeft();
+            tileInfo.rect = tile;
+            tileInfo.image = &image;
+
+            tileInfos += tileInfo;
+
+            futures += QtConcurrent::run( this, &QwtPolarSpectrogram::renderTile,
+                azimuthMap, radialMap, pole, &tileInfos.last() );
         }
     }
     for ( int i = 0; i < futures.size(); i++ )
         futures[i].waitForFinished();
 
 #else // QT_VERSION < 0x040400
-    renderTile( azimuthMap, radialMap, pole, rect, &image );
+    renderTile( azimuthMap, radialMap, pole, rect.topLeft(), rect, &image );
 #endif
 
     d_data->data->discardRaster();
@@ -377,9 +400,34 @@ QImage QwtPolarSpectrogram::renderImage(
     return image;
 }
 
+void QwtPolarSpectrogram::renderTile( 
+    const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
+    const QPointF &pole, TileInfo *tileInfo ) const
+{
+    renderTile( azimuthMap, radialMap, pole,
+        tileInfo->imagePos, tileInfo->rect, tileInfo->image );
+}
+
+/*
+  \brief Render a sub-rectangle of an image 
+
+  renderTile() is called by renderImage() to render different parts
+  of the image by concurrent threads.
+
+  \param azimuthMap Maps azimuth values to values related to 0.0, M_2PI
+  \param radialMap Maps radius values into painter coordinates.
+  \param pole Position of the pole in painter coordinates
+  \param imagePos Top/left position of the image in painter coordinates
+  \param tile Sub-rectangle of the tile in painter coordinates
+  \param image Image to be rendered
+
+   \sa setRenderThreadCount()
+   \note renderTile needs to be reentrant
+*/
 void QwtPolarSpectrogram::renderTile(
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QPointF &pole, const QRect &tile, QImage *image ) const
+    const QPointF &pole, const QPoint &imagePos,
+    const QRect &tile, QImage *image ) const
 {
     const QwtInterval intensityRange = d_data->data->interval( Qt::ZAxis );
     if ( !intensityRange.isValid() )
@@ -387,8 +435,11 @@ void QwtPolarSpectrogram::renderTile(
 
     const bool doFastAtan = testPaintAttribute( ApproximatedAtan );
 
+    const int y0 = imagePos.y();
     const int y1 = tile.top();
     const int y2 = tile.bottom();
+
+    const int x0 = imagePos.x();
     const int x1 = tile.left();
     const int x2 = tile.right();
 
@@ -399,7 +450,9 @@ void QwtPolarSpectrogram::renderTile(
             const double dy = pole.y() - y;
             const double dy2 = qwtSqr( dy );
 
-            QRgb *line = ( QRgb * )image->scanLine( y );
+            QRgb *line = ( QRgb * )image->scanLine( y - y0 );
+            line += x1 - x0;
+
             for ( int x = x1; x <= x2; x++ )
             {
                 const double dx = x - pole.x();
@@ -427,7 +480,8 @@ void QwtPolarSpectrogram::renderTile(
             const double dy = pole.y() - y;
             const double dy2 = qwtSqr( dy );
 
-            unsigned char *line = image->scanLine( y );
+            unsigned char *line = image->scanLine( y - y0 );
+            line += x1 - x0;
             for ( int x = x1; x <= x2; x++ )
             {
                 const double dx = x - pole.x();
