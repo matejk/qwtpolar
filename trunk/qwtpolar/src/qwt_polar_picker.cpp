@@ -211,3 +211,24 @@ QwtPointPolar QwtPolarPicker::invTransform( const QPoint &pos ) const
 
     return canvas()->invTransform( pos );
 }
+
+QRect QwtPolarPicker::pickRect() const
+{
+    const QRect cr = canvas()->contentsRect();
+    const QRect pr = plot()->plotRect( cr ).toRect();
+
+	return cr & pr;
+}
+
+QPainterPath QwtPolarPicker::pickArea() const
+{
+    const QRect cr = canvas()->contentsRect();
+
+	QPainterPath crPath;
+	crPath.addRect( cr );
+
+	QPainterPath prPath;
+	prPath.addEllipse( plot()->plotRect( cr ) );
+
+	return crPath & prPath;
+}
