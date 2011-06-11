@@ -12,6 +12,7 @@
 #include "qwt_polar_global.h"
 #include "qwt_picker.h"
 #include <qvector.h>
+#include <qpainterpath.h>
 
 class QwtPolarPlot;
 class QwtPolarCanvas;
@@ -41,6 +42,8 @@ public:
 
     QwtPolarCanvas *canvas();
     const QwtPolarCanvas *canvas() const;
+
+    virtual QRect pickRect() const;
 
 Q_SIGNALS:
 
@@ -86,6 +89,8 @@ protected:
     virtual bool end( bool ok = true );
 
 private:
+    virtual QPainterPath pickArea() const;
+
     class PrivateData;
     PrivateData *d_data;
 };

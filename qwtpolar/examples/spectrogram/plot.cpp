@@ -90,8 +90,6 @@ public:
 Plot::Plot( QWidget *parent ):
     QwtPolarPlot( parent )
 {
-    (void) new MyPicker( canvas() );
-
     setAutoReplot( false );
     setPlotBackground( Qt::darkBlue );
 
@@ -130,15 +128,20 @@ Plot::Plot( QWidget *parent ):
     d_spectrogram = new QwtPolarSpectrogram();
     d_spectrogram->setPaintAttribute( 
         QwtPolarSpectrogram::ApproximatedAtan, true );
-    d_spectrogram->setRenderThreadCount( 0 );
+    d_spectrogram->setRenderThreadCount( 0 ); // use multi threading
     d_spectrogram->setData( new SpectrogramData() );
     d_spectrogram->attach( this );
 
     d_spectrogram->setZ( 1.0 );
     d_grid->setZ( 2.0 );
 
+    QwtPolarPicker *picker = new MyPicker( canvas() );
+	picker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::RightButton );
+
+    QwtPolarMagnifier *magnifier = new QwtPolarMagnifier( canvas() );
+	magnifier->setMouseButton( Qt::RightButton, Qt::ShiftModifier );
+
     new QwtPolarPanner( canvas() );
-    new QwtPolarMagnifier( canvas() );
 }
 
 QwtPolarSpectrogram *Plot::spectrogram()
