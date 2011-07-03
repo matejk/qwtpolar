@@ -393,18 +393,19 @@ void QwtPolarRenderer::renderLegend(
 void QwtPolarRenderer::renderLegendItem( QPainter *painter,
     const QWidget *widget, const QRectF &rect ) const
 {
-    if ( widget->inherits( "QwtLegendItem" ) )
+    const QwtLegendItem *item = qobject_cast<const QwtLegendItem *>( widget );
+    if ( item )
     {
-        QwtLegendItem *item = ( QwtLegendItem * )widget;
+        const QSize sz = item->identifierSize();
 
-        const QRect identifierRect(
-            rect.x() + item->margin(), rect.y(),
-            item->identifierSize().width(), rect.height() );
+        const QRectF identifierRect( rect.x() + item->margin(),
+            rect.center().y() - 0.5 * sz.height(), sz.width(), sz.height() );
 
         QwtLegendItemManager *itemManger = d_data->plot->legend()->find( item );
         if ( itemManger )
         {
             painter->save();
+            painter->setClipRect( identifierRect, Qt::IntersectClip );
             itemManger->drawLegendIdentifier( painter, identifierRect );
             painter->restore();
         }
