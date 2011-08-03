@@ -210,7 +210,8 @@ void QwtPolarSpectrogram::setPaintAttribute( PaintAttribute attribute, bool on )
 }
 
 /*!
-    \brief Return the current paint attributes
+    \param attribute Paint attribute
+    \return True, when attribute has been set
     \sa setPaintAttribute()
 */
 bool QwtPolarSpectrogram::testPaintAttribute( PaintAttribute attribute ) const
@@ -409,7 +410,7 @@ void QwtPolarSpectrogram::renderTile(
         tileInfo->imagePos, tileInfo->rect, tileInfo->image );
 }
 
-/*
+/*!
   \brief Render a sub-rectangle of an image 
 
   renderTile() is called by renderImage() to render different parts

@@ -25,7 +25,7 @@ QwtPolarPanner::~QwtPolarPanner()
 {
 }
 
-//! Return observed plot canvas
+//! \return observed plot canvas
 QwtPolarCanvas *QwtPolarPanner::canvas()
 {
     QWidget *w = parentWidget();
@@ -35,13 +35,13 @@ QwtPolarCanvas *QwtPolarPanner::canvas()
     return NULL;
 }
 
-//! Return observed plot canvas
+//! \return observed plot canvas
 const QwtPolarCanvas *QwtPolarPanner::canvas() const
 {
     return ( ( QwtPolarPanner * )this )->canvas();
 }
 
-//! Return observed plot
+//! \return observed plot
 QwtPolarPlot *QwtPolarPanner::plot()
 {
     QwtPolarCanvas *c = canvas();
@@ -51,7 +51,7 @@ QwtPolarPlot *QwtPolarPanner::plot()
     return NULL;
 }
 
-//! Return observed plot
+//! \return observed plot
 const QwtPolarPlot *QwtPolarPanner::plot() const
 {
     return ( ( QwtPolarPanner * )this )->plot();
@@ -103,15 +103,15 @@ void QwtPolarPanner::movePlot( int dx, int dy )
 /*!
   Block panning when the plot zoom factor is >= 1.0.
 
-  \param me Mouse event
+  \param event Mouse event
 */
-void QwtPolarPanner::widgetMousePressEvent( QMouseEvent *me )
+void QwtPolarPanner::widgetMousePressEvent( QMouseEvent *event )
 {
     const QwtPolarPlot *plot = QwtPolarPanner::plot();
     if ( plot )
     {
         if ( plot->zoomFactor() < 1.0 )
-            QwtPanner::widgetMousePressEvent( me );
+            QwtPanner::widgetMousePressEvent( event );
     }
 }
 

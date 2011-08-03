@@ -113,7 +113,7 @@ int QwtPolarItem::rtti() const
     return Rtti_PolarItem;
 }
 
-//! Return attached plot
+//! \return Attached plot
 QwtPolarPlot *QwtPolarItem::plot() const
 {
     return d_data->plot;
@@ -122,7 +122,8 @@ QwtPolarPlot *QwtPolarItem::plot() const
 /*!
    Plot items are painted in increasing z-order.
 
-   \return setZ(), QwtPolarItemDict::itemList()
+   \return Z value
+   \sa setZ(), QwtPolarItemDict::itemList()
 */
 double QwtPolarItem::z() const
 {
@@ -315,6 +316,7 @@ void QwtPolarItem::itemChanged()
    sense an invalid interval is returned.
 
    \param scaleId Scale id ( QwtPolar::Scale )
+   \return Bounding interval of the plot item for a specific scale
 */
 QwtInterval QwtPolarItem::boundingInterval( int scaleId ) const
 {
@@ -435,6 +437,8 @@ QWidget *QwtPolarItem::legendItem() const
    Some items like to display something (f.e. the azimuth axis) outside
    of the area of the interval of the radial scale.
    The default implementation returns 0 pixels
+
+   \return Hint for the margin
 */
 int QwtPolarItem::marginHint() const
 {

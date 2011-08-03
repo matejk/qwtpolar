@@ -1089,21 +1089,23 @@ void QwtPolarGrid::setScaleDraw( int axisId, QwtScaleDraw *scaleDraw )
 }
 
 /*!
-  Returns the scale draw of the azimuth axis
+  \return Scale draw for the azimuth scale
   \sa setAzimuthScaleDraw(), scaleDraw()
 */
 const QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw() const
 {
-    return ( QwtRoundScaleDraw * )d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw;
+    return static_cast<QwtRoundScaleDraw *>( 
+        d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw );
 }
 
 /*!
-  Returns the scale draw of the azimuth axis
+  \return Scale draw for the azimuth scale
   \sa setAzimuthScaleDraw(), scaleDraw()
 */
 QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw()
 {
-    return ( QwtRoundScaleDraw * )d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw;
+    return static_cast<QwtRoundScaleDraw *>( 
+        d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw );
 }
 
 /*!
