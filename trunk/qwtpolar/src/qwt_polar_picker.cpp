@@ -58,19 +58,19 @@ QwtPolarPicker::~QwtPolarPicker()
     delete d_data;
 }
 
-//! Return observed plot canvas
+//! \return Observed plot canvas
 QwtPolarCanvas *QwtPolarPicker::canvas()
 {
     return qobject_cast<QwtPolarCanvas *>( parentWidget() );
 }
 
-//! Return Observed plot canvas
+//! \return Observed plot canvas
 const QwtPolarCanvas *QwtPolarPicker::canvas() const
 {
     return qobject_cast<const QwtPolarCanvas *>( parentWidget() );
 }
 
-//! Return plot widget, containing the observed plot canvas
+//! \return Plot widget, containing the observed plot canvas
 QwtPolarPlot *QwtPolarPicker::plot()
 {
     QwtPolarCanvas *w = canvas();
@@ -80,7 +80,7 @@ QwtPolarPlot *QwtPolarPicker::plot()
     return NULL;
 }
 
-//! Return plot widget, containing the observed plot canvas
+//! \return Plot widget, containing the observed plot canvas
 const QwtPolarPlot *QwtPolarPicker::plot() const
 {
     const QwtPolarCanvas *w = canvas();
@@ -203,6 +203,13 @@ bool QwtPolarPicker::end( bool ok )
     return true;
 }
 
+/*!
+    Translate a point from widget into plot coordinates
+
+    \param pos Point in widget coordinates of the plot canvas
+    \return Point in plot coordinates
+    \sa transform(), canvas()
+*/
 QwtPointPolar QwtPolarPicker::invTransform( const QPoint &pos ) const
 {
     QwtPointPolar polarPos;
@@ -212,23 +219,27 @@ QwtPointPolar QwtPolarPicker::invTransform( const QPoint &pos ) const
     return canvas()->invTransform( pos );
 }
 
+/*!
+    \return Bounding rectangle of the region, where picking is 
+            supported.
+*/
 QRect QwtPolarPicker::pickRect() const
 {
     const QRect cr = canvas()->contentsRect();
     const QRect pr = plot()->plotRect( cr ).toRect();
 
-	return cr & pr;
+    return cr & pr;
 }
 
 QPainterPath QwtPolarPicker::pickArea() const
 {
     const QRect cr = canvas()->contentsRect();
 
-	QPainterPath crPath;
-	crPath.addRect( cr );
+    QPainterPath crPath;
+    crPath.addRect( cr );
 
-	QPainterPath prPath;
-	prPath.addEllipse( plot()->plotRect( cr ) );
+    QPainterPath prPath;
+    prPath.addEllipse( plot()->plotRect( cr ) );
 
-	return crPath & prPath;
+    return crPath & prPath;
 }

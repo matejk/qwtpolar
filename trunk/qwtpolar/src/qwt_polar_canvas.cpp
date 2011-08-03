@@ -257,9 +257,11 @@ void QwtPolarCanvas::resizeEvent( QResizeEvent *event )
 }
 
 /*!
-    Translate a point from plot into widget coordinates
+    Translate a point from widget into plot coordinates
 
-    \return Point in widget coordinates
+    \param pos Point in widget coordinates of the plot canvas
+    \return Point in plot coordinates
+
     \sa transform()
 */
 QwtPointPolar QwtPolarCanvas::invTransform( const QPoint &pos ) const
@@ -283,6 +285,7 @@ QwtPointPolar QwtPolarCanvas::invTransform( const QPoint &pos ) const
 /*!
     Translate a point from plot into widget coordinates
 
+    \param polarPos Point in plot coordinates
     \return Point in widget coordinates
     \sa transform()
 */
