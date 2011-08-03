@@ -72,17 +72,13 @@ void QwtPolarMagnifier::getUnzoomKey( int &key, int &modifiers ) const
 //! \return Observed plot canvas
 QwtPolarCanvas *QwtPolarMagnifier::canvas()
 {
-    QWidget *w = parentWidget();
-    if ( w && w->inherits( "QwtPolarCanvas" ) )
-        return ( QwtPolarCanvas * )w;
-
-    return NULL;
+    return qobject_cast<QwtPolarCanvas *>( parent() );
 }
 
 //! \return Observed plot canvas
 const QwtPolarCanvas *QwtPolarMagnifier::canvas() const
 {
-    return ( ( QwtPolarMagnifier * )this )->canvas();
+    return qobject_cast<QwtPolarCanvas *>( parent() );
 }
 
 //! \return Observed plot
@@ -98,7 +94,11 @@ QwtPolarPlot *QwtPolarMagnifier::plot()
 //! \return observed plot
 const QwtPolarPlot *QwtPolarMagnifier::plot() const
 {
-    return ( ( QwtPolarMagnifier * )this )->plot();
+    const QwtPolarCanvas *c = canvas();
+    if ( c )
+        return c->plot();
+
+    return NULL;
 }
 
 /*!

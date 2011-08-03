@@ -124,14 +124,14 @@ void QwtPolarMarker::draw( QPainter *painter,
         int dx = pos.x();
         int dy = pos.y();
 
-        if ( d_data->align & ( int ) Qt::AlignTop )
+        if ( d_data->align & Qt::AlignTop )
             dy += tr.y() - ylw1;
-        else if ( d_data->align & ( int ) Qt::AlignBottom )
+        else if ( d_data->align & Qt::AlignBottom )
             dy -= tr.y() - ylw1;
 
-        if ( d_data->align & ( int ) Qt::AlignLeft )
+        if ( d_data->align & Qt::AlignLeft )
             dx += tr.x() - xlw1;
-        else if ( d_data->align & ( int ) Qt::AlignRight )
+        else if ( d_data->align & Qt::AlignRight )
             dx -= tr.x() - xlw1;
 
         tr.translate( dx, dy );

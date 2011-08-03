@@ -28,17 +28,13 @@ QwtPolarPanner::~QwtPolarPanner()
 //! \return observed plot canvas
 QwtPolarCanvas *QwtPolarPanner::canvas()
 {
-    QWidget *w = parentWidget();
-    if ( w && w->inherits( "QwtPolarCanvas" ) )
-        return ( QwtPolarCanvas * )w;
-
-    return NULL;
+    return qobject_cast<QwtPolarCanvas *>( parent() );
 }
 
 //! \return observed plot canvas
 const QwtPolarCanvas *QwtPolarPanner::canvas() const
 {
-    return ( ( QwtPolarPanner * )this )->canvas();
+    return qobject_cast<const QwtPolarCanvas *>( parent() );
 }
 
 //! \return observed plot
@@ -54,7 +50,11 @@ QwtPolarPlot *QwtPolarPanner::plot()
 //! \return observed plot
 const QwtPolarPlot *QwtPolarPanner::plot() const
 {
-    return ( ( QwtPolarPanner * )this )->plot();
+    const QwtPolarCanvas *c = canvas();
+    if ( c )
+        return c->plot();
+
+    return NULL;
 }
 
 /*!

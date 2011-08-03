@@ -206,10 +206,11 @@ void QwtPolarPlot::insertLegend( QwtLegend *legend,
                 ( *it )->updateLegend( d_data->legend );
             }
 
-            QLayout *l = d_data->legend->contentsWidget()->layout();
-            if ( l && l->inherits( "QwtDynGridLayout" ) )
+            QwtDynGridLayout *tl = qobject_cast<QwtDynGridLayout *>(
+                d_data->legend->contentsWidget()->layout() );
+
+            if ( tl )
             {
-                QwtDynGridLayout *tl = ( QwtDynGridLayout * )l;
                 switch( d_data->layout->legendPosition() )
                 {
                     case LeftLegend:
@@ -226,7 +227,6 @@ void QwtPolarPlot::insertLegend( QwtLegend *legend,
                         break;
                 }
             }
-
         }
     }
     updateLayout();
@@ -258,8 +258,8 @@ void QwtPolarPlot::legendItemClicked()
 {
     if ( d_data->legend && sender()->isWidgetType() )
     {
-        QwtPolarItem *plotItem = 
-            ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
+        QwtPolarItem *plotItem = static_cast< QwtPolarItem* >(
+            d_data->legend->find( qobject_cast<const QWidget *>( sender() ) ) );
         if ( plotItem )
             Q_EMIT legendClicked( plotItem );
     }
@@ -273,8 +273,8 @@ void QwtPolarPlot::legendItemChecked( bool on )
 {
     if ( d_data->legend && sender()->isWidgetType() )
     {
-        QwtPolarItem *plotItem = 
-            ( QwtPolarItem* )d_data->legend->find( ( QWidget * )sender() );
+        QwtPolarItem *plotItem = static_cast< QwtPolarItem* >(
+            d_data->legend->find( qobject_cast<const QWidget *>( sender() ) ) );
         if ( plotItem )
             Q_EMIT legendChecked( plotItem, on );
     }

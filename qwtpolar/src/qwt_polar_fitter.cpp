@@ -79,7 +79,7 @@ QPolygonF QwtPolarFitter::fitCurve( const QPolygonF &points ) const
 
     int index = 0;
     fittedPoints[index++] = points[0];
-    for ( int i = 1; i < ( int )points.size(); i++ )
+    for ( int i = 1; i < points.size(); i++ )
     {
         const QPointF &p1 = points[i-1];
         const QPointF &p2 = points[i];

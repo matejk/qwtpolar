@@ -387,7 +387,7 @@ void QwtPolarCurve::drawLines( QPainter *painter,
         QPointF *polylineData = polyline.data();
         QPointF *pointsData = polyline.data();
 
-        for ( int i = 0; i < ( int )points.size(); i++ )
+        for ( int i = 0; i < points.size(); i++ )
         {
             const QwtPointPolar point( pointsData[i].x(), pointsData[i].y() );
 
@@ -512,10 +512,25 @@ void QwtPolarCurve::updateLegend( QwtLegend *legend ) const
             if ( lgdItem )
                 legend->insert( this, lgdItem );
         }
-        if ( lgdItem && lgdItem->inherits( "QwtLegendItem" ) )
+
+        QwtLegendItem *l = qobject_cast<QwtLegendItem *>( lgdItem );
+        if ( l )
         {
-            QwtLegendItem *l = ( QwtLegendItem * )lgdItem;
-            l->setIdentifierSize( d_data->symbol->boundingSize() );
+            QSize sz = d_data->symbol->boundingSize();
+            sz += QSize( 2, 2 ); // margin
+
+            if ( d_data->legendAttributes & QwtPolarCurve::LegendShowLine )
+            {
+                // Avoid, that the line is completely covered by the symbol
+
+                int w = qCeil( 1.5 * sz.width() );
+                if ( w % 2 )
+                    w++;
+
+                sz.setWidth( qMax( 8, w ) );
+            }
+
+            l->setIdentifierSize( sz );
         }
     }
 
@@ -525,7 +540,7 @@ void QwtPolarCurve::updateLegend( QwtLegend *legend ) const
 /*!
   \brief Draw the identifier representing the curve on the legend
 
-  \param painter Üainter
+  \param painter Qt Painter
   \param rect Bounding rectangle for the identifier
 
   \sa setLegendAttribute

@@ -95,21 +95,13 @@ QwtPolarCanvas::~QwtPolarCanvas()
 //! \return Parent plot widget
 QwtPolarPlot *QwtPolarCanvas::plot()
 {
-    QWidget *w = parentWidget();
-    if ( w && w->inherits( "QwtPolarPlot" ) )
-        return ( QwtPolarPlot * )w;
-
-    return NULL;
+    return qobject_cast<QwtPolarPlot *>( parent() );
 }
 
 //! \return Parent plot widget
 const QwtPolarPlot *QwtPolarCanvas::plot() const
 {
-    const QWidget *w = parentWidget();
-    if ( w && w->inherits( "QwtPolarPlot" ) )
-        return ( QwtPolarPlot * )w;
-
-    return NULL;
+    return qobject_cast<QwtPolarPlot *>( parent() );
 }
 
 /*!

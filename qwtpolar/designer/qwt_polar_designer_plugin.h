@@ -53,6 +53,6 @@ private:
     QList<QDesignerCustomWidgetInterface*> d_plugins;
 };
 
-};
+}
 
 #endif
