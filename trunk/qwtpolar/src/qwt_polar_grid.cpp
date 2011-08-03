@@ -583,7 +583,7 @@ void QwtPolarGrid::draw( QPainter *painter,
             const AxisData &axis = d_data->axisData[axisId];
             if ( axisId != QwtPolar::AxisAzimuth && axis.isVisible )
             {
-                QwtScaleDraw *scaleDraw = ( QwtScaleDraw * )axis.scaleDraw;
+                QwtScaleDraw *scaleDraw = static_cast<QwtScaleDraw *>( axis.scaleDraw );
                 if ( scaleDraw->hasComponent( QwtScaleDraw::Labels ) )
                 {
                     const QList<double> &ticks =
@@ -865,7 +865,8 @@ void QwtPolarGrid::updateScaleDraws(
 
         if ( axisId == QwtPolar::AxisAzimuth )
         {
-            QwtRoundScaleDraw *scaleDraw = ( QwtRoundScaleDraw * )axis.scaleDraw;
+            QwtRoundScaleDraw *scaleDraw = 
+                static_cast<QwtRoundScaleDraw *>( axis.scaleDraw );
 
             scaleDraw->setRadius( qRound( radius ) );
             scaleDraw->moveCenter( p );
@@ -879,7 +880,9 @@ void QwtPolarGrid::updateScaleDraws(
         }
         else
         {
-            QwtScaleDraw *scaleDraw = ( QwtScaleDraw * )axis.scaleDraw;
+            QwtScaleDraw *scaleDraw = 
+                static_cast<QwtScaleDraw *>( axis.scaleDraw );
+
             switch( axisId )
             {
                 case QwtPolar::AxisLeft:
@@ -972,8 +975,8 @@ void QwtPolarGrid::updateScaleDiv( const QwtScaleDiv &azimuthScaleDiv,
             {
                 QwtScaleDiv sd = radialGrid.scaleDiv;
 
-                QList<double> &ticks =
-                    ( QList<double> & )sd.ticks( QwtScaleDiv::MajorTick );
+                QList<double> &ticks = 
+                    const_cast<QList<double> &>( sd.ticks( QwtScaleDiv::MajorTick ) );
 
                 if ( testDisplayFlag( SmartOriginLabel ) )
                 {
@@ -1046,7 +1049,7 @@ int QwtPolarGrid::marginHint() const
 const QwtScaleDraw *QwtPolarGrid::scaleDraw( int axisId ) const
 {
     if ( axisId >= QwtPolar::AxisLeft || axisId <= QwtPolar::AxisBottom )
-        return ( QwtScaleDraw * )d_data->axisData[axisId].scaleDraw;
+        return static_cast<QwtScaleDraw *>( d_data->axisData[axisId].scaleDraw );
 
     return NULL;
 }
@@ -1061,7 +1064,7 @@ const QwtScaleDraw *QwtPolarGrid::scaleDraw( int axisId ) const
 QwtScaleDraw *QwtPolarGrid::scaleDraw( int axisId )
 {
     if ( axisId >= QwtPolar::AxisLeft || axisId <= QwtPolar::AxisBottom )
-        return ( QwtScaleDraw * )d_data->axisData[axisId].scaleDraw;
+        return static_cast<QwtScaleDraw *>( d_data->axisData[axisId].scaleDraw );
 
     return NULL;
 }

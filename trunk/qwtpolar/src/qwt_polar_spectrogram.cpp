@@ -452,7 +452,7 @@ void QwtPolarSpectrogram::renderTile(
             const double dy = pole.y() - y;
             const double dy2 = qwtSqr( dy );
 
-            QRgb *line = ( QRgb * )image->scanLine( y - y0 );
+            QRgb *line = reinterpret_cast<QRgb *>( image->scanLine( y - y0 ) );
             line += x1 - x0;
 
             for ( int x = x1; x <= x2; x++ )

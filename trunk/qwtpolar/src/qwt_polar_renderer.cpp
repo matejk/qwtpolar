@@ -350,11 +350,10 @@ void QwtPolarRenderer::renderLegend(
     if ( legend == NULL || legend->isEmpty() )
         return;
 
-    QLayout *l = legend->contentsWidget()->layout();
-    if ( l == 0 || !l->inherits( "QwtDynGridLayout" ) )
+    const QwtDynGridLayout *legendLayout = qobject_cast<QwtDynGridLayout *>(
+        legend->contentsWidget()->layout() );
+    if ( legendLayout == NULL )
         return;
-
-    QwtDynGridLayout *legendLayout = ( QwtDynGridLayout * )l;
 
     uint numCols = legendLayout->columnsForWidth( rect.width() );
     const QList<QRect> itemRects =

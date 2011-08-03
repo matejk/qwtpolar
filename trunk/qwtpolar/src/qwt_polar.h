@@ -79,6 +79,6 @@ namespace QwtPolar
         //! Number of scales
         ScaleCount
     };
-};
+}
 
 #endif
