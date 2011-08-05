@@ -16,21 +16,21 @@
 class MyPicker: public QwtPolarPicker
 {
 public:
-    MyPicker(QwtPolarCanvas *canvas):
-        QwtPolarPicker(canvas)
+    MyPicker( QwtPolarCanvas *canvas ):
+        QwtPolarPicker( canvas )
     {
-        setStateMachine(new QwtPickerDragPointMachine());
-        setRubberBand(QwtPicker::NoRubberBand);
-        setTrackerMode(ActiveOnly);
+        setStateMachine( new QwtPickerDragPointMachine() );
+        setRubberBand( QwtPicker::NoRubberBand );
+        setTrackerMode( ActiveOnly );
     }
 
-    virtual QwtText trackerTextPolar(const QwtPointPolar &pos) const
+    virtual QwtText trackerTextPolar( const QwtPointPolar &pos ) const
     {
-        QColor bg(Qt::white);
-        bg.setAlpha(200);
+        QColor bg( Qt::white );
+        bg.setAlpha( 200 );
 
-        QwtText text = QwtPolarPicker::trackerTextPolar(pos);
-        text.setBackgroundBrush( QBrush( bg ));
+        QwtText text = QwtPolarPicker::trackerTextPolar( pos );
+        text.setBackgroundBrush( QBrush( bg ) );
         return text;
     }
 };
@@ -51,10 +51,10 @@ public:
         const double x = radius / 10.0 * 3.0 - 1.5;
         const double y = azimuth / M_2PI * 3.0 - 1.5;
 
-        const double v1 = qwtSqr(x) + ( y - c ) * ( y + c );
+        const double v1 = qwtSqr( x ) + ( y - c ) * ( y + c );
         const double v2 = 2 * x * ( y + c );
 
-        const double v = 1.0 / ( qwtSqr(v1) + qwtSqr(v2) );
+        const double v = 1.0 / ( qwtSqr( v1 ) + qwtSqr( v2 ) );
         return v;
     }
 };
@@ -64,26 +64,26 @@ class AzimuthScaleDraw: public QwtRoundScaleDraw
 public:
     virtual QwtText label( double value ) const
     {
-		QwtText text;
+        QwtText text;
 
-		if ( qFuzzyCompare( fmod(value, M_2PI), 0.0 ) )
-		{
-			return QString( "0" );
-		}
+        if ( qFuzzyCompare( fmod( value, M_2PI ), 0.0 ) )
+        {
+            return QString( "0" );
+        }
 
-		if ( qFuzzyCompare( fmod( value, M_PI_4 ), 0.0 ) )
-		{
-			QString text;
-			if ( !qFuzzyCompare( value, M_PI ) )
-			{
-				text += QLocale().toString( value / M_PI );
-				text += " ";
-			}
- 			text += "<FONT face=Symbol size=4>p</FONT>";
-			return text;
-		}
+        if ( qFuzzyCompare( fmod( value, M_PI_4 ), 0.0 ) )
+        {
+            QString text;
+            if ( !qFuzzyCompare( value, M_PI ) )
+            {
+                text += QLocale().toString( value / M_PI );
+                text += " ";
+            }
+            text += "<FONT face=Symbol size=4>p</FONT>";
+            return text;
+        }
 
-       	return QwtRoundScaleDraw::label( value );
+        return QwtRoundScaleDraw::label( value );
     }
 };
 
@@ -126,7 +126,7 @@ Plot::Plot( QWidget *parent ):
     // spectrogram
 
     d_spectrogram = new QwtPolarSpectrogram();
-    d_spectrogram->setPaintAttribute( 
+    d_spectrogram->setPaintAttribute(
         QwtPolarSpectrogram::ApproximatedAtan, true );
     d_spectrogram->setRenderThreadCount( 0 ); // use multi threading
     d_spectrogram->setData( new SpectrogramData() );
@@ -136,10 +136,10 @@ Plot::Plot( QWidget *parent ):
     d_grid->setZ( 2.0 );
 
     QwtPolarPicker *picker = new MyPicker( canvas() );
-	picker->setMousePattern(QwtEventPattern::MouseSelect1, Qt::RightButton );
+    picker->setMousePattern( QwtEventPattern::MouseSelect1, Qt::RightButton );
 
     QwtPolarMagnifier *magnifier = new QwtPolarMagnifier( canvas() );
-	magnifier->setMouseButton( Qt::RightButton, Qt::ShiftModifier );
+    magnifier->setMouseButton( Qt::RightButton, Qt::ShiftModifier );
 
     new QwtPolarPanner( canvas() );
 }
@@ -162,8 +162,8 @@ void Plot::rotate()
 
 void Plot::mirror()
 {
-	const double a1 = scaleDiv( QwtPolar::Azimuth )->upperBound();
-	const double a2 = scaleDiv( QwtPolar::Azimuth )->lowerBound();
+    const double a1 = scaleDiv( QwtPolar::Azimuth )->upperBound();
+    const double a2 = scaleDiv( QwtPolar::Azimuth )->lowerBound();
 
     setScale( QwtPolar::Azimuth, a1, a2, qAbs( a2 - a1 ) / 8.0 );
     replot();
@@ -186,7 +186,7 @@ void Plot::exportDocument()
 
     if ( imageFormats.size() > 0 )
     {
-        QString imageFilter("Images (");
+        QString imageFilter( "Images (" );
         for ( int i = 0; i < imageFormats.size(); i++ )
         {
             if ( i > 0 )
@@ -201,12 +201,12 @@ void Plot::exportDocument()
 
     fileName = QFileDialog::getSaveFileName(
         this, "Export File Name", fileName,
-        filter.join(";;"), NULL, QFileDialog::DontConfirmOverwrite);
+        filter.join( ";;" ), NULL, QFileDialog::DontConfirmOverwrite );
 #endif
     if ( !fileName.isEmpty() )
     {
         QwtPolarRenderer renderer;
-        renderer.renderDocument(this, fileName, QSizeF(300, 200), 85);
+        renderer.renderDocument( this, fileName, QSizeF( 300, 200 ), 85 );
     }
 }
 

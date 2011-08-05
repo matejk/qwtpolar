@@ -82,23 +82,23 @@ MainWindow::MainWindow( QWidget *parent ):
 
 void MainWindow::printDocument()
 {
-    QPrinter printer(QPrinter::HighResolution);
+    QPrinter printer( QPrinter::HighResolution );
 
     QString docName = d_plot->title().text();
     if ( !docName.isEmpty() )
     {
-        docName.replace (QRegExp (QString::fromLatin1 ("\n")), tr (" -- "));
-        printer.setDocName (docName);
+        docName.replace ( QRegExp ( QString::fromLatin1 ( "\n" ) ), tr ( " -- " ) );
+        printer.setDocName ( docName );
     }
 
-    printer.setCreator("polar plot demo example");
-    printer.setOrientation(QPrinter::Landscape);
+    printer.setCreator( "polar plot demo example" );
+    printer.setOrientation( QPrinter::Landscape );
 
-    QPrintDialog dialog(&printer);
+    QPrintDialog dialog( &printer );
     if ( dialog.exec() )
     {
         QwtPolarRenderer renderer;
-        renderer.renderTo(d_plot, printer);
+        renderer.renderTo( d_plot, printer );
     }
 }
 
@@ -119,7 +119,7 @@ void MainWindow::exportDocument()
 
     if ( imageFormats.size() > 0 )
     {
-        QString imageFilter("Images (");
+        QString imageFilter( "Images (" );
         for ( int i = 0; i < imageFormats.size(); i++ )
         {
             if ( i > 0 )
@@ -134,13 +134,13 @@ void MainWindow::exportDocument()
 
     fileName = QFileDialog::getSaveFileName(
         this, "Export File Name", fileName,
-        filter.join(";;"), NULL, QFileDialog::DontConfirmOverwrite);
+        filter.join( ";;" ), NULL, QFileDialog::DontConfirmOverwrite );
 #endif
 
     if ( !fileName.isEmpty() )
     {
         QwtPolarRenderer renderer;
-        renderer.renderDocument(d_plot, fileName, QSizeF(300, 200), 85);
+        renderer.renderDocument( d_plot, fileName, QSizeF( 300, 200 ), 85 );
     }
 }
 

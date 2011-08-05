@@ -74,7 +74,7 @@ public:
     //! Item attributes
     typedef QFlags<ItemAttribute> ItemAttributes;
 
-    /*! 
+    /*!
        \brief Render hints
        \sa setRenderHint(), testRenderHint()
      */

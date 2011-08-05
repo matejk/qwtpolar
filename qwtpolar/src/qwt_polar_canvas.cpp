@@ -18,11 +18,11 @@
 #endif
 
 static inline void qwtDrawStyledBackground(
-    QWidget *w, QPainter *painter )
+    QWidget *widget, QPainter *painter )
 {
     QStyleOption opt;
-    opt.initFrom(w);
-    w->style()->drawPrimitive( QStyle::PE_Widget, &opt, painter, w);
+    opt.initFrom( widget );
+    widget->style()->drawPrimitive( QStyle::PE_Widget, &opt, painter, widget );
 }
 
 static QWidget *qwtBackgroundWidget( QWidget *w )
@@ -183,7 +183,7 @@ void QwtPolarCanvas::paintEvent( QPaintEvent *event )
     QPainter painter( this );
     painter.setClipRegion( event->region() );
 
-    if ( ( d_data->paintAttributes & BackingStore ) 
+    if ( ( d_data->paintAttributes & BackingStore )
         && d_data->backingStore != NULL )
     {
         QPixmap &bs = *d_data->backingStore;
@@ -197,7 +197,7 @@ void QwtPolarCanvas::paintEvent( QPaintEvent *event )
 
             QPainter p;
 
-            if ( testAttribute(Qt::WA_StyledBackground ) )
+            if ( testAttribute( Qt::WA_StyledBackground ) )
             {
                 p.begin( &bs );
                 qwtDrawStyledBackground( this, &p );
@@ -271,7 +271,7 @@ QwtPointPolar QwtPolarCanvas::invTransform( const QPoint &pos ) const
     const double azimuth = azimuthMap.invTransform( polarPos.azimuth() );
     const double radius = radialMap.invTransform( polarPos.radius() );
 
-    return QwtPointPolar(azimuth, radius );
+    return QwtPointPolar( azimuth, radius );
 }
 
 /*!

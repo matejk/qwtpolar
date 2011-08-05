@@ -28,10 +28,10 @@ public:
     //! \brief Options to configure the plot layout engine
     enum Option
     {
-        //! Ignore the dimension of the scrollbars. 
+        //! Ignore the dimension of the scrollbars.
         IgnoreScrollbars = 0x01,
 
-        //! Ignore all frames. 
+        //! Ignore all frames.
         IgnoreFrames     = 0x02,
 
         //! Ignore the title.

@@ -865,7 +865,7 @@ void QwtPolarGrid::updateScaleDraws(
 
         if ( axisId == QwtPolar::AxisAzimuth )
         {
-            QwtRoundScaleDraw *scaleDraw = 
+            QwtRoundScaleDraw *scaleDraw =
                 static_cast<QwtRoundScaleDraw *>( axis.scaleDraw );
 
             scaleDraw->setRadius( qRound( radius ) );
@@ -880,7 +880,7 @@ void QwtPolarGrid::updateScaleDraws(
         }
         else
         {
-            QwtScaleDraw *scaleDraw = 
+            QwtScaleDraw *scaleDraw =
                 static_cast<QwtScaleDraw *>( axis.scaleDraw );
 
             switch( axisId )
@@ -975,7 +975,7 @@ void QwtPolarGrid::updateScaleDiv( const QwtScaleDiv &azimuthScaleDiv,
             {
                 QwtScaleDiv sd = radialGrid.scaleDiv;
 
-                QList<double> &ticks = 
+                QList<double> &ticks =
                     const_cast<QList<double> &>( sd.ticks( QwtScaleDiv::MajorTick ) );
 
                 if ( testDisplayFlag( SmartOriginLabel ) )
@@ -1097,7 +1097,7 @@ void QwtPolarGrid::setScaleDraw( int axisId, QwtScaleDraw *scaleDraw )
 */
 const QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw() const
 {
-    return static_cast<QwtRoundScaleDraw *>( 
+    return static_cast<QwtRoundScaleDraw *>(
         d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw );
 }
 
@@ -1107,7 +1107,7 @@ const QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw() const
 */
 QwtRoundScaleDraw *QwtPolarGrid::azimuthScaleDraw()
 {
-    return static_cast<QwtRoundScaleDraw *>( 
+    return static_cast<QwtRoundScaleDraw *>(
         d_data->axisData[QwtPolar::AxisAzimuth].scaleDraw );
 }
 

@@ -189,7 +189,7 @@ PlotSettings Plot::settings() const
     const QwtScaleDiv *sd = scaleDiv( QwtPolar::Radius );
     s.flags[PlotSettings::Inverted] = sd->lowerBound() > sd->upperBound();
 
-    s.flags[PlotSettings::Antialiasing] = 
+    s.flags[PlotSettings::Antialiasing] =
         d_grid->testRenderHint( QwtPolarItem::RenderAntialiased );
 
     for ( int curveId = 0; curveId < PlotSettings::NumCurves; curveId++ )

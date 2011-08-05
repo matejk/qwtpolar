@@ -739,7 +739,7 @@ QwtScaleMap QwtPolarPlot::scaleMap( int scaleId, const double radius ) const
     return map;
 }
 
-/*! 
+/*!
     \brief Qt event handler
 
     Handles QEvent::LayoutRequest and QEvent::PolishRequest
