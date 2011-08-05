@@ -18,40 +18,40 @@
 namespace QwtPolarDesignerPlugin
 {
 
-class PolarPlotInterface: public QObject, 
-    public QDesignerCustomWidgetInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QDesignerCustomWidgetInterface)
+    class PolarPlotInterface: public QObject,
+        public QDesignerCustomWidgetInterface
+    {
+        Q_OBJECT
+        Q_INTERFACES( QDesignerCustomWidgetInterface )
 
-public:
-    PolarPlotInterface(QObject *parent);
+    public:
+        PolarPlotInterface( QObject *parent );
 
-    virtual bool isContainer() const;
-    virtual QIcon icon() const;
-    virtual QString domXml() const;
-    virtual QString group() const;
-    virtual QString includeFile() const;
-    virtual QString name() const;
-    virtual QString toolTip() const;
-    virtual QString whatsThis() const;
-    virtual QWidget *createWidget(QWidget *parent);
-};
+        virtual bool isContainer() const;
+        virtual QIcon icon() const;
+        virtual QString domXml() const;
+        virtual QString group() const;
+        virtual QString includeFile() const;
+        virtual QString name() const;
+        virtual QString toolTip() const;
+        virtual QString whatsThis() const;
+        virtual QWidget *createWidget( QWidget *parent );
+    };
 
-class CustomWidgetCollectionInterface: public QObject,
-    public QDesignerCustomWidgetCollectionInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+    class CustomWidgetCollectionInterface: public QObject,
+        public QDesignerCustomWidgetCollectionInterface
+    {
+        Q_OBJECT
+        Q_INTERFACES( QDesignerCustomWidgetCollectionInterface )
 
-public:
-    CustomWidgetCollectionInterface(QObject *parent = NULL);
+    public:
+        CustomWidgetCollectionInterface( QObject *parent = NULL );
 
-    virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
+        virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
 
-private:
-    QList<QDesignerCustomWidgetInterface*> d_plugins;
-};
+    private:
+        QList<QDesignerCustomWidgetInterface*> d_plugins;
+    };
 
 }
 

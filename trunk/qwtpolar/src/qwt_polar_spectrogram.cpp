@@ -105,7 +105,7 @@ public:
     QwtColorMap *colorMap;
 
     uint renderThreadCount;
-    
+
     QwtPolarSpectrogram::PaintAttributes paintAttributes;
 };
 
@@ -402,7 +402,7 @@ QImage QwtPolarSpectrogram::renderImage(
     return image;
 }
 
-void QwtPolarSpectrogram::renderTile( 
+void QwtPolarSpectrogram::renderTile(
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
     const QPointF &pole, TileInfo *tileInfo ) const
 {

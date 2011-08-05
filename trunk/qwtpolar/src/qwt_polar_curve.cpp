@@ -276,9 +276,12 @@ QwtCurveFitter *QwtPolarCurve::curveFitter() const
 */
 void QwtPolarCurve::draw( QPainter *painter,
     const QwtScaleMap &azimuthMap, const QwtScaleMap &radialMap,
-    const QPointF &pole, double /*radius*/,
-    const QRectF & ) const
+    const QPointF &pole, double radius,
+    const QRectF &canvasRect ) const
 {
+    Q_UNUSED( radius );
+    Q_UNUSED( canvasRect );
+
     draw( painter, azimuthMap, radialMap, pole, 0, -1 );
 }
 

@@ -52,7 +52,7 @@ public:
 #endif
     void renderTo( QwtPolarPlot *, QPrinter & ) const;
     void renderTo( QwtPolarPlot *, QPaintDevice &p ) const;
-    
+
     virtual void render( QwtPolarPlot *,
         QPainter *, const QRectF &rect ) const;
 

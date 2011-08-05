@@ -41,7 +41,7 @@ public:
            widget into polar coordinates.
          */
 
-         ApproximatedAtan = 0x01
+        ApproximatedAtan = 0x01
     };
 
     //! Paint attributes

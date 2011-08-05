@@ -22,7 +22,7 @@ class QwtPointPolar;
   \brief QwtPolarPicker provides selections on a plot canvas
 
   QwtPolarPicker is a QwtPicker tailored for selections on
-  a polar plot canvas. 
+  a polar plot canvas.
 */
 
 class QWT_POLAR_EXPORT QwtPolarPicker: public QwtPicker
@@ -33,7 +33,7 @@ public:
     explicit QwtPolarPicker( QwtPolarCanvas * );
     virtual ~QwtPolarPicker();
 
-    explicit QwtPolarPicker( 
+    explicit QwtPolarPicker(
         RubberBand rubberBand, DisplayMode trackerMode,
         QwtPolarCanvas * );
 

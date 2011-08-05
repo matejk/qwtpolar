@@ -24,8 +24,8 @@
 
 using namespace QwtPolarDesignerPlugin;
 
-PolarPlotInterface::PolarPlotInterface(QObject *parent): 
-    QObject(parent)
+PolarPlotInterface::PolarPlotInterface( QObject *parent ):
+    QObject( parent )
 {
 }
 
@@ -36,12 +36,12 @@ bool PolarPlotInterface::isContainer() const
 
 QIcon PolarPlotInterface::icon() const
 {
-    return QPixmap(":/pixmaps/qwt_polar_plot.png");
+    return QPixmap( ":/pixmaps/qwt_polar_plot.png" );
 }
 
 QString PolarPlotInterface::domXml() const
 {
-	return QString(
+    return QString(
         "<widget class=\"QwtPolarPlot\" name=\"qwtPolarPlot\">\n"
         " <property name=\"geometry\">\n"
         "  <rect>\n"
@@ -52,7 +52,7 @@ QString PolarPlotInterface::domXml() const
         "  </rect>\n"
         " </property>\n"
         "</widget>\n"
-	);
+    );
 }
 
 QString PolarPlotInterface::group() const
@@ -80,22 +80,22 @@ QString PolarPlotInterface::whatsThis() const
     return "A polar plot widget";
 }
 
-QWidget *PolarPlotInterface::createWidget(QWidget *parent)
+QWidget *PolarPlotInterface::createWidget( QWidget *parent )
 {
-    return new QwtPolarPlot(parent);
+    return new QwtPolarPlot( parent );
 }
 
 CustomWidgetCollectionInterface::CustomWidgetCollectionInterface(
-        QObject *parent): 
-    QObject(parent)
+        QObject *parent ):
+    QObject( parent )
 {
-    d_plugins.append(new PolarPlotInterface(this)); 
-}   
+    d_plugins.append( new PolarPlotInterface( this ) );
+}
 
 QList<QDesignerCustomWidgetInterface*>
-    CustomWidgetCollectionInterface::customWidgets(void) const
+CustomWidgetCollectionInterface::customWidgets( void ) const
 {
     return d_plugins;
 }
 
-Q_EXPORT_PLUGIN2(QwtPolarDesignerPlugin, CustomWidgetCollectionInterface)
+Q_EXPORT_PLUGIN2( QwtPolarDesignerPlugin, CustomWidgetCollectionInterface )

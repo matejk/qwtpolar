@@ -38,7 +38,7 @@ class QwtPolarRenderer::PrivateData
 {
 public:
     PrivateData():
-        plot(NULL)
+        plot( NULL )
     {
     }
 
@@ -286,7 +286,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     // All paint operations need to be scaled according to
     // the paint device metrics.
 
-    QwtPolarLayout::Options layoutOptions = 
+    QwtPolarLayout::Options layoutOptions =
         QwtPolarLayout::IgnoreScrollbars | QwtPolarLayout::IgnoreFrames;
 
     layout->activate( plot, layoutRect, layoutOptions );
@@ -343,7 +343,7 @@ void QwtPolarRenderer::renderTitle( QPainter *painter, const QRectF &rect ) cons
   \param rect Bounding rectangle
 */
 
-void QwtPolarRenderer::renderLegend( 
+void QwtPolarRenderer::renderLegend(
     QPainter *painter, const QRectF &rect ) const
 {
     QwtLegend *legend = d_data->plot->legend();

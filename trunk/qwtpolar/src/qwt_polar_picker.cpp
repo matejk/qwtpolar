@@ -220,7 +220,7 @@ QwtPointPolar QwtPolarPicker::invTransform( const QPoint &pos ) const
 }
 
 /*!
-    \return Bounding rectangle of the region, where picking is 
+    \return Bounding rectangle of the region, where picking is
             supported.
 */
 QRect QwtPolarPicker::pickRect() const

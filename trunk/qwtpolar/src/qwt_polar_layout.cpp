@@ -139,7 +139,7 @@ QwtPolarLayout::~QwtPolarLayout()
   \sa QwtPolarPlot::setLegendPosition()
 */
 
-void QwtPolarLayout::setLegendPosition( 
+void QwtPolarLayout::setLegendPosition(
     QwtPolarPlot::LegendPosition pos, double ratio )
 {
     if ( ratio > 1.0 )
@@ -348,8 +348,8 @@ void QwtPolarLayout::activate( const QwtPolarPlot *plot,
     invalidate();
 
     QRectF rect( boundingRect ); // undistributed rest of the plot rect
-    rect.adjust( d_data->margin, d_data->margin, 
-        -d_data->margin, -d_data->margin);
+    rect.adjust( d_data->margin, d_data->margin,
+        -d_data->margin, -d_data->margin );
 
     // We extract all layout relevant data from the widgets
     // and save them to d_data->layoutData.

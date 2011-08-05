@@ -140,7 +140,7 @@ public:
 
     // Legend
 
-    void insertLegend( QwtLegend *, 
+    void insertLegend( QwtLegend *,
         LegendPosition = RightLegend, double ratio = -1.0 );
 
     QwtLegend *legend();
