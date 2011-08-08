@@ -41,7 +41,7 @@ public:
     const QwtPolarItemList& itemList() const;
 
     void detachItems( int rtti = QwtPolarItem::Rtti_PolarItem,
-                      bool autoDelete = true );
+        bool autoDelete = true );
 
 private:
     friend class QwtPolarItem;

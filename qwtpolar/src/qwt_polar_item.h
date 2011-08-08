@@ -44,14 +44,25 @@ public:
      */
     enum RttiValues
     {
+        //! Unspecific value, that can be used, when it doesn't matter
         Rtti_PolarItem = 0,
 
+        //! For QwtPolarGrid
         Rtti_PolarGrid,
-        Rtti_PolarScale,
+
+        //! For QwtPolarMarker
         Rtti_PolarMarker,
+
+        //! For QwtPolarCurve
         Rtti_PolarCurve,
+
+        //! For QwtPolarSpectrogram
         Rtti_PolarSpectrogram,
 
+        /*! 
+           Values >= Rtti_PolarUserItem are reserved for plot items
+           not implemented in the QwtPolar library.
+         */
         Rtti_PolarUserItem = 1000
     };
 
