@@ -8,7 +8,9 @@ Changes
 3. QwtPlotSpectrogram 
    - paint attributes ( using qwtFastAtan2 )
    - setRenderThreadCount introduced
-4. QwtPolarPicker added
+4. QwtPolarPicker added ( better supported Qwt >= 6.1 )
+5) QwtPolarPoint replaced by QwtPointPolar from Qwt
+6. Basic support for style sheets
 
 
 Release 0.1.0

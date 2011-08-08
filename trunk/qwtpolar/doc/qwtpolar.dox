@@ -15,7 +15,7 @@
   \mainpage QwtPolar - A Qwt/Qt Polar Plot Library
 
 The QwtPolar library contains classes for displaying values on a polar 
-coordinate system. It is an addon package for to the <a href="http://qwt.sourceforge.net">Qwt</a> Library.
+coordinate system. 
 
   \image html polarplot.png 
 
@@ -31,15 +31,19 @@ coordinate system. It is an addon package for to the <a href="http://qwt.sourcef
 
   \section platforms Platforms
 
-  QwtPolar might be usable in all environments where you find
-  <a href="http://www.trolltech.com/products/qt">Qt</a>.
-  It is compatible with Qt 3.3.x and Qt 4.x, but the documentation
-  is generated for Qt 4.x. The corresponding <a href="http://qwt.sourceforge.net">Qwt</a> version is 5.2.x;
+  QwtPolar depends on the <a href="http://qt.nokia.com">Qt</a> and
+  <a href="http://qwt.sourceforge.net">Qwt</a> frameworks and  might be 
+  usable in all environments supported by <a href="http://qt.nokia.com">Qt</a>.
+  It is compatible with <a href="http://qt.nokia.com">Qt</a> >= 4.4 
+  and <a href="http://qwt.sourceforge.net">Qwt</a> >= 6.0.
 
   \section downloads Downloads
   Stable releases, prereleases and snapshots are available at the QwtPolar <a href="http://sourceforge.net/projects/qwtpolar">project page</a>.
 
-  For getting a development snapshot from the SVN repository: 
+  For getting a snapshot with all bugfixes for the latest 1.0 release:
+  \code svn co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/branches/qwtpolar-1.0 \endcode
+
+  For getting a development snapshot from the SVN repository:
   \code svn co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/trunk/qwtpolar \endcode
 
   \section support Support
@@ -64,7 +68,7 @@ coordinate system. It is an addon package for to the <a href="http://qwt.sourcef
 
   \section donations Donations
 
-  Sourceforge offers a <a href="http://sourceforge.net/docman/display_doc.php?docid=20244&group_id=1"> Donation System</a> via PayPal. You can use it, if you like to <a href="http://sourceforge.net/project/project_donations.php?group_id=13693">support</a> the development of Qwt.
+  Sourceforge offers a <a href="http://sourceforge.net/docman/display_doc.php?docid=20244&group_id=1"> Donation System</a> via PayPal. You can use it, if you like to <a href="http://sourceforge.net/project/project_donations.php?group_id=13693">support</a> the development of Qwt/QwtPolar.
 
   \section credits Credits:
   \par Authors: 
