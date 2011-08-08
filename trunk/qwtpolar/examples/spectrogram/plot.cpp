@@ -1,6 +1,7 @@
 #include <qfiledialog.h>
 #include <qimagewriter.h>
 #include <qpen.h>
+#include <qlocale.h>
 #include <qwt_raster_data.h>
 #include <qwt_polar_panner.h>
 #include <qwt_polar_magnifier.h>

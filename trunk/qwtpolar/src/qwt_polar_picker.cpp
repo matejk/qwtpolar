@@ -241,5 +241,5 @@ QPainterPath QwtPolarPicker::pickArea() const
     QPainterPath prPath;
     prPath.addEllipse( plot()->plotRect( cr ) );
 
-    return crPath & prPath;
+    return crPath.intersected( prPath );
 }

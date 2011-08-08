@@ -55,6 +55,9 @@ static inline double qwtFastAtan2( double y, double x )
 
 #endif // QWT_VERSION < 0x060100
 
+#if QT_VERSION < 0x040601
+#define qAtan2(y, x) ::atan2(y, x)
+#endif
 
 static bool qwtNeedsClipping( const QRectF &plotRect, const QRectF &rect )
 {
