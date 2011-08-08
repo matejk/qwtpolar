@@ -77,4 +77,4 @@ QWT_POLAR_CONFIG     += QwtPolarDesigner
 # Otherwise you have to build them from the examples directory.
 ######################################################################
 
-QWT_POLAR_CONFIG     += QwtPolarExamples
+# QWT_POLAR_CONFIG     += QwtPolarExamples
