@@ -99,6 +99,8 @@ QwtPolarPlot::QwtPolarPlot( const QwtText &title, QWidget *parent ):
 //! Destructor
 QwtPolarPlot::~QwtPolarPlot()
 {
+    detachItems( QwtPolarItem::Rtti_PolarItem, autoDelete() );
+
     delete d_data->layout;
     delete d_data;
 }
