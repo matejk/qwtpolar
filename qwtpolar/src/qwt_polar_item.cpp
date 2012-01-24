@@ -10,6 +10,7 @@
 #include "qwt_polar_item.h"
 #include <qwt_legend.h>
 #include <qwt_legend_item.h>
+#include <qwt_scale_div.h>
 #include <qpainter.h>
 
 class QwtPolarItem::PrivateData
