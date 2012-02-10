@@ -7,8 +7,8 @@
  *****************************************************************************/
 
 #include "qwt_polar_curve.h"
+#include "qwt_polar.h"
 #include <qwt_painter.h>
-#include <qwt_polar.h>
 #include <qwt_scale_map.h>
 #include <qwt_math.h>
 #include <qwt_symbol.h>

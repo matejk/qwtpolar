@@ -37,7 +37,7 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 	SOURCES += qwt_polar_designer_plugin.cpp
 	RESOURCES += qwt_polar_designer_plugin.qrc
 
-	target.path = $$[QWT_POLAR_INSTALL_PLUGINS]/designer
+	target.path = $${QWT_POLAR_INSTALL_PLUGINS}
 	INSTALLS += target
 }
 else {

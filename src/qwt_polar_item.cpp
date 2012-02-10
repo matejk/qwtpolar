@@ -10,6 +10,7 @@
 #include "qwt_polar_item.h"
 #include <qwt_legend.h>
 #include <qwt_legend_item.h>
+#include <qwt_scale_div.h>
 #include <qpainter.h>
 
 class QwtPolarItem::PrivateData
@@ -428,7 +429,15 @@ void QwtPolarItem::updateLegend( QwtLegend *legend ) const
 */
 QWidget *QwtPolarItem::legendItem() const
 {
-    return new QwtLegendItem;
+    QwtLegendItem *item = new QwtLegendItem;
+    if ( d_data->plot )
+    {
+        QObject::connect( item, SIGNAL( clicked() ),
+            d_data->plot, SLOT( legendItemClicked() ) );
+        QObject::connect( item, SIGNAL( checked( bool ) ),
+            d_data->plot, SLOT( legendItemChecked( bool ) ) );
+    }
+    return item;
 }
 
 /*!
