@@ -102,6 +102,8 @@ public:
 
     ~PrivateData()
     {
+        delete data;
+        delete colorMap;
     }
 
     QwtRasterData *data;
