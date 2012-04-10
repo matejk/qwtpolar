@@ -263,12 +263,30 @@ QwtPointPolar QwtPolarCanvas::invTransform( const QPoint &pos ) const
     const QwtScaleMap azimuthMap = pl->scaleMap( QwtPolar::Azimuth );
     const QwtScaleMap radialMap = pl->scaleMap( QwtPolar::Radius );
 
-    double dx = pos.x() - pl->plotRect().center().x();
-    double dy = -( pos.y() - pl->plotRect().center().y() );
+    const QPointF center = pl->plotRect().center();
+
+    double dx = pos.x() - center.x();
+    double dy = -( pos.y() - center.y() );
 
     const QwtPointPolar polarPos = QwtPointPolar( QPoint( dx, dy ) ).normalized();
 
-    const double azimuth = azimuthMap.invTransform( polarPos.azimuth() );
+    double azimuth = azimuthMap.invTransform( polarPos.azimuth() );
+
+    // normalize the azimuth
+    double min = azimuthMap.s1();
+    double max = azimuthMap.s2();
+    if ( max < min )
+        qSwap( min, max );
+
+    if ( azimuth < min )
+    {
+        azimuth += max - min;
+    }
+    else if ( azimuth > max )
+    {
+        azimuth -= max - min;
+    }
+
     const double radius = radialMap.invTransform( polarPos.radius() );
 
     return QwtPointPolar( azimuth, radius );
