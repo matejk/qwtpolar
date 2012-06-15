@@ -388,7 +388,7 @@ void QwtPolarCurve::drawLines( QPainter *painter,
         polyline.resize( points.size() );
 
         QPointF *polylineData = polyline.data();
-        QPointF *pointsData = polyline.data();
+        QPointF *pointsData = points.data();
 
         for ( int i = 0; i < points.size(); i++ )
         {
