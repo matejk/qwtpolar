@@ -43,7 +43,7 @@ insist on using an IDE don't forget the "make install" step.
 A) Unix
 --------
 
-qmake
+qmake qwtpolar.pro
 make
 make install
 
@@ -132,7 +132,7 @@ In the recent Qt4 releases the default target of qmake is to generate
 XCode project files instead of makefiles. So you might need to do the
 following:
 
-qmake -spec macx-g++
+qmake -spec macx-g++ qwtpolar.pro
 ...
 
 E) Qt Embedded
