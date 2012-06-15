@@ -6,9 +6,10 @@ Bug Fixes
 1. MSVC compiler issues fixed
 2. Install path for the designer fixed
 3. Missing signal/slot connections of legendItemClicked/legendItemChecked added
-4. Memory leaks
+4. Memory leaks fixed
 5. Usage of QwtCurveFitter fixed
 6. QwtPolarPicker normalization of the displayed tracker position
+7. QwtPolarCanvas::invTransform fixed
 
 Release 1.0.0
 ===================
