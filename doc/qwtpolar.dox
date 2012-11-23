@@ -41,10 +41,10 @@ coordinate system.
   Stable releases, prereleases and snapshots are available at the QwtPolar <a href="http://sourceforge.net/projects/qwtpolar">project page</a>.
 
   For getting a snapshot with all bugfixes for the latest 1.0 release:
-  \code svn co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/branches/qwtpolar-1.0 \endcode
+  \code svn checkout svn://svn.code.sf.net/p/qwtpolar/code/branches/qwtpolar-1.0 \endcode
 
   For getting a development snapshot from the SVN repository:
-  \code svn co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/trunk/qwtpolar \endcode
+  \code svn checkout svn://svn.code.sf.net/p/qwtpolar/code/trunk/qwtpolar \endcode
 
   \section support Support
   - Mailing list\n
