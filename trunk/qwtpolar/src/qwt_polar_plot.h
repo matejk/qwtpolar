@@ -23,6 +23,7 @@ class QwtScaleDiv;
 class QwtTextLabel;
 class QwtPolarCanvas;
 class QwtPolarLayout;
+class QwtLegend;
 
 /*!
   \brief A plotting widget, displaying a polar coordinate system

@@ -100,7 +100,7 @@ public:
     void setStyle( CurveStyle style );
     CurveStyle style() const;
 
-    void setSymbol( const QwtSymbol * );
+    void setSymbol( QwtSymbol * );
     const QwtSymbol *symbol() const;
 
     void setCurveFitter( QwtCurveFitter * );
