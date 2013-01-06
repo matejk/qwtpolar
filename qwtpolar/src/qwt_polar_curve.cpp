@@ -173,7 +173,7 @@ QwtPolarCurve::CurveStyle QwtPolarCurve::style() const
   \param symbol Symbol
   \sa symbol()
 */
-void QwtPolarCurve::setSymbol( const QwtSymbol *symbol )
+void QwtPolarCurve::setSymbol( QwtSymbol *symbol )
 {
     if ( symbol != d_data->symbol )
     {

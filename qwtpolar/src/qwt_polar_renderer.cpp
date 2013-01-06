@@ -16,6 +16,8 @@
 #include <qwt_text.h>
 #include <qpainter.h>
 #include <qprinter.h>
+#include <qprintdialog.h>
+#include <qfiledialog.h>
 #include <qimagewriter.h>
 #include <qfileinfo.h>
 #include <qmath.h>
@@ -114,19 +116,37 @@ void QwtPolarRenderer::renderDocument( QwtPolarPlot *plot,
     const QRectF documentRect( 0.0, 0.0, size.width(), size.height() );
 
     const QString fmt = format.toLower();
-    if ( format == "pdf" || format == "ps" )
+    if ( format == "pdf" )
     {
+#ifndef QT_NO_PRINTER
         QPrinter printer;
         printer.setFullPage( true );
         printer.setPaperSize( sizeMM, QPrinter::Millimeter );
         printer.setDocName( title );
         printer.setOutputFileName( fileName );
-        printer.setOutputFormat( ( format == "pdf" )
-            ? QPrinter::PdfFormat : QPrinter::PostScriptFormat );
+        printer.setOutputFormat( QPrinter::PdfFormat );
         printer.setResolution( resolution );
 
         QPainter painter( &printer );
         render( plot, &painter, documentRect );
+#endif
+    }
+    else if ( format == "ps" )
+    {
+#if QT_VERSION < 0x050000
+#ifndef QT_NO_PRINTER
+        QPrinter printer;
+        printer.setFullPage( true );
+        printer.setPaperSize( sizeMM, QPrinter::Millimeter );
+        printer.setDocName( title );
+        printer.setOutputFileName( fileName );
+        printer.setOutputFormat( QPrinter::PostScriptFormat );
+        printer.setResolution( resolution );
+
+        QPainter painter( &printer );
+        render( plot, &painter, documentRect );
+#endif
+#endif
     }
 #ifndef QWT_NO_POLAR_SVG
 #ifdef QT_SVG_LIB
@@ -419,3 +439,67 @@ void QwtPolarRenderer::renderLegendItem( QPainter *painter,
     }
 }
 
+/*!
+   \brief Execute a file dialog and render the plot to the selected file
+
+   The document will be rendered in 85 dpi for a size 30x30 cm
+
+   \param plot Plot widget
+   \param documentName Default document name
+   \param sizeMM Size for the document in millimeters.
+   \param resolution Resolution in dots per Inch (dpi)
+
+   \sa renderDocument()
+*/
+bool QwtPolarRenderer::exportTo( QwtPolarPlot *plot, 
+    const QString &documentName, const QSizeF &sizeMM, int resolution )
+{
+    if ( plot == NULL )
+        return false;
+
+    QString fileName = documentName;
+
+    // What about translation 
+
+#ifndef QT_NO_FILEDIALOG
+    const QList<QByteArray> imageFormats =
+        QImageWriter::supportedImageFormats();
+
+    QStringList filter;
+#ifndef QT_NO_PRINTER
+    filter += QString( "PDF " ) + tr( "Documents" ) + " (*.pdf)";
+#endif
+#ifndef QWT_NO_SVG
+    filter += QString( "SVG " ) + tr( "Documents" ) + " (*.svg)";
+#endif
+#ifndef QT_NO_PRINTER
+    filter += QString( "Postscript " ) + tr( "Documents" ) + " (*.ps)";
+#endif
+
+    if ( imageFormats.size() > 0 )
+    {
+        QString imageFilter( tr( "Images" ) );
+        imageFilter += " (";
+        for ( int i = 0; i < imageFormats.size(); i++ )
+        {
+            if ( i > 0 )
+                imageFilter += " ";
+            imageFilter += "*.";
+            imageFilter += imageFormats[i];
+        }
+        imageFilter += ")";
+
+        filter += imageFilter;
+    }
+
+    fileName = QFileDialog::getSaveFileName(
+        NULL, tr( "Export File Name" ), fileName,
+        filter.join( ";;" ), NULL, QFileDialog::DontConfirmOverwrite );
+#endif
+    if ( fileName.isEmpty() )
+        return false;
+
+    renderDocument( plot, fileName, sizeMM, resolution );
+
+    return true;
+}

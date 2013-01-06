@@ -126,6 +126,9 @@ public:
     void setRenderHint( RenderHint, bool on = true );
     bool testRenderHint( RenderHint ) const;
 
+    void setRenderThreadCount( uint numThreads );
+    uint renderThreadCount() const;
+
     double z() const;
     void setZ( double z );
 

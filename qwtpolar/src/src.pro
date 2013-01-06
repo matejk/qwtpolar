@@ -65,6 +65,12 @@ SOURCES += \
     qwt_polar_renderer.cpp \
     qwt_polar_plot.cpp
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+
+    QT += printsupport
+    QT += concurrent
+}
+
 contains(QWT_CONFIG, QwtPolarSvg) {
 
     QT += svg

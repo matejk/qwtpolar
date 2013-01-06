@@ -106,42 +106,8 @@ void MainWindow::exportDocument()
 {
     QString fileName = "polarplot.pdf";
 
-#ifndef QT_NO_FILEDIALOG
-    const QList<QByteArray> imageFormats =
-        QImageWriter::supportedImageFormats();
-
-    QStringList filter;
-    filter += "PDF Documents (*.pdf)";
-#ifndef QWT_NO_POLAR_SVG
-    filter += "SVG Documents (*.svg)";
-#endif
-    filter += "Postscript Documents (*.ps)";
-
-    if ( imageFormats.size() > 0 )
-    {
-        QString imageFilter( "Images (" );
-        for ( int i = 0; i < imageFormats.size(); i++ )
-        {
-            if ( i > 0 )
-                imageFilter += " ";
-            imageFilter += "*.";
-            imageFilter += imageFormats[i];
-        }
-        imageFilter += ")";
-
-        filter += imageFilter;
-    }
-
-    fileName = QFileDialog::getSaveFileName(
-        this, "Export File Name", fileName,
-        filter.join( ";;" ), NULL, QFileDialog::DontConfirmOverwrite );
-#endif
-
-    if ( !fileName.isEmpty() )
-    {
-        QwtPolarRenderer renderer;
-        renderer.renderDocument( d_plot, fileName, QSizeF( 300, 200 ), 85 );
-    }
+    QwtPolarRenderer renderer;
+    renderer.exportTo( d_plot, "polarplot.pdf" );
 }
 
 void MainWindow::enableZoomMode( bool on )

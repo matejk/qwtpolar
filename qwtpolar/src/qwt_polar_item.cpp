@@ -21,6 +21,7 @@ public:
         isVisible( true ),
         attributes( 0 ),
         renderHints( 0 ),
+        renderThreadCount( 1 ),
         z( 0.0 )
     {
     }
@@ -30,6 +31,8 @@ public:
     bool isVisible;
     QwtPolarItem::ItemAttributes attributes;
     QwtPolarItem::RenderHints renderHints;
+    uint renderThreadCount;
+
     double z;
 
     QwtText title;
@@ -254,6 +257,34 @@ void QwtPolarItem::setRenderHint( RenderHint hint, bool on )
 bool QwtPolarItem::testRenderHint( RenderHint hint ) const
 {
     return ( d_data->renderHints & hint );
+}
+
+/*!
+   On multi core systems rendering of certain plot item 
+   ( f.e QwtPolarSpectrogram ) can be done in parallel in 
+   several threads.
+
+   The default setting is set to 1.
+
+   \param numThreads Number of threads to be used for rendering.
+                     If numThreads is set to 0, the system specific
+                     ideal thread count is used.
+
+   The default thread count is 1 ( = no additional threads )
+*/
+void QwtPolarItem::setRenderThreadCount( uint numThreads )
+{
+    d_data->renderThreadCount = numThreads;
+}
+
+/*!
+   \return Number of threads to be used for rendering.
+           If numThreads() is set to 0, the system specific
+           ideal thread count is used.
+*/
+uint QwtPolarItem::renderThreadCount() const
+{
+    return d_data->renderThreadCount;
 }
 
 //! Show the item
