@@ -21,7 +21,7 @@ contains(QWT_POLAR_CONFIG, QwtPolarExamples ) {
 	SUBDIRS += examples
 }
 
-qwtpolarspec.files  = qwtpolarconfig.pri qwtpolar.prf
+qwtpolarspec.files  = qwtpolarconfig.pri qwtpolarfunctions.pri qwtpolar.prf
 qwtpolarspec.path  = $${QWT_POLAR_INSTALL_FEATURES}
 
 INSTALLS += qwtpolarspec

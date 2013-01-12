@@ -6,15 +6,25 @@
 # modify it under the terms of the Qwt License, Version 1.0
 ##############################################
 
-QWT_POLAR_ROOT = ..
+QWT_POLAR_ROOT = $${PWD}/..
 
 include ( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include ( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
+include ( $${QWT_POLAR_ROOT}/qwtpolarfunctions.pri )
 
 contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 
-	CONFIG    += qt designer plugin
+    CONFIG    += qt plugin
 	CONFIG    += warn_on
+
+    greaterThan(QT_MAJOR_VERSION, 4) {
+
+        QT += designer
+    }
+    else {
+
+        CONFIG    += designer
+    }
 
 	TEMPLATE        = lib
 	TARGET          = qwt_polar_designer_plugin
@@ -24,10 +34,19 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 	INCLUDEPATH    += $${QWT_POLAR_ROOT}/src 
 	DEPENDPATH     += $${QWT_POLAR_ROOT}/src 
 
-	LIBS      += -L$${QWT_POLAR_ROOT}/lib
-	qtAddLibrary(qwtpolar)
+    contains(QWT_CONFIG, QwtFramework) {
+
+        LIBS      += -F$${QWT_POLAR_ROOT}/lib
+    }
+    else {
+
+        LIBS      += -L$${QWT_POLAR_ROOT}/lib
+    }
+
+	qwtPolarAddLibrary(qwtpolar)
 
 	contains(CONFIG, QwtPolarDll) {
+
 		win32 {
 			DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
 		}

@@ -53,7 +53,7 @@ MainWindow::MainWindow( QWidget *parent ):
         "use the left mouse button to move it.";
 
     btnZoom->setText( "Zoom" );
-    btnZoom->setIcon( QIcon( zoom_xpm ) );
+    btnZoom->setIcon( QPixmap( zoom_xpm ) );
     btnZoom->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
     btnZoom->setToolTip( zoomHelp );
     btnZoom->setCheckable( true );
@@ -62,7 +62,7 @@ MainWindow::MainWindow( QWidget *parent ):
 
     QToolButton *btnPrint = new QToolButton( toolBar );
     btnPrint->setText( "Print" );
-    btnPrint->setIcon( QIcon( print_xpm ) );
+    btnPrint->setIcon( QPixmap( print_xpm ) );
     btnPrint->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
     toolBar->addWidget( btnPrint );
     connect( btnPrint, SIGNAL( clicked() ), SLOT( printDocument() ) );
@@ -70,7 +70,7 @@ MainWindow::MainWindow( QWidget *parent ):
 #ifdef QT_SVG_LIB
     QToolButton *btnExport = new QToolButton( toolBar );
     btnExport->setText( "Export" );
-    btnExport->setIcon( QIcon( print_xpm ) );
+    btnExport->setIcon( QPixmap( print_xpm ) );
     btnExport->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
     toolBar->addWidget( btnExport );
 

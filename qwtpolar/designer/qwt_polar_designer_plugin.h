@@ -17,7 +17,6 @@
 
 namespace QwtPolarDesignerPlugin
 {
-
     class PolarPlotInterface: public QObject,
         public QDesignerCustomWidgetInterface
     {
@@ -44,6 +43,9 @@ namespace QwtPolarDesignerPlugin
         Q_OBJECT
         Q_INTERFACES( QDesignerCustomWidgetCollectionInterface )
 
+#if QT_VERSION >= 0x050000
+        Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetCollectionInterface" )
+#endif
     public:
         CustomWidgetCollectionInterface( QObject *parent = NULL );
 

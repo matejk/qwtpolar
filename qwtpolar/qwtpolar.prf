@@ -33,11 +33,4 @@ else {
     LIBS        *= -L$${QWT_POLAR_INSTALL_LIBS}
 }
 
-INCLUDEPATH_QWT_POLAR = $${INCLUDEPATH}
-qtAddLibrary(qwtpolar)
-
-# we don't want qtAddLibrary to expand the 
-# include path, with directories, that might
-# conflict with other installations of qwtpolar
-
-INCLUDEPATH      = $${INCLUDEPATH_QWT_POLAR}
+qwtPolarAddLibrary(qwtpolar)
