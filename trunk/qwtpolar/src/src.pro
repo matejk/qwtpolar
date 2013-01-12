@@ -8,12 +8,13 @@
 
 # qmake project file for building the qwtpolar libraries
 
-QWT_POLAR_ROOT = ..
+QWT_POLAR_ROOT = $${PWD}/..
 include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
+include( $${QWT_POLAR_ROOT}/qwtpolarfunctions.pri )
 
 TEMPLATE          = lib
-TARGET            = $$qtLibraryTarget(qwtpolar)
+TARGET            = $$qwtPolarLibraryTarget(qwtpolar)
 
 DESTDIR           = $${QWT_POLAR_ROOT}/lib
 

@@ -11,7 +11,7 @@
 ######################################################################
 
 QWT_POLAR_VER_MAJ      = 1
-QWT_POLAR_VER_MIN      = 0
+QWT_POLAR_VER_MIN      = 1
 QWT_POLAR_VER_PAT      = 0
 QWT_POLAR_VERSION      = $${QWT_POLAR_VER_MAJ}.$${QWT_POLAR_VER_MIN}.$${QWT_POLAR_VER_PAT}
 

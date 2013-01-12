@@ -98,4 +98,6 @@ CustomWidgetCollectionInterface::customWidgets( void ) const
     return d_plugins;
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2( QwtPolarDesignerPlugin, CustomWidgetCollectionInterface )
+#endif

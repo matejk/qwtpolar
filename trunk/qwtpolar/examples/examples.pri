@@ -6,9 +6,10 @@
 # modify it under the terms of the Qwt License, Version 1.0
 #################################################################
 
-QWT_POLAR_ROOT = ../..
+QWT_POLAR_ROOT = $${PWD}/..
 include( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
+include( $${QWT_POLAR_ROOT}/qwtpolarfunctions.pri )
 
 TEMPLATE     = app
 
@@ -25,9 +26,13 @@ else {
     LIBS      += -L$${QWT_POLAR_ROOT}/lib
 }
 
-IPATH       = $${INCLUDEPATH}
-qtAddLibrary(qwtpolar)
-INCLUDEPATH = $${IPATH}
+qwtPolarAddLibrary(qwtpolar)
+
+greaterThan(QT_MAJOR_VERSION, 4) {
+
+    QT += printsupport
+    QT += concurrent
+}
 
 contains(QWT_CONFIG, QwtPolarSvg) {
 
