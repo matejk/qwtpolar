@@ -180,11 +180,8 @@ PlotSettings Plot::settings() const
     s.flags[PlotSettings::AutoScaling] =
         d_grid->testGridAttribute( QwtPolarGrid::AutoScaling );
 
-    const QwtScaleTransformation *transform =
+    s.flags[PlotSettings::Logarithmic] = 
         scaleEngine( QwtPolar::Radius )->transformation();
-    s.flags[PlotSettings::Logarithmic] =
-        ( transform->type() == QwtScaleTransformation::Log10 );
-    delete transform;
 
     const QwtScaleDiv *sd = scaleDiv( QwtPolar::Radius );
     s.flags[PlotSettings::Inverted] = sd->lowerBound() > sd->upperBound();
@@ -233,19 +230,14 @@ void Plot::applySettings( const PlotSettings& s )
             interval.minValue(), interval.maxValue() );
     }
 
-    const QwtScaleTransformation *transform =
-        scaleEngine( QwtPolar::Radius )->transformation();
     if ( s.flags[PlotSettings::Logarithmic] )
     {
-        if ( transform->type() != QwtScaleTransformation::Log10 )
-            setScaleEngine( QwtPolar::Radius, new QwtLog10ScaleEngine() );
+        setScaleEngine( QwtPolar::Radius, new QwtLogScaleEngine() );
     }
     else
     {
-        if ( transform->type() != QwtScaleTransformation::Linear )
-            setScaleEngine( QwtPolar::Radius, new QwtLinearScaleEngine() );
+        setScaleEngine( QwtPolar::Radius, new QwtLinearScaleEngine() );
     }
-    delete transform;
 
     d_grid->setRenderHint( QwtPolarItem::RenderAntialiased,
         s.flags[PlotSettings::Antialiasing] );

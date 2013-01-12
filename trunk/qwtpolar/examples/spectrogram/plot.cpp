@@ -50,7 +50,7 @@ public:
     {
         const double c = 0.842;
         const double x = radius / 10.0 * 3.0 - 1.5;
-        const double y = azimuth / M_2PI * 3.0 - 1.5;
+        const double y = azimuth / ( 2 * M_PI ) * 3.0 - 1.5;
 
         const double v1 = qwtSqr( x ) + ( y - c ) * ( y + c );
         const double v2 = 2 * x * ( y + c );
@@ -67,7 +67,7 @@ public:
     {
         QwtText text;
 
-        if ( qFuzzyCompare( fmod( value, M_2PI ), 0.0 ) )
+        if ( qFuzzyCompare( fmod( value, 2 * M_PI ), 0.0 ) )
         {
             return QString( "0" );
         }
@@ -96,7 +96,7 @@ Plot::Plot( QWidget *parent ):
 
 
     // scales
-    setScale( QwtPolar::Azimuth, 0.0, M_2PI, M_PI_4 );
+    setScale( QwtPolar::Azimuth, 0.0, 2 * M_PI, M_PI_4 );
     setScaleMaxMinor( QwtPolar::Azimuth, 2 );
 
     setScale( QwtPolar::Radius, 0.0, 10.0 );

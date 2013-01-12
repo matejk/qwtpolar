@@ -42,7 +42,7 @@ PlotWindow::PlotWindow( QWidget *parent ):
     d_plot->spectrogram()->setColorMap( new ColorMap() );
 
     QwtLinearScaleEngine scaleEngine;
-    d_colorScale->setScaleDiv( scaleEngine.transformation(),
+    d_colorScale->setScaleDiv( 
         scaleEngine.divideScale( interval.minValue(), interval.maxValue(), 8, 5 ) );
 
     int startDist, endDist;
