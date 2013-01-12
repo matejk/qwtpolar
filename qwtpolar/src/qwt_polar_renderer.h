@@ -60,10 +60,9 @@ public:
         const QSizeF &sizeMM = QSizeF( 200, 200 ), int resolution = 85 );
 
     virtual void renderTitle( QPainter *, const QRectF & ) const;
-    virtual void renderLegend( QPainter *, const QRectF & ) const;
 
-    virtual void renderLegendItem( QPainter *,
-        const QWidget *, const QRectF & ) const;
+    virtual void renderLegend(
+        const QwtPolarPlot *, QPainter *, const QRectF & ) const;
 
 private:
     class PrivateData;

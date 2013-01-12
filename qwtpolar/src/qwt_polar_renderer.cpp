@@ -10,7 +10,6 @@
 #include "qwt_polar_plot.h"
 #include "qwt_polar_layout.h"
 #include <qwt_legend.h>
-#include <qwt_legend_item.h>
 #include <qwt_dyngrid_layout.h>
 #include <qwt_text_label.h>
 #include <qwt_text.h>
@@ -319,7 +318,7 @@ void QwtPolarRenderer::render( QwtPolarPlot *plot,
     painter->restore();
 
     painter->save();
-    renderLegend( painter, layout->legendRect() );
+    renderLegend( plot, painter, layout->legendRect() );
     painter->restore();
 
     const QRectF canvasRect = layout->canvasRect();
@@ -359,84 +358,15 @@ void QwtPolarRenderer::renderTitle( QPainter *painter, const QRectF &rect ) cons
 /*!
   Render the legend into a given rectangle.
 
+  \param plot Plot widget
   \param painter Painter
   \param rect Bounding rectangle
 */
-
-void QwtPolarRenderer::renderLegend(
+void QwtPolarRenderer::renderLegend( const QwtPolarPlot *plot,
     QPainter *painter, const QRectF &rect ) const
 {
-    QwtLegend *legend = d_data->plot->legend();
-    if ( legend == NULL || legend->isEmpty() )
-        return;
-
-    const QwtDynGridLayout *legendLayout = qobject_cast<QwtDynGridLayout *>(
-        legend->contentsWidget()->layout() );
-    if ( legendLayout == NULL )
-        return;
-
-    uint numCols = legendLayout->columnsForWidth( rect.width() );
-    const QList<QRect> itemRects =
-        legendLayout->layoutItems( rect.toRect(), numCols );
-
-    int index = 0;
-
-    for ( int i = 0; i < legendLayout->count(); i++ )
-    {
-        QLayoutItem *item = legendLayout->itemAt( i );
-        QWidget *w = item->widget();
-        if ( w )
-        {
-            painter->save();
-
-            painter->setClipRect( itemRects[index] );
-            renderLegendItem( painter, w, itemRects[index] );
-
-            index++;
-            painter->restore();
-        }
-    }
-
-}
-
-/*!
-  Print the legend item into a given rectangle.
-
-  \param painter Painter
-  \param widget Widget representing a legend item
-  \param rect Bounding rectangle
-
-  \note When widget is not derived from QwtLegendItem renderLegendItem
-        does nothing and needs to be overloaded
-*/
-void QwtPolarRenderer::renderLegendItem( QPainter *painter,
-    const QWidget *widget, const QRectF &rect ) const
-{
-    const QwtLegendItem *item = qobject_cast<const QwtLegendItem *>( widget );
-    if ( item )
-    {
-        const QSize sz = item->identifierSize();
-
-        const QRectF identifierRect( rect.x() + item->margin(),
-            rect.center().y() - 0.5 * sz.height(), sz.width(), sz.height() );
-
-        QwtLegendItemManager *itemManger = d_data->plot->legend()->find( item );
-        if ( itemManger )
-        {
-            painter->save();
-            painter->setClipRect( identifierRect, Qt::IntersectClip );
-            itemManger->drawLegendIdentifier( painter, identifierRect );
-            painter->restore();
-        }
-
-        // Label
-
-        QRectF titleRect = rect;
-        titleRect.setX( identifierRect.right() + 2 * item->spacing() );
-
-        painter->setFont( item->font() );
-        item->text().draw( painter, titleRect );
-    }
+    if ( plot->legend() )
+        plot->legend()->renderLegend( painter, rect, true );
 }
 
 /*!
