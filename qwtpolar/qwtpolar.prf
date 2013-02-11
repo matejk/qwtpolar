@@ -22,7 +22,7 @@ else {
     DEFINES *= QWT_POLAR_NO_SVG
 }
 
-contains(QWT_CONFIG, QwtFramework) {
+contains(QWT_CONFIG, QwtPolarFramework) {
 
     INCLUDEPATH *= $${QWT_POLAR_INSTALL_LIBS}/qwtpolar.framework/Headers
     LIBS        *= -F$${QWT_POLAR_INSTALL_LIBS}

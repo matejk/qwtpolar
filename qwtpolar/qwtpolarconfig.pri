@@ -78,3 +78,14 @@ QWT_POLAR_CONFIG     += QwtPolarDesigner
 ######################################################################
 
 QWT_POLAR_CONFIG     += QwtPolarExamples
+
+######################################################################
+# When Qt has been built as framework qmake wants 
+# to link frameworks instead of regular libs
+######################################################################
+
+macx:CONFIG(qt_framework, qt_framework|qt_no_framework) {
+
+    QWT_POLAR_CONFIG += QwtPolarFramework
+}
+
