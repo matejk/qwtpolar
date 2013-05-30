@@ -17,7 +17,7 @@ INCLUDEPATH += $${QWT_POLAR_ROOT}/src
 DEPENDPATH  += $${QWT_POLAR_ROOT}/src
 DESTDIR      = $${QWT_POLAR_ROOT}/examples/bin$${SUFFIX_STR}
 
-contains(QWT_CONFIG, QwtFramework) {
+contains(QWT_CONFIG, QwtPolarFramework) {
 
     LIBS      += -F$${QWT_POLAR_ROOT}/lib
 }
