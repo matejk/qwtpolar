@@ -27,7 +27,7 @@ else {
     CONFIG += staticlib
 }
 
-contains(QWT_CONFIG, QwtFramework) {
+contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
 
     CONFIG += lib_bundle
 }

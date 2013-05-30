@@ -1,11 +1,10 @@
-################################################################
-# Qwt Widget Library
-# Copyright (C) 1997   Josef Wilgen
-# Copyright (C) 2002   Uwe Rathmann
+# -*- mode: sh -*- ##############################################
+# QwtPolar Widget Library
+# Copyright (C) 2008   Uwe Rathmann
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the Qwt License, Version 1.0
-################################################################
+#################################################################
 
 # Copied and modified from qt_functions.prf
 
@@ -14,19 +13,19 @@ defineReplace(qwtPolarLibraryTarget) {
     unset(LIBRARY_NAME)
     LIBRARY_NAME = $$1
 
-    mac::contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
+    mac:contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
 
-      	QMAKE_FRAMEWORK_BUNDLE_NAME = $$LIBRARY_NAME
-      	export(QMAKE_FRAMEWORK_BUNDLE_NAME)
-   	}
+        QMAKE_FRAMEWORK_BUNDLE_NAME = $$LIBRARY_NAME
+        export(QMAKE_FRAMEWORK_BUNDLE_NAME)
+    }
 
-   	contains(TEMPLATE, .*lib):CONFIG(debug, debug|release) {
+    contains(TEMPLATE, .*lib):CONFIG(debug, debug|release) {
 
-      	!debug_and_release|build_pass {
-          	mac:RET = $$member(LIBRARY_NAME, 0)_debug
-          	else:win32:RET = $$member(LIBRARY_NAME, 0)d
-      	}
-   	}
+        !debug_and_release|build_pass {
+            mac:RET = $$member(LIBRARY_NAME, 0)_debug
+            win32:RET = $$member(LIBRARY_NAME, 0)d
+        }
+    }
 
    	isEmpty(RET):RET = $$LIBRARY_NAME
    	return($$RET)
@@ -38,7 +37,7 @@ defineTest(qwtPolarAddLibrary) {
 
     unset(LINKAGE)
 
-   	mac:contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
+    mac:contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
 
         LINKAGE = -framework $${LIB_NAME}$${QT_LIBINFIX}
     }
@@ -47,8 +46,8 @@ defineTest(qwtPolarAddLibrary) {
 
         if(!debug_and_release|build_pass):CONFIG(debug, debug|release) {
 
-            win32:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}d
             mac:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}_debug
+            win32:LINKAGE = -l$${LIB_NAME}$${QT_LIBINFIX}d
         }
     }
 
