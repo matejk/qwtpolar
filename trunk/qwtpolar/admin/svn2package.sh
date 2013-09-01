@@ -1,4 +1,4 @@
-#! /bin/sh -x
+#! /bin/sh
 # 
 # Generates a Qwt Polar package from sourceforge svn
 #
