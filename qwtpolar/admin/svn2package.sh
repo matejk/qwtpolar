@@ -1,4 +1,4 @@
-#! /bin/sh 
+#! /bin/sh -x
 # 
 # Generates a Qwt Polar package from sourceforge svn
 #
@@ -29,7 +29,7 @@ function checkoutQwtPolar() {
         fi
     fi
 
-    svn -q co https://qwtpolar.svn.sourceforge.net/svnroot/qwtpolar/$1/$2
+    svn -q co https://svn.code.sf.net/p/qwtpolar/code/$1/$2
     if [ $? -ne 0 ]
     then
         echo "Can't access sourceforge SVN"
@@ -110,9 +110,9 @@ function createDocs {
 
     if [ "$SUFFIX" != "" ]
     then
-        sed -i -e "s/svn/$VERSION-$SUFFIX/" Doxyfile
+		export QWTPOLARVERSION=$VERSION-$SUFFIX
     else
-        sed -i -e "s/svn/$VERSION/" Doxyfile
+		export QWTPOLARVERSION=$VERSION
     fi
     cp Doxyfile Doxyfile.doc
 
@@ -124,7 +124,7 @@ function createDocs {
 
     if [ $GENERATE_PDF -ne 0 ]
     then
-        # We need LateX for PDF
+        # We need LateX for the qwtpolardoc.pdf
 
         sed -i -e '/GENERATE_LATEX/d' -e '/GENERATE_MAN/d' Doxyfile.doc
         echo 'GENERATE_LATEX = YES' >> Doxyfile.doc
@@ -279,6 +279,8 @@ echo done
 if [ $GENERATE_DOC -ne 0 ]
 then
     echo -n "generate documentation ... "
+
+	export VERSION # used in the doxygen files
     createDocs $TMPDIR/doc
 
     if [ $GENERATE_PDF -ne 0 ]
