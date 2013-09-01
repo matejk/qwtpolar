@@ -13,9 +13,9 @@ qwtpolarbuild.pri and qwtpolarconfig.pri are read by all project files
 of the QwtPolar package. So the first step is to edit the *.pri files to adjust
 them to your needs. 
 
-QwtPolar needs a proper installation of Qwt 6.x. For building 
+QwtPolar 1.1 needs a proper installation of Qwt >= 6.1. For building 
 QwtPolar you need to configure qmake to find the installed Qwt features
-file qwt.prf. Read http://doc.qt.nokia.com/4.7/qmake-advanced-usage.html#adding-new-configuration-features.
+file qwt.prf. Read "http://qt-project.org/doc/qt-4.8/qmake-advanced-usage.html#adding-new-configuration-features".
 
 The subdirs template of qmake is known to be buggy when using spaces
 in path names. So better don't build QwtPolar below a path name with spaces.
@@ -153,7 +153,7 @@ Using QwtPolar
 
 For building a QwtPolar application with qmake use the QwtPolar configuration 
 features file, that has been installed by "make install". When qmake is able to find
-it ( http://doc.qt.nokia.com/4.7/qmake-advanced-usage.html#adding-new-configuration-features )
+it ( http://qt-project.org/doc/qt-4.8/qmake-advanced-usage.html#adding-new-configuration-features )
 you can simply add "CONFIG += qwt qwtpolar" to your application project file.
 
 Good luck !
