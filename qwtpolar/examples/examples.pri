@@ -17,7 +17,7 @@ INCLUDEPATH += $${QWT_POLAR_ROOT}/src
 DEPENDPATH  += $${QWT_POLAR_ROOT}/src
 DESTDIR      = $${QWT_POLAR_ROOT}/examples/bin$${SUFFIX_STR}
 
-contains(QWT_CONFIG, QwtPolarFramework) {
+contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
 
     LIBS      += -F$${QWT_POLAR_ROOT}/lib
 }
@@ -34,7 +34,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += concurrent
 }
 
-contains(QWT_CONFIG, QwtPolarSvg) {
+contains(QWT_POLAR_CONFIG, QwtPolarSvg) {
 
     QT += svg
 }
@@ -44,7 +44,7 @@ else {
 }
 
 win32 {
-    contains(QWT_CONFIG, QwtPolarDll) {
+    contains(QWT_POLAR_CONFIG, QwtPolarDll) {
         DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL
     }
 }

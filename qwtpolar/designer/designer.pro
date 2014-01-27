@@ -34,7 +34,7 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 	INCLUDEPATH    += $${QWT_POLAR_ROOT}/src 
 	DEPENDPATH     += $${QWT_POLAR_ROOT}/src 
 
-    contains(QWT_CONFIG, QwtFramework) {
+    contains(QWT_POLAR_CONFIG, QwtFramework) {
 
         LIBS      += -F$${QWT_POLAR_ROOT}/lib
     }
