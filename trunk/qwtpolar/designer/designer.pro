@@ -12,10 +12,22 @@ include ( $${QWT_POLAR_ROOT}/qwtpolarconfig.pri )
 include ( $${QWT_POLAR_ROOT}/qwtpolarbuild.pri )
 include ( $${QWT_POLAR_ROOT}/qwtpolarfunctions.pri )
 
+CONFIG( debug_and_release ) {
+
+    # When building debug_and_release the designer plugin is built
+    # for release only. If you want to have a debug version it has to be
+    # done with "CONFIG += debug" only.
+
+    message("debug_and_release: building the Qwt designer plugin in release mode only")
+
+    CONFIG -= debug_and_release
+    CONFIG += release
+}
+
 contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 
     CONFIG    += qt plugin
-	CONFIG    += warn_on
+    CONFIG    += warn_on
 
     greaterThan(QT_MAJOR_VERSION, 4) {
 
@@ -26,13 +38,18 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
         CONFIG    += designer
     }
 
-	TEMPLATE        = lib
-	TARGET          = qwt_polar_designer_plugin
+    TEMPLATE        = lib
+    TARGET          = qwt_polar_designer_plugin
 
-	DESTDIR         = plugins/designer
+    DESTDIR         = plugins/designer
 
-	INCLUDEPATH    += $${QWT_POLAR_ROOT}/src 
-	DEPENDPATH     += $${QWT_POLAR_ROOT}/src 
+    INCLUDEPATH    += $${QWT_POLAR_ROOT}/src 
+    DEPENDPATH     += $${QWT_POLAR_ROOT}/src 
+
+    # compile the path for finding the Qwt library
+    # into the plugin. Not supported on Windows !
+
+    QMAKE_RPATHDIR *= $${QWT_POLAR_INSTALL_LIBS}
 
     contains(QWT_POLAR_CONFIG, QwtPolarFramework) {
 
@@ -43,22 +60,22 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
         LIBS      += -L$${QWT_POLAR_ROOT}/lib
     }
 
-	qwtPolarAddLibrary(qwtpolar)
+    qwtPolarAddLibrary(qwtpolar)
 
-	contains(CONFIG, QwtPolarDll) {
+    contains(CONFIG, QwtPolarDll) {
 
-		win32 {
-			DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
-		}
-	}
+        win32 {
+            DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
+        }
+    }
 
-	HEADERS += qwt_polar_designer_plugin.h
-	SOURCES += qwt_polar_designer_plugin.cpp
-	RESOURCES += qwt_polar_designer_plugin.qrc
+    HEADERS += qwt_polar_designer_plugin.h
+    SOURCES += qwt_polar_designer_plugin.cpp
+    RESOURCES += qwt_polar_designer_plugin.qrc
 
-	target.path = $${QWT_POLAR_INSTALL_PLUGINS}
-	INSTALLS += target
+    target.path = $${QWT_POLAR_INSTALL_PLUGINS}
+    INSTALLS += target
 }
 else {
-	TEMPLATE        = subdirs # do nothing
+    TEMPLATE        = subdirs # do nothing
 }
