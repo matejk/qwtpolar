@@ -45,9 +45,7 @@ else {
     DEFINES += QWT_POLAR_NO_SVG
 }
 
-win32 {
-    contains(QWT_POLAR_CONFIG, QwtPolarDll) {
-        DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL
-    }
+contains(QWT_POLAR_CONFIG, QwtPolarDll) {
+    DEFINES    += QT_DLL QWT_DLL QWT_POLAR_DLL
 }
 
