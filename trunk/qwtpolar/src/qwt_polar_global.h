@@ -14,7 +14,7 @@
 // QWT_POLAR_VERSION is (major << 16) + (minor << 8) + patch.
 
 #define QWT_POLAR_VERSION       0x010100
-#define QWT_POLAR_VERSION_STR   "1.1.0"
+#define QWT_POLAR_VERSION_STR   "1.1.1"
 
 #if defined(_MSC_VER) /* MSVC Compiler */
 /* template-class specialization 'identifier' is already instantiated */
@@ -24,10 +24,10 @@
 #ifdef QWT_POLAR_DLL
 
 #if defined(QWT_POLAR_MAKEDLL)     // create DLL library 
-#define QWT_POLAR_EXPORT  __declspec(dllexport)
+#define QWT_POLAR_EXPORT  Q_DECL_EXPORT
 #define QWT_POLAR_TEMPLATEDLL
 #else                        // use DLL library
-#define QWT_POLAR_EXPORT  __declspec(dllimport)
+#define QWT_POLAR_EXPORT  Q_DECL_IMPORT
 #endif
 
 #endif // QWT_POLAR_DLL
