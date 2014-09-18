@@ -64,7 +64,9 @@ contains(QWT_POLAR_CONFIG, QwtPolarDesigner) {
 
     contains(CONFIG, QwtPolarDll) {
 
-		DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
+        win32 {
+            DEFINES += QT_DLL QWT_DLL QWT_POLAR_DLL
+        }
     }
 
     HEADERS += qwt_polar_designer_plugin.h
