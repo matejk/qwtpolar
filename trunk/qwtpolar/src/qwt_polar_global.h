@@ -13,8 +13,8 @@
 
 // QWT_POLAR_VERSION is (major << 16) + (minor << 8) + patch.
 
-#define QWT_POLAR_VERSION       0x010100
-#define QWT_POLAR_VERSION_STR   "1.1.1"
+#define QWT_POLAR_VERSION       0x010200
+#define QWT_POLAR_VERSION_STR   "1.2.0"
 
 #if defined(_MSC_VER) /* MSVC Compiler */
 /* template-class specialization 'identifier' is already instantiated */
