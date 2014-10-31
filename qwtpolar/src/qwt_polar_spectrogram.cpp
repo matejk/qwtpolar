@@ -13,6 +13,7 @@
 #include <qwt_scale_map.h>
 #include <qwt_raster_data.h>
 #include <qwt_math.h>
+#include <qwt_clipper.h>
 #include <qpainter.h>
 #if QT_VERSION >= 0x040400
 #include <qthread.h>
@@ -262,9 +263,14 @@ void QwtPolarSpectrogram::draw( QPainter *painter,
         QRectF r( 0, 0, 2 * radius, 2 * radius );
         r.moveCenter( pole );
 
-        clipRegion &= QRegion( r.toRect(), QRegion::Ellipse );;
-
         imageRect &= r.toRect();
+
+        const QVector<QwtInterval> intv = QwtClipper::clipCircle( 
+            clipRegion.boundingRect(), pole, radius );
+        if ( !intv.isEmpty() )
+        {
+            clipRegion &= QRegion( r.toRect(), QRegion::Ellipse );
+        }
     }
 
     const QImage image = renderImage( azimuthMap, radialMap, pole, imageRect );
