@@ -60,29 +60,6 @@ static inline double qwtFastAtan2( double y, double x )
 #define qAtan2(y, x) ::atan2(y, x)
 #endif
 
-static bool qwtNeedsClipping( const QRectF &plotRect, const QRectF &rect )
-{
-    QPointF points[4];
-    points[0] = rect.topLeft();
-    points[1] = rect.topRight();
-    points[2] = rect.bottomLeft();
-    points[3] = rect.bottomRight();
-
-    const double radius = plotRect.width() / 2.0;
-    const QPointF pole = plotRect.center();
-
-    for ( int i = 0; i < 4; i++ )
-    {
-        const double dx = points[i].x() - pole.x();
-        const double dy = points[i].y() - pole.y();
-
-        if ( qSqrt( dx * dx + dy * dy ) > radius )
-            return true;
-    }
-
-    return false;
-}
-
 class QwtPolarSpectrogram::TileInfo
 {
 public:
@@ -238,46 +215,35 @@ void QwtPolarSpectrogram::draw( QPainter *painter,
     const QRectF &canvasRect ) const
 {
     const QRectF plotRect = plot()->plotRect( canvasRect.toRect() );
-
-    QRegion clipRegion( canvasRect.toRect() );
-    if ( qwtNeedsClipping( plotRect, canvasRect ) )
-    {
-        // For large plotRects the ellipse becomes a huge polygon.
-        // So we better clip only, when we really need to.
-
-        clipRegion &= QRegion( plotRect.toRect(), QRegion::Ellipse );
-    }
-
     QRect imageRect = canvasRect.toRect();
 
-    if ( painter->hasClipping() )
-        imageRect &= painter->clipRegion().boundingRect();
+    painter->save();
 
-    const QwtInterval radialInterval =
-        boundingInterval( QwtPolar::ScaleRadius );
+    painter->setClipRect( canvasRect );
+    
+    QPainterPath clipPathCanvas;
+    clipPathCanvas.addEllipse( plotRect );
+    painter->setClipPath( clipPathCanvas, Qt::IntersectClip );
+
+    imageRect &= plotRect.toAlignedRect(); // outer rect
+
+    const QwtInterval radialInterval = boundingInterval( QwtPolar::ScaleRadius );
     if ( radialInterval.isValid() )
     {
         const double radius = radialMap.transform( radialInterval.maxValue() ) -
-                              radialMap.transform( radialInterval.minValue() );
+            radialMap.transform( radialInterval.minValue() );
 
-        QRectF r( 0, 0, 2 * radius, 2 * radius );
-        r.moveCenter( pole );
+        QRectF clipRect( 0, 0, 2 * radius, 2 * radius );
+        clipRect.moveCenter( pole );
 
-        imageRect &= r.toRect();
+        imageRect &= clipRect.toRect(); // inner rect, we don't have points outside
 
-        const QVector<QwtInterval> intv = QwtClipper::clipCircle( 
-            clipRegion.boundingRect(), pole, radius );
-        if ( !intv.isEmpty() )
-        {
-            clipRegion &= QRegion( r.toRect(), QRegion::Ellipse );
-        }
+        QPainterPath clipPathRadial;
+        clipPathRadial.addEllipse( clipRect );
+        painter->setClipPath( clipPathRadial, Qt::IntersectClip );
     }
 
     const QImage image = renderImage( azimuthMap, radialMap, pole, imageRect );
-
-    painter->save();
-    painter->setClipRegion( clipRegion );
-
     painter->drawImage( imageRect, image );
 
     painter->restore();
