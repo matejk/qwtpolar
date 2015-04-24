@@ -403,8 +403,10 @@ void QwtPolarSpectrogram::renderTile(
                 const double dx = x - pole.x();
 
                 double a =  doFastAtan ? qwtFastAtan2( dy, dx ) : qAtan2( dy, dx );
+
                 if ( a < 0.0 )
                     a += 2 * M_PI;
+
                 if ( a < azimuthMap.p1() )
                     a += 2 * M_PI;
 
@@ -414,7 +416,14 @@ void QwtPolarSpectrogram::renderTile(
                 const double radius = radialMap.invTransform( r );
 
                 const double value = d_data->data->value( azimuth, radius );
-                *line++ = d_data->colorMap->rgb( intensityRange, value );
+                if ( qIsNaN( value ) )
+                {
+                    *line++ = 0u;
+                }
+                else
+                {
+                    *line++ = d_data->colorMap->rgb( intensityRange, value );
+                }
             }
         }
     }
