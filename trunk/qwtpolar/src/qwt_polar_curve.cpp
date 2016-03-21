@@ -438,7 +438,6 @@ void QwtPolarCurve::drawLines( QPainter *painter,
     }
 
     QwtPainter::drawPolyline( painter, polyline );
-    painter->drawPolyline( polyline );
 }
 
 /*!
