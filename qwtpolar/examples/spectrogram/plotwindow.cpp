@@ -13,7 +13,12 @@ public:
     ColorMap():
         QwtLinearColorMap( Qt::darkBlue, Qt::yellow )
     {
+#if 1
+        addColorStop( 0.00, Qt::black );
+        addColorStop( 0.05, Qt::darkRed );
+#else
         addColorStop( 0.05, Qt::blue );
+#endif
         addColorStop( 0.3, Qt::cyan );
         addColorStop( 0.6, Qt::green );
         addColorStop( 0.98, Qt::red );
