@@ -1,0 +1,37 @@
+
+# /qwtpolar/
+/qwtpolar/lib
+/qwtpolar/Makefile
+
+# /qwtpolar/designer/
+/qwtpolar/designer/ui
+/qwtpolar/designer/resources
+/qwtpolar/designer/Makefile
+/qwtpolar/designer/plugins
+/qwtpolar/designer/obj
+/qwtpolar/designer/moc
+
+# /qwtpolar/doc/
+/qwtpolar/doc/html
+/qwtpolar/doc/Doxygen.log
+
+# /qwtpolar/examples/
+/qwtpolar/examples/Makefile
+/qwtpolar/examples/bin
+
+# /qwtpolar/examples/polardemo/
+/qwtpolar/examples/polardemo/moc
+/qwtpolar/examples/polardemo/obj
+/qwtpolar/examples/polardemo/Makefile
+/qwtpolar/examples/polardemo/polardemo
+
+# /qwtpolar/examples/spectrogram/
+/qwtpolar/examples/spectrogram/obj
+/qwtpolar/examples/spectrogram/Makefile
+/qwtpolar/examples/spectrogram/moc
+
+# /qwtpolar/src/
+/qwtpolar/src/moc
+/qwtpolar/src/obj
+/qwtpolar/src/Makefile
+
