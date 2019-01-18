@@ -305,12 +305,8 @@ QImage QwtPolarSpectrogram::renderImage(
     QImage image( rect.size(), d_data->colorMap->format() == QwtColorMap::RGB
                   ? QImage::Format_ARGB32 : QImage::Format_Indexed8 );
 
-    const QwtInterval intensityRange = d_data->data->interval( Qt::ZAxis );
-    if ( !intensityRange.isValid() )
-        return image;
-
     if ( d_data->colorMap->format() == QwtColorMap::Indexed )
-        image.setColorTable( d_data->colorMap->colorTable( intensityRange ) );
+        image.setColorTable( d_data->colorMap->colorTable256());
 
     /*
      For the moment we only announce the composition of the image by
@@ -471,7 +467,7 @@ void QwtPolarSpectrogram::renderTile(
                 const double radius = radialMap.invTransform( r );
 
                 const double value = d_data->data->value( azimuth, radius );
-                *line++ = d_data->colorMap->colorIndex( intensityRange, value );
+                *line++ = d_data->colorMap->colorIndex(256, intensityRange, value );
             }
         }
     }

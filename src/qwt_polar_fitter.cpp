@@ -25,7 +25,7 @@ public:
    \param stepCount Number of points, that will be inserted between 2 points
    \sa setStepCount()
 */
-QwtPolarFitter::QwtPolarFitter( int stepCount )
+QwtPolarFitter::QwtPolarFitter( int stepCount ) : QwtCurveFitter(QwtCurveFitter::Polygon)
 {
     d_data = new PrivateData;
     d_data->stepCount = stepCount;
