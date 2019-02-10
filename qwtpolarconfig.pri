@@ -15,8 +15,14 @@ QWT_POLAR_VER_MIN      = 1
 QWT_POLAR_VER_PAT      = 1
 QWT_POLAR_VERSION      = $${QWT_POLAR_VER_MAJ}.$${QWT_POLAR_VER_MIN}.$${QWT_POLAR_VER_PAT}
 
+#INCLUDEPATH += $$(PREFIX)/include
+#LIBS += -L$$(PREFIX)/lib
+
+QWT_POLAR_INSTALL_PREFIX = $$[QT_INSTALL_PREFIX]
+
 unix {
-    QWT_POLAR_INSTALL_PREFIX    = /usr/local/qwtpolar-$$QWT_POLAR_VERSION-svn
+#    QWT_POLAR_INSTALL_PREFIX    = /home/matej/devel/git/uberscope/libs
+#    QWT_POLAR_INSTALL_PREFIX    = /usr/local/qwtpolar-$$QWT_POLAR_VERSION-svn
 }
 
 win32 {
@@ -52,13 +58,13 @@ QWT_POLAR_CONFIG     += QwtPolarSvg
 # Features
 # When building a QwtPolar application with qmake you might want to load
 # the compiler/linker flags, that are required to build a Qwt application
-# from qwtpolar.prf. Therefore all you need to do is to add 
-# "CONFIG += qwtpolar" to your project file and take care, that 
+# from qwtpolar.prf. Therefore all you need to do is to add
+# "CONFIG += qwtpolar" to your project file and take care, that
 # qwtpolar.prf can be found by qmake.
 # ( see http://doc.trolltech.com/4.7/qmake-advanced-usage.html#adding-new-configuration-features )
 # I recommend not to install the QwtPolar features together with the
 # Qt features, because you will have to reinstall the QwtPolar features,
-# with every Qt upgrade. 
+# with every Qt upgrade.
 ######################################################################
 
 QWT_POLAR_INSTALL_FEATURES  = $${QWT_POLAR_INSTALL_PREFIX}/features
@@ -77,10 +83,10 @@ QWT_POLAR_CONFIG     += QwtPolarDesigner
 # Otherwise you have to build them from the examples directory.
 ######################################################################
 
-QWT_POLAR_CONFIG     += QwtPolarExamples
+#QWT_POLAR_CONFIG     += QwtPolarExamples
 
 ######################################################################
-# When Qt has been built as framework qmake wants 
+# When Qt has been built as framework qmake wants
 # to link frameworks instead of regular libs
 ######################################################################
 
